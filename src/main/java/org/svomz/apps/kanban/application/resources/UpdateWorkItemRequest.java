@@ -1,6 +1,6 @@
 package org.svomz.apps.kanban.application.resources;
 
-public class CreateOrUpdateWorkItemRequest {
+public class UpdateWorkItemRequest {
   
   private long stageId;
   private String text;

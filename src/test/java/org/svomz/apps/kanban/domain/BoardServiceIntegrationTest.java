@@ -1,6 +1,5 @@
 package org.svomz.apps.kanban.domain;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import org.junit.Assert;
@@ -26,8 +25,7 @@ public class BoardServiceIntegrationTest {
     Assert.assertNotNull(boardService.getAll());
     Assert.assertEquals(0, boardService.getAll().size());
     
-    Board board = new Board("hello, world!");
-    boardService.createBoard(board);
+    boardService.createBoard("hello, world!");
     Assert.assertTrue(boardService.getAll().size() == 1);
     
     persistService.stop();
@@ -40,15 +38,9 @@ public class BoardServiceIntegrationTest {
     persistService.start();
     
     KanbanService boardService = injector.getInstance(KanbanService.class);
-    Board board = new Board("hello, world!");
-    long newId = boardService.createBoard(board).getId();
+    long newId = boardService.createBoard("hello, world!").getId();
     
-    Board updatedBoard = new Board("World! Hello,");
-    // use reflection to set the id of the board
-    Field field = Board.class.getDeclaredField("id");
-    field.setAccessible(true);
-    field.set(updatedBoard, newId);
-    boardService.updateBoard(updatedBoard);
+    Board updatedBoard = boardService.updateBoard(newId, "World! Hello,");
     
 
     List<Board> boards = boardService.getAll();
@@ -68,15 +60,9 @@ public class BoardServiceIntegrationTest {
     persistService.start();
     
     KanbanService boardService = injector.getInstance(KanbanService.class);
-    Board board = new Board("hello, world!");
-    boardService.createBoard(board);
+    boardService.createBoard("hello, world!");
     
-    Board boardToUpdate = new Board("World! Hello,");
-    // use reflection to set the id of the board
-    Field field = Board.class.getDeclaredField("id");
-    field.setAccessible(true);
-    field.set(boardToUpdate, 666);
-    boardService.updateBoard(boardToUpdate);
+    boardService.updateBoard(666, "Work!, hello");
     
     persistService.stop();
   }
@@ -88,8 +74,7 @@ public class BoardServiceIntegrationTest {
     persistService.start();
     
     KanbanService boardService = injector.getInstance(KanbanService.class);
-    Board board = new Board("hello, world!");
-    long newId = boardService.createBoard(board).getId();
+    long newId = boardService.createBoard("hello, world!").getId();
     
     boardService.deleteBoard(newId);
     
@@ -103,8 +88,7 @@ public class BoardServiceIntegrationTest {
     persistService.start();
     
     KanbanService boardService = injector.getInstance(KanbanService.class);
-    Board board = new Board("hello, world!");
-    boardService.createBoard(board);
+    boardService.createBoard("hello, world!");
     boardService.deleteBoard(666);
     
     persistService.stop();

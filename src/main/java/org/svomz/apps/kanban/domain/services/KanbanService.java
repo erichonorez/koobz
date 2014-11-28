@@ -2,7 +2,7 @@ package org.svomz.apps.kanban.domain.services;
 
 import java.util.List;
 
-import org.svomz.apps.kanban.application.resources.CreateOrUpdateWorkItemRequest;
+import org.svomz.apps.kanban.application.resources.UpdateWorkItemRequest;
 import org.svomz.apps.kanban.domain.entities.Board;
 import org.svomz.apps.kanban.domain.entities.Stage;
 import org.svomz.apps.kanban.domain.entities.StageNotEmptyException;
@@ -14,20 +14,18 @@ import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
 /**
  * Description: Facade service for Kanban application.
  * 
- * For each method which involves a write operation in the persistence storage you are guaranteed that
- * change is applied at the return of the method.
+ * For each method which involves a write operation in the persistence storage you are guaranteed
+ * that change is applied at the return of the method.
  */
 public interface KanbanService {
 
   List<Board> getAll();
 
-  Board get(long boardId) throws EntityNotFoundException;
+  Board get(final long boardId) throws EntityNotFoundException;
 
   /**
-   * Makes the board supplied in argument persistent. The returned Board is the same instance than
-   * the one supplied.
+   * Creates a board with the given name and make it persistent.
    * 
-   * @param board board to persist.
    * @return the persisted board.
    * 
    *         TODO the supplied object should not be a Board but a specific object representing the
@@ -36,19 +34,18 @@ public interface KanbanService {
    *         called by the REST application layer where marshalling / unmarshalling process does not
    *         call object method but access and set fields directly.
    */
-  Board createBoard(Board board);
+  Board createBoard(final String name);
 
   /**
    * Updates the supplied board. The returned Board is the same instance than the one supplied.
    * 
-   * @param board the board to update.
    * @return the updated instance of the board.
    * @throws EntityNotFoundException if the entity is not found in the persistence storage.
    * 
    *         TODO same as for createBoard method. The update should take two parameters: the id of
    *         the board to update and the data to update.
    */
-  Board updateBoard(Board board) throws EntityNotFoundException;
+  Board updateBoard(final long boardId, final String name) throws EntityNotFoundException;
 
   /**
    * Removes the board identified by the given boardId.
@@ -58,12 +55,11 @@ public interface KanbanService {
    * 
    *         TODO throw an exception when the board contains stage(s) and / or workitem(s).
    */
-  void deleteBoard(long boardId) throws EntityNotFoundException;
+  void deleteBoard(final long boardId) throws EntityNotFoundException;
 
   /**
-   * Attaches the stage supplied in argument to the board identified by the supplied board id and
-   * makes the stage persistent. The stage instance returned is the same as the one given in
-   * parameter.
+   * Creates a stage with the given name and attaches it to the board identified by the supplied
+   * board id and makes the stage persistent.
    * 
    * @param boardId
    * @param stage
@@ -74,7 +70,7 @@ public interface KanbanService {
    *         TODO same as for the createBoard method. This method should take two parameters: the
    *         board identifier and an object which represent the request.
    */
-  Stage addStageToBoard(long boardId, Stage stage) throws EntityNotFoundException;
+  Stage addStageToBoard(final long boardId, final String name) throws EntityNotFoundException;
 
   /**
    * Removes the stage identified by the supplied by stageId from the board identified by the given
@@ -86,31 +82,35 @@ public interface KanbanService {
    *         the board.
    * @throws StageNotEmptyException if the stage contains workitems.
    */
-  void removeStageFromBoard(long boardId, long stageId) throws EntityNotFoundException,
+  void removeStageFromBoard(final long boardId, final long stageId) throws EntityNotFoundException,
       StageNotInProcessException, StageNotEmptyException;
 
   /**
+   * Updates the stage identified by the supplied stageId with the given name.
+   * 
    * @return the updated instance of the stage
    * @throws EntityNotFoundException if the stage identified by the given stageId is not found in
    *         the persistence storage.
    * 
    *         TODO as described above don't use entities here.
    */
-  Stage updateStage(long stageId, Stage stage) throws EntityNotFoundException;
+  Stage updateStage(final long stageId, final String namae) throws EntityNotFoundException;
 
   /**
    * @throws EntityNotFoundException if the board identified by the supplied boardId is not found in
    *         the persistence storage.
    */
-  List<Stage> getStages(long boardId) throws EntityNotFoundException;
+  List<Stage> getStages(final long boardId) throws EntityNotFoundException;
 
   /**
    * @throws EntityNotFoundException if the board identified by the supplied boardId is not found in
    *         the persistence storage.
    */
-  List<WorkItem> getWorkItems(long boardId) throws EntityNotFoundException;
+  List<WorkItem> getWorkItems(final long boardId) throws EntityNotFoundException;
 
   /**
+   * Creates a workItem instance with the given name, adds it on the board in the given stage.
+   * 
    * @return the workItem persisted instance
    * @throws EntityNotFoundException if the board identified by the supplied boardId or the stage
    *         identified by the given stageId are not found in the persistence storage.
@@ -119,7 +119,7 @@ public interface KanbanService {
    * 
    *         TODO as described above.
    */
-  WorkItem addWorkItemToBoard(long boardId, long stageId, CreateOrUpdateWorkItemRequest request)
+  WorkItem addWorkItemToBoard(final long boardId, final long stageId, final String text)
       throws EntityNotFoundException, StageNotInProcessException;
 
   /**
@@ -141,7 +141,7 @@ public interface KanbanService {
    *         stage is not on the board.
    */
   WorkItem updateWorkItem(long boardId, long workItemId,
-      CreateOrUpdateWorkItemRequest updateWorkItemRequest) throws EntityNotFoundException,
-      WorkItemNotOnBoardException, StageNotInProcessException;;
+      UpdateWorkItemRequest updateWorkItemRequest) throws EntityNotFoundException,
+      WorkItemNotOnBoardException, StageNotInProcessException;
 
 }

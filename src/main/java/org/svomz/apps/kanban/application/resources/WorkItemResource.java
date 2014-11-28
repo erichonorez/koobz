@@ -43,15 +43,15 @@ public class WorkItemResource {
   }
   
   @POST
-  public WorkItem create(CreateOrUpdateWorkItemRequest request) throws EntityNotFoundException, StageNotInProcessException {
+  public WorkItem create(UpdateWorkItemRequest request) throws EntityNotFoundException, StageNotInProcessException {
     Preconditions.checkNotNull(request);
     
-    return this.kanbanService.addWorkItemToBoard(this.boardId, request.getStageId(), request);
+    return this.kanbanService.addWorkItemToBoard(this.boardId, request.getStageId(), request.getText());
   }
   
   @PUT
   @Path("{id}")
-  public WorkItem update(@PathParam("id") long workItemId, final CreateOrUpdateWorkItemRequest request) throws EntityNotFoundException, WorkItemNotOnBoardException, StageNotInProcessException {
+  public WorkItem update(@PathParam("id") long workItemId, final UpdateWorkItemRequest request) throws EntityNotFoundException, WorkItemNotOnBoardException, StageNotInProcessException {
     Preconditions.checkNotNull(request);
     
     return this.kanbanService.updateWorkItem(boardId, workItemId, request);

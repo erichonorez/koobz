@@ -3,7 +3,7 @@ package org.svomz.apps.kanban.domain.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.svomz.apps.kanban.application.resources.CreateOrUpdateWorkItemRequest;
+import org.svomz.apps.kanban.application.resources.UpdateWorkItemRequest;
 import org.svomz.apps.kanban.domain.entities.Board;
 import org.svomz.apps.kanban.domain.entities.Stage;
 import org.svomz.apps.kanban.domain.entities.StageNotEmptyException;
@@ -43,43 +43,43 @@ public class KanbanServiceImpl implements KanbanService {
   }
 
   @Override
-  public Board get(long boardId) throws EntityNotFoundException {
+  public Board get(final long boardId) throws EntityNotFoundException {
     return this.boardRepository.find(boardId);
   }
 
   @Override
   @Transactional
-  public Board createBoard(Board board) {
-    Preconditions.checkArgument(board != null, "Supplied board object can't be null.");
-    Preconditions.checkArgument(board.getId() == 0, "Supplied board can't already be an entity.");
+  public Board createBoard(final String name) {
+    Preconditions.checkNotNull(name);
 
+    Board board = new Board(name);
     return this.boardRepository.create(board);
   }
 
   @Override
   @Transactional
-  public Board updateBoard(Board board) throws EntityNotFoundException {
-    Preconditions.checkArgument(board != null, "Supplied board object can't be null.");
-    Preconditions.checkArgument(board.getId() > 0, "Supplied board must have an identifier.");
+  public Board updateBoard(final long boardId, final String name) throws EntityNotFoundException {
+    Preconditions.checkNotNull(name);
 
-    Board persistedBoard = this.boardRepository.find(board.getId());
-    persistedBoard.setName(board.getName());
+    Board persistedBoard = this.boardRepository.find(boardId);
+    persistedBoard.setName(name);
     return persistedBoard;
   }
 
   @Override
   @Transactional
-  public void deleteBoard(long boardId) throws EntityNotFoundException {
+  public void deleteBoard(final long boardId) throws EntityNotFoundException {
     Board persistedBoard = this.boardRepository.find(boardId);
     this.boardRepository.delete(persistedBoard);
   }
 
   @Override
   @Transactional
-  public Stage addStageToBoard(long boardId, Stage stage) throws EntityNotFoundException {
-    Preconditions.checkNotNull(stage, "Supplied stage cannot be null.");
+  public Stage addStageToBoard(final long boardId, final String name) throws EntityNotFoundException {
+    Preconditions.checkNotNull(name);
 
     Board board = this.boardRepository.find(boardId);
+    Stage stage = new Stage(name);
     board.addStage(stage);
     this.boardRepository.create(board);
     return stage;
@@ -87,7 +87,7 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public void removeStageFromBoard(long boardId, long stageId) throws EntityNotFoundException,
+  public void removeStageFromBoard(final long boardId, final long stageId) throws EntityNotFoundException,
       StageNotInProcessException, StageNotEmptyException {
     Board board = this.boardRepository.find(boardId);
     Stage stage = this.stageRepository.find(stageId);
@@ -96,48 +96,48 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public Stage updateStage(long stageId, Stage stage) throws EntityNotFoundException {
-    Preconditions.checkNotNull(stage, "Supplied stage cannot be null.");
+  public Stage updateStage(final long stageId, final String name) throws EntityNotFoundException {
+    Preconditions.checkNotNull(name);
 
     Stage persistedStage = this.stageRepository.find(stageId);
-    persistedStage.setName(stage.getName());
+    persistedStage.setName(name);
     return persistedStage;
   }
 
   @Override
-  public List<Stage> getStages(long boardId) throws EntityNotFoundException {
+  public List<Stage> getStages(final long boardId) throws EntityNotFoundException {
     Board board = this.boardRepository.find(boardId);
     return new ArrayList<>(board.getStages());
   }
 
   @Override
-  public List<WorkItem> getWorkItems(long boardId) throws EntityNotFoundException {
+  public List<WorkItem> getWorkItems(final long boardId) throws EntityNotFoundException {
     Board board = this.boardRepository.find(boardId);
     return new ArrayList<>(board.getWorkItems());
   }
 
   @Override
   @Transactional
-  public WorkItem addWorkItemToBoard(long boardId, long stageId, CreateOrUpdateWorkItemRequest request) throws EntityNotFoundException, StageNotInProcessException {
-    Preconditions.checkNotNull(request);
+  public WorkItem addWorkItemToBoard(final long boardId, final long stageId, final String text) throws EntityNotFoundException, StageNotInProcessException {
+    Preconditions.checkNotNull(text);
     
     Board board = this.boardRepository.find(boardId);
-    Stage stage = this.stageRepository.find(request.getStageId());
-    WorkItem workItem = new WorkItem(request.getText());
+    Stage stage = this.stageRepository.find(stageId);
+    WorkItem workItem = new WorkItem(text);
     board.addWorkItem(workItem, stage);
     return workItem;
   }
 
   @Override
   @Transactional
-  public void removeWorkItemFromBoard(long boardId, long workItemId) throws EntityNotFoundException, WorkItemNotOnBoardException {
+  public void removeWorkItemFromBoard(final long boardId, final long workItemId) throws EntityNotFoundException, WorkItemNotOnBoardException {
     Board board = this.boardRepository.find(boardId);
     WorkItem workItem = this.workItemRepository.find(workItemId);
     board.removeWorkItem(workItem);
   }
 
   @Override
-  public WorkItem updateWorkItem(long boardId, long workItemId, CreateOrUpdateWorkItemRequest updateWorkItemRequest)
+  public WorkItem updateWorkItem(final long boardId, final long workItemId, UpdateWorkItemRequest updateWorkItemRequest)
       throws EntityNotFoundException, WorkItemNotOnBoardException, StageNotInProcessException {
     Preconditions.checkNotNull(updateWorkItemRequest);
     

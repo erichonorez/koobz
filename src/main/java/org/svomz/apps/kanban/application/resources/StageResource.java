@@ -45,7 +45,7 @@ public class StageResource {
   public Stage createStage(Stage stage) throws EntityNotFoundException {
     Preconditions.checkNotNull(stage);
     
-    return this.kanbanService.addStageToBoard(this.boardId, stage);
+    return this.kanbanService.addStageToBoard(this.boardId, stage.getName());
   }
   
   @PUT
@@ -53,7 +53,7 @@ public class StageResource {
   public Stage updateStage(@PathParam("stageId") long stageId, Stage stage) throws EntityNotFoundException {
     Preconditions.checkArgument(stageId == stage.getId());
     
-    return this.kanbanService.updateStage(stageId, stage);
+    return this.kanbanService.updateStage(stageId, stage.getName());
   }
 
   @DELETE
