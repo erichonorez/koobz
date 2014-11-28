@@ -25,10 +25,6 @@ public class WorkItem {
   @ManyToOne
   @JoinColumn(name = "stage_id")
   private Stage stage;
-
-  public long getId() {
-    return this.id;
-  }
   
   @SuppressWarnings("unused")
   private WorkItem() {
@@ -38,6 +34,10 @@ public class WorkItem {
     Preconditions.checkNotNull(text, "The work item must have a text.");
     
     this.text = text;
+  }
+  
+  public long getId() {
+    return this.id;
   }
 
   public String getText() {

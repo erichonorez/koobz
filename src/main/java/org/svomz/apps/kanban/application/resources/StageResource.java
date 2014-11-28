@@ -53,7 +53,7 @@ public class StageResource {
   public Stage updateStage(@PathParam("stageId") long stageId, Stage stage) throws EntityNotFoundException {
     Preconditions.checkArgument(stageId == stage.getId());
     
-    return this.kanbanService.updateStage(stage);
+    return this.kanbanService.updateStage(stageId, stage);
   }
 
   @DELETE

@@ -55,7 +55,7 @@ public class BoardResource {
    */
   @POST
   public Board createBoard(Board board) {
-    return this.kanbanService.create(board);
+    return this.kanbanService.createBoard(board);
   }
 
   /**
@@ -66,13 +66,14 @@ public class BoardResource {
   public Board updateBoard(@PathParam("boardId") long boardId, Board board)
       throws EntityNotFoundException {
     Preconditions.checkArgument(boardId == board.getId());
-    return this.kanbanService.update(board);
+
+    return this.kanbanService.updateBoard(board);
   }
 
   @DELETE
   @Path("{boardId}")
   public void deleteBoard(@PathParam("boardId") long boardId) throws EntityNotFoundException {
-    this.kanbanService.delete(boardId);
+    this.kanbanService.deleteBoard(boardId);
   }
 
 }

@@ -46,7 +46,7 @@ public class WorkItemResource {
   public WorkItem create(CreateOrUpdateWorkItemRequest request) throws EntityNotFoundException, StageNotInProcessException {
     Preconditions.checkNotNull(request);
     
-    return this.kanbanService.addWorkItemToBoard(this.boardId, request);
+    return this.kanbanService.addWorkItemToBoard(this.boardId, request.getStageId(), request);
   }
   
   @PUT

@@ -49,7 +49,7 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public Board create(Board board) {
+  public Board createBoard(Board board) {
     Preconditions.checkArgument(board != null, "Supplied board object can't be null.");
     Preconditions.checkArgument(board.getId() == 0, "Supplied board can't already be an entity.");
 
@@ -58,7 +58,7 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public Board update(Board board) throws EntityNotFoundException {
+  public Board updateBoard(Board board) throws EntityNotFoundException {
     Preconditions.checkArgument(board != null, "Supplied board object can't be null.");
     Preconditions.checkArgument(board.getId() > 0, "Supplied board must have an identifier.");
 
@@ -69,7 +69,7 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public void delete(long boardId) throws EntityNotFoundException {
+  public void deleteBoard(long boardId) throws EntityNotFoundException {
     Board persistedBoard = this.boardRepository.find(boardId);
     this.boardRepository.delete(persistedBoard);
   }
@@ -96,10 +96,10 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public Stage updateStage(Stage stage) throws EntityNotFoundException {
+  public Stage updateStage(long stageId, Stage stage) throws EntityNotFoundException {
     Preconditions.checkNotNull(stage, "Supplied stage cannot be null.");
 
-    Stage persistedStage = this.stageRepository.find(stage.getId());
+    Stage persistedStage = this.stageRepository.find(stageId);
     persistedStage.setName(stage.getName());
     return persistedStage;
   }
@@ -118,7 +118,7 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public WorkItem addWorkItemToBoard(long boardId, CreateOrUpdateWorkItemRequest request) throws EntityNotFoundException, StageNotInProcessException {
+  public WorkItem addWorkItemToBoard(long boardId, long stageId, CreateOrUpdateWorkItemRequest request) throws EntityNotFoundException, StageNotInProcessException {
     Preconditions.checkNotNull(request);
     
     Board board = this.boardRepository.find(boardId);
