@@ -11,19 +11,24 @@ import javax.persistence.Table;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "work_items")
 public class WorkItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @JsonProperty
   private long id;
 
   @Column(name = "text")
+  @JsonProperty
   private String text;
 
   @ManyToOne
   @JoinColumn(name = "stage_id")
+  @JsonProperty
   private Stage stage;
   
   @SuppressWarnings("unused")

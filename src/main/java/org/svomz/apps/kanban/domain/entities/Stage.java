@@ -14,15 +14,21 @@ import javax.persistence.Table;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "stages")
+@JsonIgnoreProperties({"workItems"})
 public class Stage {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @JsonProperty
   private long id;
 
   @Column(name = "name")
+  @JsonProperty
   private String name;
 
   @OneToMany(mappedBy = "stage")

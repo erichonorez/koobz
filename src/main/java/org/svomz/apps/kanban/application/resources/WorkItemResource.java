@@ -12,9 +12,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
 
+import org.svomz.apps.kanban.application.models.WorkItemInputModel;
 import org.svomz.apps.kanban.domain.entities.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.entities.WorkItem;
 import org.svomz.apps.kanban.domain.entities.WorkItemNotOnBoardException;
@@ -32,35 +35,43 @@ public class WorkItemResource {
   @Inject
   public WorkItemResource(KanbanService kanbanService, @PathParam("boardId") long boardId) {
     Preconditions.checkNotNull(kanbanService);
-    
+
     this.kanbanService = kanbanService;
     this.boardId = boardId;
   }
-  
+
   @GET
   public List<WorkItem> getWorkItems() throws EntityNotFoundException {
     return this.kanbanService.getWorkItems(this.boardId);
   }
-  
+
   @POST
-  public WorkItem create(UpdateWorkItemRequest request) throws EntityNotFoundException, StageNotInProcessException {
-    Preconditions.checkNotNull(request);
-    
-    return this.kanbanService.addWorkItemToBoard(this.boardId, request.getStageId(), request.getText());
+  public Response create(WorkItemInputModel workItemInputModel) throws EntityNotFoundException,
+      StageNotInProcessException {
+    Preconditions.checkNotNull(workItemInputModel);
+
+    WorkItem workItem =
+        this.kanbanService.addWorkItemToBoard(this.boardId, workItemInputModel.getStageId(),
+            workItemInputModel.getText());
+    return Response.status(Status.CREATED).entity(workItem).build();
   }
-  
+
   @PUT
   @Path("{id}")
-  public WorkItem update(@PathParam("id") long workItemId, final UpdateWorkItemRequest request) throws EntityNotFoundException, WorkItemNotOnBoardException, StageNotInProcessException {
-    Preconditions.checkNotNull(request);
-    
-    return this.kanbanService.updateWorkItem(boardId, workItemId, request);
+  public WorkItem update(@PathParam("id") long workItemId,
+      final WorkItemInputModel workItemInputModel) throws EntityNotFoundException,
+      WorkItemNotOnBoardException, StageNotInProcessException {
+    Preconditions.checkNotNull(workItemInputModel);
+
+    return this.kanbanService.updateWorkItem(boardId, workItemId, workItemInputModel.getText(),
+        workItemInputModel.getStageId());
   }
-  
+
   @DELETE
   @Path("{id}")
-  public void delte(@PathParam("id") long workItemId) throws EntityNotFoundException, WorkItemNotOnBoardException {
+  public void delte(@PathParam("id") long workItemId) throws EntityNotFoundException,
+      WorkItemNotOnBoardException {
     this.kanbanService.removeWorkItemFromBoard(this.boardId, workItemId);
   }
-  
+
 }

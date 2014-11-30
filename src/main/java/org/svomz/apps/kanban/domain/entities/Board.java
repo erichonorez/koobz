@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
 /**
@@ -24,13 +26,16 @@ import com.google.common.base.Preconditions;
  */
 @Entity
 @Table(name = "boards")
+@JsonIgnoreProperties({"workItems", "stages"})
 public class Board {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @JsonProperty
   private long id;
 
   @Column(name = "name")
+  @JsonProperty
   private String name;
 
   @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
@@ -129,7 +134,7 @@ public class Board {
     if (!this.workItems.contains(workItem)) {
       throw new WorkItemNotOnBoardException();
     }
-    
+
     workItem.getStage().removeWorkItem(workItem);
     this.workItems.remove(workItem);
     return this;

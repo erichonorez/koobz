@@ -12,7 +12,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import org.svomz.apps.kanban.application.models.BoardInputModel;
 import org.svomz.apps.kanban.domain.entities.Board;
 import org.svomz.apps.kanban.domain.services.KanbanService;
 import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
@@ -29,13 +32,10 @@ public class BoardResource {
   @Inject
   public BoardResource(KanbanService kanbanService) {
     Preconditions.checkNotNull(kanbanService);
-    
+
     this.kanbanService = kanbanService;
   }
 
-  /**
-   * TODO the result of this method should only return the list of board without associated entities.
-   */
   @GET
   public List<Board> getBoards() {
     return this.kanbanService.getAll();
@@ -51,27 +51,25 @@ public class BoardResource {
   }
 
   /**
-   * TODO the result of this method should return the board without associated entities.
-   * TODO create a specific object for the request + TEST to prove what I want.
-   * TODO add validation on the input + TEST to prove what I want.
+   * TODO the result of this method should return the board without associated entities. TODO create
+   * a specific object for the request + TEST to prove what I want. TODO add validation on the input
+   * + TEST to prove what I want. TODO response 201
    */
   @POST
-  public Board createBoard(Board board) {
-    Preconditions.checkNotNull(board);
-    
-    return this.kanbanService.createBoard(board.getName());
+  public Response createBoard(BoardInputModel boardInputModel) {
+    Preconditions.checkNotNull(boardInputModel);
+
+    Board createdBoard = kanbanService.createBoard(boardInputModel.getName());
+    return Response.status(Status.CREATED).entity(createdBoard).build();
   }
 
-  /**
-   * TODO the result of this method should only return the board without the associated entities.
-   */
   @PUT
   @Path("{boardId}")
-  public Board updateBoard(@PathParam("boardId") long boardId, Board board)
-      throws EntityNotFoundException {
-    Preconditions.checkNotNull(board);
-    
-    return this.kanbanService.updateBoard(boardId, board.getName());
+  public Board updateBoard(@PathParam("boardId") long boardId,
+      BoardInputModel boardInputModel) throws EntityNotFoundException {
+    Preconditions.checkNotNull(boardInputModel);
+
+    return this.kanbanService.updateBoard(boardId, boardInputModel.getName());
   }
 
   @DELETE

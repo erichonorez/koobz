@@ -11,9 +11,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
 
+import org.svomz.apps.kanban.application.models.StageInputModel;
 import org.svomz.apps.kanban.domain.entities.Stage;
 import org.svomz.apps.kanban.domain.entities.StageNotEmptyException;
 import org.svomz.apps.kanban.domain.entities.StageNotInProcessException;
@@ -42,18 +45,19 @@ public class StageResource {
   }
   
   @POST
-  public Stage createStage(Stage stage) throws EntityNotFoundException {
-    Preconditions.checkNotNull(stage);
+  public Response createStage(final StageInputModel stageInputModel) throws EntityNotFoundException {
+    Preconditions.checkNotNull(stageInputModel);
     
-    return this.kanbanService.addStageToBoard(this.boardId, stage.getName());
+    Stage persistedStage = this.kanbanService.addStageToBoard(this.boardId, stageInputModel.getName());
+    return Response.status(Status.CREATED).entity(persistedStage).build();
   }
   
   @PUT
   @Path("{stageId}")
-  public Stage updateStage(@PathParam("stageId") long stageId, Stage stage) throws EntityNotFoundException {
-    Preconditions.checkArgument(stageId == stage.getId());
+  public Stage updateStage(@PathParam("stageId") long stageId, final StageInputModel stageInputModel) throws EntityNotFoundException {
+    Preconditions.checkNotNull(stageInputModel);
     
-    return this.kanbanService.updateStage(stageId, stage.getName());
+    return this.kanbanService.updateStage(stageId, stageInputModel.getName());
   }
 
   @DELETE

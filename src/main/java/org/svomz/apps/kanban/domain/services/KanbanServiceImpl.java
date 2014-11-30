@@ -3,7 +3,6 @@ package org.svomz.apps.kanban.domain.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.svomz.apps.kanban.application.resources.UpdateWorkItemRequest;
 import org.svomz.apps.kanban.domain.entities.Board;
 import org.svomz.apps.kanban.domain.entities.Stage;
 import org.svomz.apps.kanban.domain.entities.StageNotEmptyException;
@@ -137,16 +136,16 @@ public class KanbanServiceImpl implements KanbanService {
   }
 
   @Override
-  public WorkItem updateWorkItem(final long boardId, final long workItemId, UpdateWorkItemRequest updateWorkItemRequest)
+  public WorkItem updateWorkItem(final long boardId, final long workItemId, final String text, final long stageId)
       throws EntityNotFoundException, WorkItemNotOnBoardException, StageNotInProcessException {
-    Preconditions.checkNotNull(updateWorkItemRequest);
+    Preconditions.checkNotNull(text);
     
     WorkItem persistedWorkItem = this.workItemRepository.find(workItemId);
-    if (updateWorkItemRequest.getText().compareTo(persistedWorkItem.getText()) != 0) {
-      persistedWorkItem.setText(updateWorkItemRequest.getText());
+    if (text.compareTo(persistedWorkItem.getText()) != 0) {
+      persistedWorkItem.setText(text);
     }
     
-    Stage stage = this.stageRepository.find(updateWorkItemRequest.getStageId());
+    Stage stage = this.stageRepository.find(stageId);
     if (stage.getId() != persistedWorkItem.getStage().getId()) {
         Board board = this.boardRepository.find(boardId);
         board.moveWorkItem(persistedWorkItem, stage);

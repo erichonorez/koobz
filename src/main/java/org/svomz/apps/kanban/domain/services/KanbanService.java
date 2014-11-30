@@ -2,7 +2,6 @@ package org.svomz.apps.kanban.domain.services;
 
 import java.util.List;
 
-import org.svomz.apps.kanban.application.resources.UpdateWorkItemRequest;
 import org.svomz.apps.kanban.domain.entities.Board;
 import org.svomz.apps.kanban.domain.entities.Stage;
 import org.svomz.apps.kanban.domain.entities.StageNotEmptyException;
@@ -127,7 +126,7 @@ public interface KanbanService {
    *         identified by the given workItemId are not found in the persistence storage.
    * @throws WorkItemNotOnBoardException if the work item is not on the board.
    */
-  void removeWorkItemFromBoard(long boardId, long workItemId) throws EntityNotFoundException,
+  void removeWorkItemFromBoard(final long boardId, final long workItemId) throws EntityNotFoundException,
       WorkItemNotOnBoardException;
 
   /**
@@ -140,8 +139,8 @@ public interface KanbanService {
    * @throws StageNotInProcessException if the stage is moved from one stage to another the dest
    *         stage is not on the board.
    */
-  WorkItem updateWorkItem(long boardId, long workItemId,
-      UpdateWorkItemRequest updateWorkItemRequest) throws EntityNotFoundException,
+  WorkItem updateWorkItem(final long boardId, final long workItemId,
+      final String text, final long stageId) throws EntityNotFoundException,
       WorkItemNotOnBoardException, StageNotInProcessException;
 
 }
