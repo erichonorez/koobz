@@ -25,15 +25,14 @@ import org.svomz.apps.kanban.domain.services.KanbanService;
 import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
 
 @Path("/boards/{boardId}/workitems")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 public class WorkItemResource {
 
   private final KanbanService kanbanService;
-  private long boardId;
+  private final long boardId;
 
   @Inject
-  public WorkItemResource(KanbanService kanbanService, @PathParam("boardId") long boardId) {
+  public WorkItemResource(final KanbanService kanbanService,
+      @PathParam("boardId") final long boardId) {
     Preconditions.checkNotNull(kanbanService);
 
     this.kanbanService = kanbanService;
@@ -41,35 +40,41 @@ public class WorkItemResource {
   }
 
   @GET
+  @Produces(MediaType.APPLICATION_JSON)
   public List<WorkItem> getWorkItems() throws EntityNotFoundException {
     return this.kanbanService.getWorkItems(this.boardId);
   }
 
   @POST
-  public Response create(WorkItemInputModel workItemInputModel) throws EntityNotFoundException,
-      StageNotInProcessException {
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response create(final WorkItemInputModel workItemInputModel)
+      throws EntityNotFoundException, StageNotInProcessException {
     Preconditions.checkNotNull(workItemInputModel);
 
-    WorkItem workItem =
+    final WorkItem workItem =
         this.kanbanService.addWorkItemToBoard(this.boardId, workItemInputModel.getStageId(),
             workItemInputModel.getText());
+
     return Response.status(Status.CREATED).entity(workItem).build();
   }
 
   @PUT
   @Path("{id}")
-  public WorkItem update(@PathParam("id") long workItemId,
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public WorkItem update(@PathParam("id") final long workItemId,
       final WorkItemInputModel workItemInputModel) throws EntityNotFoundException,
       WorkItemNotOnBoardException, StageNotInProcessException {
     Preconditions.checkNotNull(workItemInputModel);
 
-    return this.kanbanService.updateWorkItem(boardId, workItemId, workItemInputModel.getText(),
-        workItemInputModel.getStageId());
+    return this.kanbanService.updateWorkItem(this.boardId, workItemId,
+        workItemInputModel.getText(), workItemInputModel.getStageId());
   }
 
   @DELETE
   @Path("{id}")
-  public void delte(@PathParam("id") long workItemId) throws EntityNotFoundException,
+  public void delte(@PathParam("id") final long workItemId) throws EntityNotFoundException,
       WorkItemNotOnBoardException {
     this.kanbanService.removeWorkItemFromBoard(this.boardId, workItemId);
   }

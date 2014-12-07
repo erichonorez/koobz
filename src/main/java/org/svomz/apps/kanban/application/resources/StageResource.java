@@ -25,45 +25,52 @@ import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
 
 
 @Path("/boards/{boardId}/stages")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 public class StageResource {
-  
-  private KanbanService kanbanService;
-  private long boardId;
 
-  public StageResource(final KanbanService kanbanService, @PathParam("boardId") final long boardId) throws EntityNotFoundException {
+  private final KanbanService kanbanService;
+  private final long boardId;
+
+  public StageResource(final KanbanService kanbanService, @PathParam("boardId") final long boardId)
+      throws EntityNotFoundException {
     Preconditions.checkNotNull(kanbanService, "No board service supplied.");
-    
+
     this.kanbanService = kanbanService;
     this.boardId = boardId;
   }
-  
+
   @GET
+  @Produces(MediaType.APPLICATION_JSON)
   public List<Stage> getStages() throws EntityNotFoundException {
     return this.kanbanService.getStages(this.boardId);
   }
-  
+
   @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   public Response createStage(final StageInputModel stageInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(stageInputModel);
-    
-    Stage persistedStage = this.kanbanService.addStageToBoard(this.boardId, stageInputModel.getName());
+
+    final Stage persistedStage =
+        this.kanbanService.addStageToBoard(this.boardId, stageInputModel.getName());
     return Response.status(Status.CREATED).entity(persistedStage).build();
   }
-  
+
   @PUT
   @Path("{stageId}")
-  public Stage updateStage(@PathParam("stageId") long stageId, final StageInputModel stageInputModel) throws EntityNotFoundException {
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Stage updateStage(@PathParam("stageId") final long stageId,
+      final StageInputModel stageInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(stageInputModel);
-    
+
     return this.kanbanService.updateStage(stageId, stageInputModel.getName());
   }
 
   @DELETE
   @Path("{stageId}")
-  public void delete(@PathParam("stageId") long stageId) throws EntityNotFoundException, StageNotInProcessException, StageNotEmptyException {
+  public void delete(@PathParam("stageId") final long stageId) throws EntityNotFoundException,
+      StageNotInProcessException, StageNotEmptyException {
     this.kanbanService.removeStageFromBoard(this.boardId, stageId);
   }
-  
+
 }

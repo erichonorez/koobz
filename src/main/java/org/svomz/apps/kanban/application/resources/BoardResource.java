@@ -23,20 +23,19 @@ import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
 import com.google.common.base.Preconditions;
 
 @Path("/boards")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 public class BoardResource {
 
   private final KanbanService kanbanService;
 
   @Inject
-  public BoardResource(KanbanService kanbanService) {
+  public BoardResource(final KanbanService kanbanService) {
     Preconditions.checkNotNull(kanbanService);
 
     this.kanbanService = kanbanService;
   }
 
   @GET
+  @Produces(MediaType.APPLICATION_JSON)
   public List<Board> getBoards() {
     return this.kanbanService.getAll();
   }
@@ -46,7 +45,8 @@ public class BoardResource {
    */
   @GET
   @Path("{boardId}")
-  public Board getBoard(@PathParam("boardId") long boardId) throws EntityNotFoundException {
+  @Produces(MediaType.APPLICATION_JSON)
+  public Board getBoard(@PathParam("boardId") final long boardId) throws EntityNotFoundException {
     return this.kanbanService.get(boardId);
   }
 
@@ -56,17 +56,21 @@ public class BoardResource {
    * + TEST to prove what I want. TODO response 201
    */
   @POST
-  public Response createBoard(BoardInputModel boardInputModel) {
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response createBoard(final BoardInputModel boardInputModel) {
     Preconditions.checkNotNull(boardInputModel);
 
-    Board createdBoard = kanbanService.createBoard(boardInputModel.getName());
+    final Board createdBoard = this.kanbanService.createBoard(boardInputModel.getName());
     return Response.status(Status.CREATED).entity(createdBoard).build();
   }
 
   @PUT
   @Path("{boardId}")
-  public Board updateBoard(@PathParam("boardId") long boardId,
-      BoardInputModel boardInputModel) throws EntityNotFoundException {
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Board updateBoard(@PathParam("boardId") final long boardId,
+      final BoardInputModel boardInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(boardInputModel);
 
     return this.kanbanService.updateBoard(boardId, boardInputModel.getName());
@@ -74,7 +78,7 @@ public class BoardResource {
 
   @DELETE
   @Path("{boardId}")
-  public void deleteBoard(@PathParam("boardId") long boardId) throws EntityNotFoundException {
+  public void deleteBoard(@PathParam("boardId") final long boardId) throws EntityNotFoundException {
     this.kanbanService.deleteBoard(boardId);
   }
 
