@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,7 +41,7 @@ public class Stage {
 
   public Stage(final String name) {
     this();
-    Preconditions.checkNotNull(name, "The stage must have a name.");
+    StageValidation.checkStageName(name);
 
     this.name = name;
   }
@@ -54,6 +55,8 @@ public class Stage {
   }
 
   public void setName(final String name) {
+    StageValidation.checkStageName(name);
+
     this.name = name;
   }
 
@@ -75,6 +78,23 @@ public class Stage {
     this.workItems.remove(workItem);
     workItem.setStage(null);
     return this;
+  }
+
+  private static class StageValidation {
+
+    private final static int NAME_MIN_SIZE = 1;
+    private final static int NAME_MAX_SIZE = 255;
+    private final static String NAME_IS_NULL_ERR_MSG = "You must give a name to the stage";
+    private final static String NAME_SIZE_ERR_MSG = "The name length must be between %1s and %2s";
+
+    private static void checkStageName(@Nullable final String name) {
+      Preconditions.checkArgument(name != null, NAME_IS_NULL_ERR_MSG);
+
+      int nameLength = name.length();
+      Preconditions.checkArgument(nameLength >= 1 && nameLength <= 255,
+          String.format(NAME_SIZE_ERR_MSG, NAME_MIN_SIZE, NAME_MAX_SIZE));
+    }
+
   }
 
 }
