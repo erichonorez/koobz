@@ -16,7 +16,8 @@ public class KanbanApplication extends ResourceConfig {
 
   @Inject
   public KanbanApplication(ServiceLocator serviceLocator) {
-    this.packages("org.svomz.apps.kanban.application.resources");
+    this.packages("org.svomz.apps.kanban.application.resources",
+        "org.svomz.apps.kanban.application.exceptions");
     this.register(JacksonFeature.class);
     // Guice bridge configuration
     GuiceBridge.getGuiceBridge().initializeGuiceBridge(serviceLocator);
@@ -24,5 +25,5 @@ public class KanbanApplication extends ResourceConfig {
     Injector injectorInstance = KanbanServletConfig.getInjectorInstance();
     bridge.bridgeGuiceInjector(injectorInstance);
   }
-  
+
 }
