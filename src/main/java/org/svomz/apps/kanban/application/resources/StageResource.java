@@ -18,8 +18,8 @@ import jersey.repackaged.com.google.common.base.Preconditions;
 
 import org.svomz.apps.kanban.application.models.StageInputModel;
 import org.svomz.apps.kanban.domain.entities.Stage;
-import org.svomz.apps.kanban.domain.entities.StageNotEmptyException;
-import org.svomz.apps.kanban.domain.entities.StageNotInProcessException;
+import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
+import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.services.KanbanService;
 import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
 

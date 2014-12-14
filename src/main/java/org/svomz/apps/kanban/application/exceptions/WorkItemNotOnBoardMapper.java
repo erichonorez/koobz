@@ -7,7 +7,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.svomz.apps.kanban.application.models.ErrorModel;
-import org.svomz.apps.kanban.domain.entities.WorkItemNotOnBoardException;
+import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 
 @Provider
 public class WorkItemNotOnBoardMapper implements ExceptionMapper<WorkItemNotOnBoardException> {

@@ -7,7 +7,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.svomz.apps.kanban.application.models.ErrorModel;
-import org.svomz.apps.kanban.domain.entities.StageNotInProcessException;
+import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
 
 @Provider
 public class StageNotInProcessMapper implements ExceptionMapper<StageNotInProcessException> {

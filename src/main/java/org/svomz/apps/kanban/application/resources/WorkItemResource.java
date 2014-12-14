@@ -18,9 +18,9 @@ import javax.ws.rs.core.Response.Status;
 import jersey.repackaged.com.google.common.base.Preconditions;
 
 import org.svomz.apps.kanban.application.models.WorkItemInputModel;
-import org.svomz.apps.kanban.domain.entities.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.entities.WorkItem;
-import org.svomz.apps.kanban.domain.entities.WorkItemNotOnBoardException;
+import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
+import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 import org.svomz.apps.kanban.domain.services.KanbanService;
 import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
 

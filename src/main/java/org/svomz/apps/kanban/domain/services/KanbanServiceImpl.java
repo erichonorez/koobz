@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.svomz.apps.kanban.domain.entities.Board;
 import org.svomz.apps.kanban.domain.entities.Stage;
-import org.svomz.apps.kanban.domain.entities.StageNotEmptyException;
-import org.svomz.apps.kanban.domain.entities.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.entities.WorkItem;
-import org.svomz.apps.kanban.domain.entities.WorkItemNotOnBoardException;
+import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
+import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
+import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 import org.svomz.apps.kanban.domain.repositories.BoardRepository;
 import org.svomz.apps.kanban.domain.repositories.StageRepository;
 import org.svomz.apps.kanban.domain.repositories.WorkItemRepository;
