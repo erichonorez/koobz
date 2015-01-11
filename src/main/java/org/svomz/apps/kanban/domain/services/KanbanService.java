@@ -8,7 +8,7 @@ import org.svomz.apps.kanban.domain.entities.WorkItem;
 import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
 import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
-import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
+import org.svomz.commons.persistence.EntityNotFoundException;
 
 /**
  * Description: Facade service for Kanban application.
@@ -126,8 +126,8 @@ public interface KanbanService {
    *         identified by the given workItemId are not found in the persistence storage.
    * @throws WorkItemNotOnBoardException if the work item is not on the board.
    */
-  void removeWorkItemFromBoard(final long boardId, final long workItemId) throws EntityNotFoundException,
-      WorkItemNotOnBoardException;
+  void removeWorkItemFromBoard(final long boardId, final long workItemId)
+      throws EntityNotFoundException, WorkItemNotOnBoardException;
 
   /**
    * @return the updated workItem instance
@@ -139,8 +139,8 @@ public interface KanbanService {
    * @throws StageNotInProcessException if the stage is moved from one stage to another the dest
    *         stage is not on the board.
    */
-  WorkItem updateWorkItem(final long boardId, final long workItemId,
-      final String text, final long stageId) throws EntityNotFoundException,
-      WorkItemNotOnBoardException, StageNotInProcessException;
+  WorkItem updateWorkItem(final long boardId, final long workItemId, final String text,
+      final long stageId) throws EntityNotFoundException, WorkItemNotOnBoardException,
+      StageNotInProcessException;
 
 }

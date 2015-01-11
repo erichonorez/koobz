@@ -21,7 +21,7 @@ import org.svomz.apps.kanban.domain.entities.Stage;
 import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
 import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.services.KanbanService;
-import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
+import org.svomz.commons.persistence.EntityNotFoundException;
 
 
 @Path("/boards/{boardId}/stages")

@@ -22,7 +22,7 @@ import org.svomz.apps.kanban.domain.entities.WorkItem;
 import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 import org.svomz.apps.kanban.domain.services.KanbanService;
-import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
+import org.svomz.commons.persistence.EntityNotFoundException;
 
 @Path("/boards/{boardId}/workitems")
 public class WorkItemResource {

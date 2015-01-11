@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response.Status;
 import org.svomz.apps.kanban.application.models.BoardInputModel;
 import org.svomz.apps.kanban.domain.entities.Board;
 import org.svomz.apps.kanban.domain.services.KanbanService;
-import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
+import org.svomz.commons.persistence.EntityNotFoundException;
 
 import com.google.common.base.Preconditions;
 

@@ -12,7 +12,7 @@ import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 import org.svomz.apps.kanban.domain.repositories.BoardRepository;
 import org.svomz.apps.kanban.domain.repositories.StageRepository;
 import org.svomz.apps.kanban.domain.repositories.WorkItemRepository;
-import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
+import org.svomz.commons.persistence.EntityNotFoundException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
@@ -74,7 +74,8 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public Stage addStageToBoard(final long boardId, final String name) throws EntityNotFoundException {
+  public Stage addStageToBoard(final long boardId, final String name)
+      throws EntityNotFoundException {
     Preconditions.checkNotNull(name);
 
     Board board = this.boardRepository.find(boardId);
@@ -86,8 +87,8 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public void removeStageFromBoard(final long boardId, final long stageId) throws EntityNotFoundException,
-      StageNotInProcessException, StageNotEmptyException {
+  public void removeStageFromBoard(final long boardId, final long stageId)
+      throws EntityNotFoundException, StageNotInProcessException, StageNotEmptyException {
     Board board = this.boardRepository.find(boardId);
     Stage stage = this.stageRepository.find(stageId);
     board.removeStage(stage);
@@ -117,9 +118,10 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public WorkItem addWorkItemToBoard(final long boardId, final long stageId, final String text) throws EntityNotFoundException, StageNotInProcessException {
+  public WorkItem addWorkItemToBoard(final long boardId, final long stageId, final String text)
+      throws EntityNotFoundException, StageNotInProcessException {
     Preconditions.checkNotNull(text);
-    
+
     Board board = this.boardRepository.find(boardId);
     Stage stage = this.stageRepository.find(stageId);
     WorkItem workItem = new WorkItem(text);
@@ -129,28 +131,30 @@ public class KanbanServiceImpl implements KanbanService {
 
   @Override
   @Transactional
-  public void removeWorkItemFromBoard(final long boardId, final long workItemId) throws EntityNotFoundException, WorkItemNotOnBoardException {
+  public void removeWorkItemFromBoard(final long boardId, final long workItemId)
+      throws EntityNotFoundException, WorkItemNotOnBoardException {
     Board board = this.boardRepository.find(boardId);
     WorkItem workItem = this.workItemRepository.find(workItemId);
     board.removeWorkItem(workItem);
   }
 
   @Override
-  public WorkItem updateWorkItem(final long boardId, final long workItemId, final String text, final long stageId)
-      throws EntityNotFoundException, WorkItemNotOnBoardException, StageNotInProcessException {
+  public WorkItem updateWorkItem(final long boardId, final long workItemId, final String text,
+      final long stageId) throws EntityNotFoundException, WorkItemNotOnBoardException,
+      StageNotInProcessException {
     Preconditions.checkNotNull(text);
-    
+
     WorkItem persistedWorkItem = this.workItemRepository.find(workItemId);
     if (text.compareTo(persistedWorkItem.getText()) != 0) {
       persistedWorkItem.setText(text);
     }
-    
+
     Stage stage = this.stageRepository.find(stageId);
     if (stage.getId() != persistedWorkItem.getStage().getId()) {
-        Board board = this.boardRepository.find(boardId);
-        board.moveWorkItem(persistedWorkItem, stage);
+      Board board = this.boardRepository.find(boardId);
+      board.moveWorkItem(persistedWorkItem, stage);
     }
-    
+
     return persistedWorkItem;
   }
 

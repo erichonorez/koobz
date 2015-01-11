@@ -7,7 +7,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.svomz.apps.kanban.application.models.ErrorModel;
-import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
+import org.svomz.commons.persistence.EntityNotFoundException;
 
 @Provider
 public class EntityNotFoundMapper implements ExceptionMapper<EntityNotFoundException> {

@@ -4,9 +4,10 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.svomz.apps.kanban.domain.entities.Stage;
-import org.svomz.commons.infrastructure.persistence.jpa.AbstractJpaRepository;
+import org.svomz.commons.persistence.jpa.AbstractJpaRepository;
 
-public class StageRepositoryImpl extends AbstractJpaRepository<Stage, Long> implements StageRepository {
+public class StageRepositoryImpl extends AbstractJpaRepository<Stage, Long> implements
+    StageRepository {
 
   @Inject
   public StageRepositoryImpl(EntityManager entityManager) {

@@ -6,8 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.junit.Assert;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.svomz.apps.kanban.domain.entities.Board;
@@ -16,7 +16,7 @@ import org.svomz.apps.kanban.domain.entities.WorkItem;
 import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
 import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
-import org.svomz.commons.infrastructure.persistence.EntityNotFoundException;
+import org.svomz.commons.persistence.EntityNotFoundException;
 
 public class BoardIntegrationTest {
 
