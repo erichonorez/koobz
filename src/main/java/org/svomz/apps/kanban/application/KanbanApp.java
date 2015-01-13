@@ -8,7 +8,14 @@ import org.svomz.commons.application.AppLauncher;
 import org.svomz.commons.application.modules.HttpServerModule;
 import org.svomz.commons.application.modules.JerseyModule;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.servlet.InstrumentedFilter;
+import com.codahale.metrics.servlet.InstrumentedFilterContextListener;
+import com.codahale.metrics.servlets.MetricsServlet;
+import com.codahale.metrics.servlets.PingServlet;
+import com.codahale.metrics.servlets.ThreadDumpServlet;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.persist.PersistFilter;
 import com.google.inject.persist.jpa.JpaPersistModule;
@@ -32,7 +39,43 @@ public class KanbanApp extends AbstractApplication {
           @Override
           protected void configureServlets() {
             this.bind(PersistFilter.class).in(Singleton.class);
-            this.filter("/*").through(PersistFilter.class);}
+            this.filter("/*").through(PersistFilter.class);
+            
+            this.bind(MetricRegistry.class).in(Singleton.class);
+            
+            HttpServerModule.addContextListener(this.binder(), new InstrumentedFilterContextListener() {
+              @Inject
+              private MetricRegistry metricRegistry;
+              
+              @Override
+              protected MetricRegistry getMetricRegistry() {
+                return this.metricRegistry;
+              }
+            });
+            
+            HttpServerModule.addContextListener(this.binder(), new MetricsServlet.ContextListener() {
+              @Inject
+              private MetricRegistry metricRegistry;
+              
+              @Override
+              protected MetricRegistry getMetricRegistry() {
+                return this.metricRegistry;
+              }
+            });
+            
+            this.bind(InstrumentedFilter.class).in(Singleton.class);
+            this.filter("/*").through(InstrumentedFilter.class);
+            
+            this.bind(MetricsServlet.class).in(Singleton.class);
+            this.serve("/metrics").with(MetricsServlet.class);
+            
+            this.bind(PingServlet.class).in(Singleton.class);
+            this.serve("/ping").with(PingServlet.class);
+            
+            this.bind(ThreadDumpServlet.class).in(Singleton.class);
+            this.serve("/threads").with(ThreadDumpServlet.class);
+
+          }
         }).build();
   }
   
