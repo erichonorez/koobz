@@ -64,7 +64,7 @@ public class Stage {
     return Collections.unmodifiableSet(this.workItems);
   }
 
-  Stage addWorkItem(WorkItem workItem) {
+  Stage addWorkItem(final WorkItem workItem) {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     workItem.setStage(this);
@@ -72,7 +72,7 @@ public class Stage {
     return this;
   }
 
-  Stage removeWorkItem(WorkItem workItem) {
+  Stage removeWorkItem(final WorkItem workItem) {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     this.workItems.remove(workItem);

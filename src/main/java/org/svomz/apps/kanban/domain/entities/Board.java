@@ -19,8 +19,6 @@ import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
 import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
 /**
@@ -31,16 +29,13 @@ import com.google.common.base.Preconditions;
  */
 @Entity
 @Table(name = "boards")
-@JsonIgnoreProperties({"workItems", "stages"})
 public class Board {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @JsonProperty
   private long id;
 
   @Column(name = "name")
-  @JsonProperty
   private String name;
 
   @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)

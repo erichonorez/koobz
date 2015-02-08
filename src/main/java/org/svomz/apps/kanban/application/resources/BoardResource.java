@@ -1,5 +1,6 @@
 package org.svomz.apps.kanban.application.resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,10 +17,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.svomz.apps.kanban.application.models.BoardInputModel;
+import org.svomz.apps.kanban.application.models.BoardViewModel;
 import org.svomz.apps.kanban.domain.entities.Board;
 import org.svomz.apps.kanban.domain.services.KanbanService;
 import org.svomz.commons.persistence.EntityNotFoundException;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.base.Preconditions;
 
 @Path("/boards")
@@ -36,44 +39,49 @@ public class BoardResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<Board> getBoards() {
-    return this.kanbanService.getAll();
+  @JsonView(BoardViewModel.SimpleView.class)
+  public List<BoardViewModel> getBoards() {
+    List<BoardViewModel> viewModels = new ArrayList<>();
+    List<Board> boards = this.kanbanService.getAll();
+    for (Board board : boards) {
+      viewModels.add(new BoardViewModel(board));
+    }
+    return viewModels;
   }
 
-  /**
-   * TODO the result of this method should return the board with associated entities.
-   */
   @GET
   @Path("{boardId}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Board getBoard(@PathParam("boardId") final long boardId) throws EntityNotFoundException {
-    return this.kanbanService.get(boardId);
+  @JsonView(BoardViewModel.FullView.class)
+  public BoardViewModel getBoard(@PathParam("boardId") final long boardId) throws EntityNotFoundException {
+    Board board = kanbanService.get(boardId);
+    return new BoardViewModel(board);
   }
 
-  /**
-   * TODO the result of this method should return the board without associated entities. TODO create
-   * a specific object for the request + TEST to prove what I want. TODO add validation on the input
-   * + TEST to prove what I want. TODO response 201
-   */
+  // TODO add validation on the input
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
+  @JsonView(BoardViewModel.SimpleView.class)
   public Response createBoard(final BoardInputModel boardInputModel) {
     Preconditions.checkNotNull(boardInputModel);
 
     final Board createdBoard = this.kanbanService.createBoard(boardInputModel.getName());
-    return Response.status(Status.CREATED).entity(createdBoard).build();
+    BoardViewModel viewModel = new BoardViewModel(createdBoard);
+    return Response.status(Status.CREATED).entity(viewModel).build();
   }
 
   @PUT
   @Path("{boardId}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Board updateBoard(@PathParam("boardId") final long boardId,
+  @JsonView(BoardViewModel.SimpleView.class)
+  public BoardViewModel updateBoard(@PathParam("boardId") final long boardId,
       final BoardInputModel boardInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(boardInputModel);
 
-    return this.kanbanService.updateBoard(boardId, boardInputModel.getName());
+    Board updateBoard = this.kanbanService.updateBoard(boardId, boardInputModel.getName());
+    return new BoardViewModel(updateBoard);
   }
 
   @DELETE
