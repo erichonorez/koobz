@@ -64,17 +64,17 @@ public class KanbanApp extends AbstractApplication {
             });
             
             this.bind(InstrumentedFilter.class).in(Singleton.class);
-            this.filter("/*").through(InstrumentedFilter.class);
+            this.filterRegex("/[^_]*").through(InstrumentedFilter.class);
             
             this.bind(MetricsServlet.class).in(Singleton.class);
-            this.serve("/metrics").with(MetricsServlet.class);
+            this.serve("/_monitoring/metrics").with(MetricsServlet.class);
             
             this.bind(PingServlet.class).in(Singleton.class);
-            this.serve("/ping").with(PingServlet.class);
+            this.serve("/_monitoring/ping").with(PingServlet.class);
             
             this.bind(ThreadDumpServlet.class).in(Singleton.class);
-            this.serve("/threads").with(ThreadDumpServlet.class);
-
+            this.serve("/_monitoring/threads").with(ThreadDumpServlet.class);
+            
           }
         }).build();
   }
