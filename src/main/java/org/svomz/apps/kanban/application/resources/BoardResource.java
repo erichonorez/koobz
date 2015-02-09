@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -63,7 +65,7 @@ public class BoardResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.SimpleView.class)
-  public Response createBoard(final BoardInputModel boardInputModel) {
+  public Response createBoard(@NotNull @Valid final BoardInputModel boardInputModel) {
     Preconditions.checkNotNull(boardInputModel);
 
     final Board createdBoard = this.kanbanService.createBoard(boardInputModel.getName());
@@ -77,7 +79,7 @@ public class BoardResource {
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.SimpleView.class)
   public BoardViewModel updateBoard(@PathParam("boardId") final long boardId,
-      final BoardInputModel boardInputModel) throws EntityNotFoundException {
+      @NotNull @Valid final BoardInputModel boardInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(boardInputModel);
 
     Board updateBoard = this.kanbanService.updateBoard(boardId, boardInputModel.getName());

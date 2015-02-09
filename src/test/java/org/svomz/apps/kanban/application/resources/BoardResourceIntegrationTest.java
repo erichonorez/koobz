@@ -52,6 +52,11 @@ public class BoardResourceIntegrationTest {
     RestAssured.config = config().connectionConfig(new ConnectionConfig().closeIdleConnectionsAfterEachResponse());
   }
   
+  @After
+  public void tearDown() {
+    RestAssured.reset();
+  }
+  
   /**
    * As an api user
    * When I GET /boards
@@ -182,9 +187,50 @@ public class BoardResourceIntegrationTest {
       .body(equalTo(StringUtils.EMPTY));
   }
   
-  @After
-  public void tearDown() {
-    RestAssured.reset();
+  /**
+   * As an api user
+   * When I GET a non existing board
+   * Then I receive a 404
+   */
+  @Test
+  public void testGetNonExistingBoard() {
+    given()
+      .accept(ContentType.JSON)
+    .when()
+      .get("/boards/" + Integer.MAX_VALUE)
+    .then()
+      .statusCode(404)
+      .body("message", not(equalTo(StringUtils.EMPTY)));
+  }
+  
+  /**
+   * As an api user
+   * When I want to create an invalid board
+   * Then I receice a 400
+   */
+  @Test
+  public void testInvalidRequestWithEmptyBody() {
+    given()
+      .contentType(ContentType.JSON)
+      .accept(ContentType.JSON)
+      .body(StringUtils.EMPTY)
+    .when()
+      .post("/boards")
+    .then()
+      .statusCode(400);
+  }
+  
+  @Test
+  public void testInvalidRequestWithEmptyName() {
+    BoardInputModel board = new BoardInputModel("");
+    given()
+      .contentType(ContentType.JSON)
+      .accept(ContentType.JSON)
+      .body(board)
+    .when()
+      .post("/boards")
+    .then()
+      .statusCode(400);
   }
 
 }
