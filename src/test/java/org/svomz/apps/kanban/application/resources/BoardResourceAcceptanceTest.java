@@ -1,7 +1,6 @@
 package org.svomz.apps.kanban.application.resources;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.config.RestAssuredConfig.config;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isA;
@@ -9,53 +8,18 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.svomz.apps.kanban.application.KanbanApp;
 import org.svomz.apps.kanban.application.models.BoardInputModel;
 import org.svomz.apps.kanban.domain.entities.Stage;
 import org.svomz.apps.kanban.domain.entities.WorkItem;
-import org.svomz.commons.application.Lifecycle;
-import org.svomz.commons.application.modules.LifecycleModule;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.config.ConnectionConfig;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 
-public class BoardResourceIntegrationTest {
-
-  
-  @BeforeClass
-  public static void bootstrap() throws InstantiationException, IllegalAccessException, InterruptedException {
-    Set<Module> modules = ImmutableSet.<Module>builder()
-        .add(new LifecycleModule())
-        .addAll(KanbanApp.class.newInstance().getModules())
-        .build();
-    Injector injector = Guice.createInjector(modules);
-    final Lifecycle lifecycle = injector.getInstance(Lifecycle.class);
-    lifecycle.start();
-  }
-  
-  @Before
-  public void setUp() {
-    RestAssured.config = config().connectionConfig(new ConnectionConfig().closeIdleConnectionsAfterEachResponse());
-  }
-  
-  @After
-  public void tearDown() {
-    RestAssured.reset();
-  }
+public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   
   /**
    * As an api user

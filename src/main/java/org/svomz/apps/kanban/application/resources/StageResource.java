@@ -2,6 +2,8 @@ package org.svomz.apps.kanban.application.resources;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -47,7 +49,7 @@ public class StageResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response createStage(final StageInputModel stageInputModel) throws EntityNotFoundException {
+  public Response createStage(@NotNull @Valid final StageInputModel stageInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(stageInputModel);
 
     final Stage persistedStage =
@@ -60,7 +62,7 @@ public class StageResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Stage updateStage(@PathParam("stageId") final long stageId,
-      final StageInputModel stageInputModel) throws EntityNotFoundException {
+      @NotNull @Valid final StageInputModel stageInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(stageInputModel);
 
     return this.kanbanService.updateStage(stageId, stageInputModel.getName());
