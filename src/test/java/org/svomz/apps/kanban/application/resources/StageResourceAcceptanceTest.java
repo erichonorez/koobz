@@ -3,14 +3,11 @@ package org.svomz.apps.kanban.application.resources;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.not;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.svomz.apps.kanban.application.models.BoardInputModel;
 import org.svomz.apps.kanban.application.models.StageInputModel;
-import org.svomz.apps.kanban.application.models.WorkItemInputModel;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
@@ -200,47 +197,6 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
       .put("/boards/" + boardId + "/stages/" + stageId)
     .then()
       .statusCode(400);
-  }
-  
-  private JsonPath createWorkItem(final int boardId, final int stageId, final String workItemName) {
-    WorkItemInputModel workItem = new WorkItemInputModel("test", stageId);
-    
-    return given()
-      .contentType(ContentType.JSON)
-      .accept(ContentType.JSON)
-      .body(workItem)
-    .when()
-      .post("/boards/" + boardId + "/workitems")
-    .then()
-      .statusCode(201)
-    .extract().response().jsonPath();
-  }
-  
-  private JsonPath createStage(int boardId, final String stageName) {
-    StageInputModel stage = new StageInputModel(stageName);
-    return given()
-      .contentType(ContentType.JSON)
-      .accept(ContentType.JSON)
-      .body(stage)
-    .when()
-      .post("/boards/" + boardId + "/stages")
-    .then()
-      .statusCode(201)
-      .body("id", isA(Integer.class))
-      .body("name", equalTo(stage.getName()))
-    .extract().response().jsonPath();
-  }
-
-  private JsonPath createBoard(final String name) {
-    BoardInputModel board = new BoardInputModel(name);
-    JsonPath boardJsonPath = given()
-      .contentType(ContentType.JSON)
-      .accept(ContentType.JSON)
-      .body(board)
-    .when()
-      .post("/boards")
-    .then().extract().response().jsonPath();
-    return boardJsonPath;
   }
 
 }

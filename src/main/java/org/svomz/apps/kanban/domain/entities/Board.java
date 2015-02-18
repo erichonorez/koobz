@@ -42,8 +42,7 @@ public class Board {
   @JoinColumn(name = "board_id")
   private Set<WorkItem> workItems;
 
-  @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-  @JoinColumn(name = "board_id")
+  @OneToMany(mappedBy="board", cascade = CascadeType.PERSIST, orphanRemoval = true)
   private Set<Stage> stages;
 
   private Board() {
@@ -93,6 +92,7 @@ public class Board {
   public Board addStage(final Stage stage) {
     Preconditions.checkNotNull(stage, "The given stage must not be null.");
 
+    stage.setBoard(this);
     this.stages.add(stage);
     return this;
   }

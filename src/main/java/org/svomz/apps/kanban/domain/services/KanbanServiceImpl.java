@@ -145,11 +145,11 @@ public class KanbanServiceImpl implements KanbanService {
     Preconditions.checkNotNull(text);
 
     WorkItem persistedWorkItem = this.workItemRepository.find(workItemId);
-    if (text.compareTo(persistedWorkItem.getText()) != 0) {
+    if (!persistedWorkItem.getText().equals(text)) {
       persistedWorkItem.setText(text);
     }
 
-    Stage stage = this.stageRepository.find(stageId);
+    Stage stage = this.stageRepository.find(boardId, stageId);
     if (stage.getId() != persistedWorkItem.getStage().getId()) {
       Board board = this.boardRepository.find(boardId);
       board.moveWorkItem(persistedWorkItem, stage);

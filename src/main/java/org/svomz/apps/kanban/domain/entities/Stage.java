@@ -10,30 +10,38 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Entity
 @Table(name = "stages")
-@JsonIgnoreProperties({"workItems"})
+@NamedQueries({
+  @NamedQuery(
+      name="Stage.findByBoardIdAndStageId",
+      query="SELECT s FROM Stage s WHERE s.id = :stageId AND s.board.id = :boardId"
+  )
+})
 public class Stage {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @JsonProperty
   private long id;
 
   @Column(name = "name")
-  @JsonProperty
   private String name;
 
   @OneToMany(mappedBy = "stage")
   private Set<WorkItem> workItems;
+  
+  @ManyToOne
+  @JoinColumn(name = "board_id")
+  private Board board;
 
   private Stage() {
     this.workItems = new HashSet<WorkItem>();
@@ -77,6 +85,13 @@ public class Stage {
 
     this.workItems.remove(workItem);
     workItem.setStage(null);
+    return this;
+  }
+  
+  Stage setBoard(final Board board) {
+    Preconditions.checkNotNull(board, "The given board must not be null.");
+    
+    this.board = board;
     return this;
   }
 
