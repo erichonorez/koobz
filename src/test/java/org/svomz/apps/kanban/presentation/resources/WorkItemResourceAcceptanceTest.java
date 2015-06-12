@@ -113,7 +113,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     int workItemId = this.createWorkItem(boardId, stageId, text).getInt("id");
     
     String editedText = "My first edited work item";
-    WorkItemInputModel updateRequest = new WorkItemInputModel(editedText, stageId);
+    WorkItemInputModel updateRequest = new WorkItemInputModel(editedText, stageId, 0);
     given()
         .contentType(ContentType.JSON)
         .accept(ContentType.JSON)
@@ -170,7 +170,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStageWIP = this.createStage(boardId, "Work in progress");
     
     int wipStageId = jsonStageWIP.getInt("id");
-    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", wipStageId);
+    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", wipStageId, null);
     given()
         .contentType(ContentType.JSON)
         .accept(ContentType.JSON)
@@ -204,7 +204,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     String text = "My first work item";
     int workItemId = this.createWorkItem(boardId, stageId, text).getInt("id");
 
-    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", jsonStageBoard2.getInt("id"));
+    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", jsonStageBoard2.getInt("id"), null);
     given()
         .contentType(ContentType.JSON)
         .accept(ContentType.JSON)
@@ -228,7 +228,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     int boardId = jsonBoard.getInt("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
-    WorkItemInputModel workItem = new WorkItemInputModel(StringUtils.EMPTY, stageId);
+    WorkItemInputModel workItem = new WorkItemInputModel(StringUtils.EMPTY, stageId, null);
     
     given()
       .contentType(ContentType.JSON)

@@ -2,11 +2,9 @@ package org.svomz.apps.kanban.domain.entities;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.svomz.apps.kanban.domain.entities.Board;
-import org.svomz.apps.kanban.domain.entities.Stage;
-import org.svomz.apps.kanban.domain.entities.WorkItem;
 import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
 import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
+import org.svomz.apps.kanban.domain.exceptions.WorkItemNotInStageException;
 import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 
 public class BoardUnitTest {
@@ -157,6 +155,97 @@ public class BoardUnitTest {
     board.moveWorkItem(postIt, columnDone);
     Assert.assertEquals(1, board.getWorkItems());
     Assert.assertEquals(columnDone, postIt.getStage());
+  }
+  
+  @Test
+  public void addWorkItem_NewWorkItemIsTheLast() throws StageNotInProcessException {
+    Board board = new Board("Project board");
+    Stage todoStage = new Stage("Todo");
+    board.addStage(todoStage);
+    
+    WorkItem workItemA = new WorkItem("Work item A");
+    board.addWorkItem(workItemA, todoStage);
+    Assert.assertEquals(0, workItemA.getOrder());
+    
+    WorkItem workItemB = new WorkItem("Work item B");
+    board.addWorkItem(workItemB, todoStage);
+    Assert.assertEquals(1, workItemB.getOrder());
+  }
+  
+  @Test
+  public void reorderWorkItem_WithExistingWorkItems() throws StageNotInProcessException, WorkItemNotOnBoardException, WorkItemNotInStageException {
+    Board board = new Board("Project board");
+    Stage todoStage = new Stage("Todo");
+    board.addStage(todoStage);
+    
+    WorkItem workItemA = new WorkItem("Work item A");
+    board.addWorkItem(workItemA, todoStage);
+    
+    WorkItem workItemB = new WorkItem("Work item B");
+    board.addWorkItem(workItemB, todoStage);
+    
+    WorkItem workItemC = new WorkItem("Work item C");
+    board.addWorkItem(workItemC, todoStage);
+    
+    WorkItem workItemD = new WorkItem("Work item D");
+    board.addWorkItem(workItemD, todoStage);
+    
+    board.reoderWorkItem(workItemC, 0);
+    Assert.assertEquals(0, workItemC.getOrder());
+    Assert.assertEquals(1, workItemA.getOrder());
+    Assert.assertEquals(2, workItemB.getOrder());
+    Assert.assertEquals(3, workItemD.getOrder());
+    
+    board.reoderWorkItem(workItemA, 3);
+    Assert.assertEquals(0, workItemC.getOrder());
+    Assert.assertEquals(3, workItemA.getOrder());
+    Assert.assertEquals(1, workItemB.getOrder());
+    Assert.assertEquals(2, workItemD.getOrder());
+    
+    board.reoderWorkItem(workItemB, 2);
+    Assert.assertEquals(0, workItemC.getOrder());
+    Assert.assertEquals(3, workItemA.getOrder());
+    Assert.assertEquals(2, workItemB.getOrder());
+    Assert.assertEquals(1, workItemD.getOrder());
+    
+    board.reoderWorkItem(workItemB, 2);
+    Assert.assertEquals(0, workItemC.getOrder());
+    Assert.assertEquals(3, workItemA.getOrder());
+    Assert.assertEquals(2, workItemB.getOrder());
+    Assert.assertEquals(1, workItemD.getOrder());
+    
+  }
+  
+  @Test(expected = IllegalArgumentException.class)
+  public void reorderWorkItem_WithNegativePositionThrowsIllegalArgumentException() throws StageNotInProcessException, WorkItemNotOnBoardException, WorkItemNotInStageException {
+    Board board = new Board("Project board");
+    Stage todoStage = new Stage("Todo");
+    board.addStage(todoStage);
+    
+    WorkItem workItemA = new WorkItem("Work item A");
+    board.addWorkItem(workItemA, todoStage);
+    
+    WorkItem workItemB = new WorkItem("Work item B");
+    board.addWorkItem(workItemB, todoStage);
+    
+    board.reoderWorkItem(workItemA, -1);
+  }
+  
+  @Test
+  public void reorderWorkItem_WithBigPositionPutTheWotkItemAtTheEnd() throws StageNotInProcessException, WorkItemNotOnBoardException, WorkItemNotInStageException {
+    Board board = new Board("Project board");
+    Stage todoStage = new Stage("Todo");
+    board.addStage(todoStage);
+    
+    WorkItem workItemA = new WorkItem("Work item A");
+    board.addWorkItem(workItemA, todoStage);
+    
+    WorkItem workItemB = new WorkItem("Work item B");
+    board.addWorkItem(workItemB, todoStage);
+    
+    board.reoderWorkItem(workItemA, Integer.MAX_VALUE);
+    Assert.assertEquals(0, workItemB.getOrder());
+    Assert.assertEquals(1, workItemA.getOrder());
   }
 
 }

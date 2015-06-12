@@ -20,17 +20,19 @@ public class WorkItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @JsonProperty
   private long id;
 
   @Column(name = "text")
-  @JsonProperty
   private String text;
+  
+  @Column(name = "position")
+  private int order;
 
   @ManyToOne
   @JoinColumn(name = "stage_id")
   @JsonProperty
   private Stage stage;
+
 
   @SuppressWarnings("unused")
   private WorkItem() {}
@@ -64,6 +66,15 @@ public class WorkItem {
     this.stage = stage;
     return this;
   }
+  
+  WorkItem setOrder(final int order) {
+    this.order = order;
+    return this;
+  }
+  
+  public int getOrder() {
+    return this.order;
+  }
 
   private static class WorkItemValidation {
 
@@ -81,5 +92,5 @@ public class WorkItem {
     }
 
   }
-
+  
 }

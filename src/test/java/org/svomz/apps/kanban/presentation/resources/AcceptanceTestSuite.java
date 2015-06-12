@@ -31,6 +31,7 @@ public class AcceptanceTestSuite {
     Injector injector = Guice.createInjector(modules);
     final Lifecycle lifecycle = injector.getInstance(Lifecycle.class);
     lifecycle.start();
+    Thread.sleep(10000);
   }
   
 }

@@ -31,4 +31,8 @@ public class WorkItemViewModel {
     return this.workItem.getStage().getId();
   }
   
+  @JsonProperty("order")
+  public int getOrder() {
+    return this.workItem.getOrder();
+  }
 }

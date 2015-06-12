@@ -15,13 +15,17 @@ public class WorkItemInputModel {
   
   private final long stageId;
 
+  private Integer order;
+
   @JsonCreator
   public WorkItemInputModel(@JsonProperty("text") final String text,
-      @JsonProperty("stage_id") final long stageId) {
+      @JsonProperty("stage_id") final long stageId,
+      @JsonProperty("order") final Integer order) {
     Preconditions.checkNotNull(text);
 
     this.text = text;
     this.stageId = stageId;
+    this.order = order;
   }
 
   public String getText() {
@@ -30,6 +34,10 @@ public class WorkItemInputModel {
 
   public long getStageId() {
     return this.stageId;
+  }
+  
+  public Integer getOrder() {
+    return this.order;
   }
 
 }

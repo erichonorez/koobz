@@ -19,6 +19,8 @@ import javax.persistence.Table;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
 
+import org.svomz.apps.kanban.domain.exceptions.WorkItemNotInStageException;
+
 @Entity
 @Table(name = "stages")
 @NamedQueries({
@@ -76,6 +78,7 @@ public class Stage {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     workItem.setStage(this);
+    workItem.setOrder(this.workItems.size());
     this.workItems.add(workItem);
     return this;
   }
@@ -92,6 +95,40 @@ public class Stage {
     Preconditions.checkNotNull(board, "The given board must not be null.");
     
     this.board = board;
+    return this;
+  }
+  
+  Stage reoderWorkItem(WorkItem workItem, int order) throws WorkItemNotInStageException {
+    Preconditions.checkNotNull(workItem);
+    Preconditions.checkArgument(order >= 0);
+    
+    if (!this.workItems.contains(workItem)) {
+      throw new WorkItemNotInStageException();
+    }
+    
+    if (order == workItem.getOrder()) {
+      return this;
+    }
+    
+    if (order > this.workItems.size()) {
+      order = this.workItems.size() - 1;
+    }
+    
+    if (order > workItem.getOrder()) {
+      for (WorkItem item : this.workItems) {
+        if (item.getOrder() > workItem.getOrder() && item.getOrder() <= order) {
+          item.setOrder(item.getOrder() - 1);
+        }
+      }
+    } else {
+      for (WorkItem item : this.workItems) {
+        if (item.getOrder() >= order && item.getOrder() < workItem.getOrder()) {
+          item.setOrder(item.getOrder() + 1);
+        }
+      }
+    }
+    
+    workItem.setOrder(order);
     return this;
   }
 

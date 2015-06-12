@@ -56,7 +56,7 @@ public class AbstractAcceptanceTest {
   }
 
   protected JsonPath createWorkItem(final int boardId, final int stageId, final String workItemText) {
-    WorkItemInputModel workItem = new WorkItemInputModel(workItemText, stageId);
+    WorkItemInputModel workItem = new WorkItemInputModel(workItemText, stageId, 0);
     
     return given()
       .contentType(ContentType.JSON)

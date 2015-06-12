@@ -60,7 +60,6 @@ public class BoardResource {
     return new BoardViewModel(board);
   }
 
-  // TODO add validation on the input
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)

@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
 import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
+import org.svomz.apps.kanban.domain.exceptions.WorkItemNotInStageException;
 import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 
 import com.google.common.base.Preconditions;
@@ -156,6 +157,17 @@ public class Board {
     workItem.getStage().removeWorkItem(workItem);
     stage.addWorkItem(workItem);
     return this;
+  }
+  
+  public WorkItem reoderWorkItem(WorkItem workItem, int i) throws WorkItemNotOnBoardException, WorkItemNotInStageException {
+    Preconditions.checkNotNull(workItem);
+    
+    if (!this.workItems.contains(workItem)) {
+      throw new WorkItemNotOnBoardException();
+    }
+    
+    workItem.getStage().reoderWorkItem(workItem, i);
+    return workItem;
   }
 
   private static class BoardValidation {

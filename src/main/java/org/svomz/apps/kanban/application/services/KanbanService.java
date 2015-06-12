@@ -7,6 +7,7 @@ import org.svomz.apps.kanban.domain.entities.Stage;
 import org.svomz.apps.kanban.domain.entities.WorkItem;
 import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
 import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
+import org.svomz.apps.kanban.domain.exceptions.WorkItemNotInStageException;
 import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 import org.svomz.commons.persistence.EntityNotFoundException;
 
@@ -138,9 +139,10 @@ public interface KanbanService {
    * @throws WorkItemNotOnBoardException if the work item is not on the board.
    * @throws StageNotInProcessException if the stage is moved from one stage to another the dest
    *         stage is not on the board.
+   * @throws WorkItemNotInStageException 
    */
   WorkItem updateWorkItem(final long boardId, final long workItemId, final String text,
-      final long stageId) throws EntityNotFoundException, WorkItemNotOnBoardException,
-      StageNotInProcessException;
+      final long stageId, final Integer order) throws EntityNotFoundException, WorkItemNotOnBoardException,
+      StageNotInProcessException, WorkItemNotInStageException;
 
 }

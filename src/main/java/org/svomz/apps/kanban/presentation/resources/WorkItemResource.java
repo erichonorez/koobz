@@ -23,6 +23,7 @@ import jersey.repackaged.com.google.common.base.Preconditions;
 import org.svomz.apps.kanban.application.services.KanbanService;
 import org.svomz.apps.kanban.domain.entities.WorkItem;
 import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
+import org.svomz.apps.kanban.domain.exceptions.WorkItemNotInStageException;
 import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
 import org.svomz.apps.kanban.presentation.models.WorkItemInputModel;
 import org.svomz.apps.kanban.presentation.models.WorkItemViewModel;
@@ -74,11 +75,11 @@ public class WorkItemResource {
   @Produces(MediaType.APPLICATION_JSON)
   public WorkItemViewModel update(@PathParam("id") final long workItemId,
       @NotNull @Valid final WorkItemInputModel workItemInputModel) throws EntityNotFoundException,
-      WorkItemNotOnBoardException, StageNotInProcessException {
+      WorkItemNotOnBoardException, StageNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(workItemInputModel);
 
     WorkItem updateWorkItem = this.kanbanService.updateWorkItem(this.boardId, workItemId,
-        workItemInputModel.getText(), workItemInputModel.getStageId());
+        workItemInputModel.getText(), workItemInputModel.getStageId(), workItemInputModel.getOrder());
     return new WorkItemViewModel(updateWorkItem);
   }
 
