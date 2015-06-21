@@ -10,19 +10,19 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.svomz.apps.kanban.domain.entities.Board;
-import org.svomz.apps.kanban.domain.entities.Stage;
-import org.svomz.apps.kanban.domain.entities.WorkItem;
-import org.svomz.apps.kanban.domain.exceptions.StageNotEmptyException;
-import org.svomz.apps.kanban.domain.exceptions.StageNotInProcessException;
-import org.svomz.apps.kanban.domain.exceptions.WorkItemNotOnBoardException;
-import org.svomz.apps.kanban.domain.repositories.BoardRepository;
-import org.svomz.apps.kanban.domain.repositories.StageRepository;
-import org.svomz.apps.kanban.domain.repositories.WorkItemRepository;
+import org.svomz.apps.kanban.domain.Board;
+import org.svomz.apps.kanban.domain.BoardRepository;
+import org.svomz.apps.kanban.domain.Stage;
+import org.svomz.apps.kanban.domain.StageNotEmptyException;
+import org.svomz.apps.kanban.domain.StageNotInProcessException;
+import org.svomz.apps.kanban.domain.StageRepository;
+import org.svomz.apps.kanban.domain.WorkItem;
+import org.svomz.apps.kanban.domain.WorkItemNotOnBoardException;
+import org.svomz.apps.kanban.domain.WorkItemRepository;
+import org.svomz.apps.kanban.infrastructure.domain.EntityNotFoundException;
 import org.svomz.apps.kanban.infrastructure.domain.JpaBoardRepository;
 import org.svomz.apps.kanban.infrastructure.domain.JpaStageRepository;
 import org.svomz.apps.kanban.infrastructure.domain.JpaWorkItemRepository;
-import org.svomz.commons.persistence.EntityNotFoundException;
 
 public class BoardIntegrationTest {
 

@@ -12,9 +12,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.svomz.apps.kanban.domain.entities.Stage;
-import org.svomz.apps.kanban.domain.entities.WorkItem;
-import org.svomz.apps.kanban.presentation.models.BoardInputModel;
+import org.svomz.apps.kanban.application.models.BoardInputModel;
+import org.svomz.apps.kanban.domain.Stage;
+import org.svomz.apps.kanban.domain.WorkItem;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
@@ -29,14 +29,14 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testGetBoards() {
     BoardInputModel board1 = new BoardInputModel("Test1");
-    createBoard(board1);
+    this.createBoard(board1);
     BoardInputModel board2 = new BoardInputModel("Test2");
-    createBoard(board2);
+    this.createBoard(board2);
     
     JsonPath json = given()
       .accept(ContentType.JSON)
     .when()
-      .get("/boards/")
+      .get(this.baseUrl() + "/kanban/boards/")
     .then()
       .statusCode(200)
       .body(not(emptyIterable()))
@@ -61,14 +61,14 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testGetBoard() {
     BoardInputModel board = new BoardInputModel("Test1");
-    JsonPath response = createBoard(board);
+    JsonPath response = this.createBoard(board);
     
     int boardId = response.get("id");
     given()
       .contentType(ContentType.JSON)
       .accept(ContentType.JSON)
     .when()
-      .get("/boards/" + String.valueOf(boardId))
+      .get(this.baseUrl() + "/kanban/boards/" + String.valueOf(boardId))
     .then()
       .statusCode(200)
       .body("id", equalTo(boardId))
@@ -85,7 +85,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testPostBoard() {
     BoardInputModel board = new BoardInputModel("Test1");
-    createBoard(board);
+    this.createBoard(board);
   }
 
   private JsonPath createBoard(BoardInputModel board) {
@@ -94,7 +94,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(board)
     .when()
-      .post("/boards")
+      .post(this.boardsUrl())
     .then()
       .statusCode(201)
       .body("name", equalTo(board.getName()))
@@ -112,7 +112,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testPutBoard() {
     BoardInputModel board1 = new BoardInputModel("Test1");
-    int boardId = createBoard(board1).get("id");
+    int boardId = this.createBoard(board1).get("id");
     
     BoardInputModel updatedBoard1 = new BoardInputModel("Test2");
     
@@ -123,7 +123,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     .expect()
       .statusCode(200)
     .when()
-      .put("/boards/" + String.valueOf(boardId))
+      .put(this.baseUrl() + "/kanban/boards/" + String.valueOf(boardId))
     .then()
       .body("name", equalTo(updatedBoard1.getName()))
       .body("id", equalTo(boardId))
@@ -140,12 +140,12 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testDeleteBoard() {
     BoardInputModel board1 = new BoardInputModel("Test1");
-    int boardId = createBoard(board1).get("id");
+    int boardId = this.createBoard(board1).get("id");
     
     given()
       .accept(ContentType.JSON)
     .when()
-      .delete("/boards/" + String.valueOf(boardId))
+      .delete(this.baseUrl() + "/kanban/boards/" + String.valueOf(boardId))
     .then()
       .statusCode(204)
       .body(equalTo(StringUtils.EMPTY));
@@ -161,7 +161,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     given()
       .accept(ContentType.JSON)
     .when()
-      .get("/boards/" + Integer.MAX_VALUE)
+      .get(this.baseUrl() + "/kanban/boards/" + Integer.MAX_VALUE)
     .then()
       .statusCode(404)
       .body("message", not(equalTo(StringUtils.EMPTY)));
@@ -179,7 +179,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(StringUtils.EMPTY)
     .when()
-      .post("/boards")
+      .post(this.boardsUrl())
     .then()
       .statusCode(400);
   }
@@ -192,9 +192,13 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(board)
     .when()
-      .post("/boards")
+      .post(this.boardsUrl())
     .then()
       .statusCode(400);
+  }
+
+  private String boardsUrl() {
+    return this.baseUrl() + "/kanban/boards";
   }
 
 }

@@ -7,9 +7,9 @@ import static org.hamcrest.Matchers.isA;
 
 import org.junit.After;
 import org.junit.Before;
-import org.svomz.apps.kanban.presentation.models.BoardInputModel;
-import org.svomz.apps.kanban.presentation.models.StageInputModel;
-import org.svomz.apps.kanban.presentation.models.WorkItemInputModel;
+import org.svomz.apps.kanban.application.models.BoardInputModel;
+import org.svomz.apps.kanban.application.models.StageInputModel;
+import org.svomz.apps.kanban.application.models.WorkItemInputModel;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.ConnectionConfig;
@@ -35,12 +35,16 @@ public class AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(stage)
     .when()
-      .post("/boards/" + boardId + "/stages")
+      .post(this.baseUrl() + "/kanban/boards/" + boardId + "/stages")
     .then()
       .statusCode(201)
       .body("id", isA(Integer.class))
       .body("name", equalTo(stage.getName()))
     .extract().response().jsonPath();
+  }
+
+  protected String baseUrl() {
+    return "http://localhost:8080/";
   }
 
   protected JsonPath createBoard(final String name) {
@@ -50,7 +54,7 @@ public class AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(board)
     .when()
-      .post("/boards")
+      .post(this.baseUrl() + "/kanban/boards")
     .then().extract().response().jsonPath();
     return boardJsonPath;
   }
@@ -63,7 +67,7 @@ public class AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(workItem)
     .when()
-      .post("/boards/" + boardId + "/workitems")
+      .post(this.baseUrl() + "/kanban/boards/" + boardId + "/workitems")
     .then()
       .statusCode(201)
       .body("id", isA(Integer.class))

@@ -5,10 +5,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-import org.svomz.apps.kanban.domain.entities.Stage;
-import org.svomz.apps.kanban.domain.repositories.StageRepository;
-import org.svomz.commons.persistence.EntityNotFoundException;
-import org.svomz.commons.persistence.jpa.AbstractJpaRepository;
+import org.svomz.apps.kanban.domain.Stage;
+import org.svomz.apps.kanban.domain.StageRepository;
 
 public class JpaStageRepository extends AbstractJpaRepository<Stage, Long> implements
     StageRepository {
