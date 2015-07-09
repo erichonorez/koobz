@@ -1,4 +1,4 @@
-package org.svomz.apps.kanban.domain.entities;
+package org.svomz.apps.kanban.domain;
 
 import org.junit.Assert;
 import org.junit.Test;

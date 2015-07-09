@@ -3,9 +3,7 @@ package org.svomz.apps.kanban.application.resources;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -20,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.springframework.stereotype.Component;
 import org.svomz.apps.kanban.application.models.BoardInputModel;
 import org.svomz.apps.kanban.application.models.BoardViewModel;
 import org.svomz.apps.kanban.domain.Board;
@@ -29,15 +28,12 @@ import org.svomz.apps.kanban.infrastructure.domain.EntityNotFoundException;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.base.Preconditions;
 
-@RequestScoped
-@Transactional
+@Component
 @Path("/boards")
 public class BoardResource {
 
   private BoardRepository boardRepository;
 
-  public BoardResource() {}
-  
   @Inject
   public BoardResource(final BoardRepository boardRepository) {
     Preconditions.checkNotNull(boardRepository);
@@ -49,11 +45,11 @@ public class BoardResource {
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.SimpleView.class)
   public List<BoardViewModel> getBoards() {
+    Iterable<Board> boards = this.boardRepository.findAll();
+
     List<BoardViewModel> viewModels = new ArrayList<>();
-    List<Board> boards = this.boardRepository.findAll();
-    for (Board board : boards) {
-      viewModels.add(new BoardViewModel(board));
-    }
+    boards.forEach(board -> viewModels.add(new BoardViewModel(board)));
+
     return viewModels;
   }
 
@@ -61,8 +57,10 @@ public class BoardResource {
   @Path("{boardId}")
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.FullView.class)
-  public BoardViewModel getBoard(@PathParam("boardId") final long boardId) throws EntityNotFoundException {
-    Board board = this.boardRepository.find(boardId);
+  public BoardViewModel getBoard(@PathParam("boardId") final long boardId)
+    throws EntityNotFoundException {
+    Board board = this.boardRepository.findOrThrowException(boardId);
+
     return new BoardViewModel(board);
   }
 
@@ -74,7 +72,7 @@ public class BoardResource {
     Preconditions.checkNotNull(boardInputModel);
 
     Board board = new Board(boardInputModel.getName());
-    this.boardRepository.create(board);
+    this.boardRepository.save(board);
     
     BoardViewModel viewModel = new BoardViewModel(board);
     return Response.status(Status.CREATED).entity(viewModel).build();
@@ -89,15 +87,18 @@ public class BoardResource {
       @NotNull @Valid final BoardInputModel boardInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(boardInputModel);
     
-    Board board = this.boardRepository.find(boardId);
+    Board board = this.boardRepository.findOrThrowException(boardId);
+
     board.setName(boardInputModel.getName());
     return new BoardViewModel(board);
   }
 
   @DELETE
   @Path("{boardId}")
-  public void deleteBoard(@PathParam("boardId") final long boardId) throws EntityNotFoundException {
-    Board persistedBoard = this.boardRepository.find(boardId);
+  public void deleteBoard(@PathParam("boardId") final long boardId)
+    throws EntityNotFoundException {
+    Board persistedBoard = this.boardRepository.findOrThrowException(boardId);
+
     this.boardRepository.delete(persistedBoard);
   }
 

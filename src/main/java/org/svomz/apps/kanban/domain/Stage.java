@@ -22,12 +22,6 @@ import com.google.common.base.Preconditions;
 
 @Entity
 @Table(name = "stages")
-@NamedQueries({
-  @NamedQuery(
-      name="Stage.findByBoardIdAndStageId",
-      query="SELECT s FROM Stage s WHERE s.id = :stageId AND s.board.id = :boardId"
-  )
-})
 public class Stage {
 
   @Id

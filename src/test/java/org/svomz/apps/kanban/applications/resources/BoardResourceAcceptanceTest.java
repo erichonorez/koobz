@@ -1,4 +1,4 @@
-package org.svomz.apps.kanban.presentation.resources;
+package org.svomz.apps.kanban.applications.resources;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.emptyIterable;
@@ -20,7 +20,20 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 
 public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
-  
+
+  @Test
+  public void shouldSuccessfullyCreateNewBoard() {
+    BoardInputModel board = new BoardInputModel("Test1");
+
+    System.out.println(given()
+      .contentType(ContentType.JSON)
+      .accept(ContentType.JSON)
+      .body(board)
+    .when()
+      .post(this.boardsUrl())
+    .asString());
+  }
+
   /**
    * As an api user
    * When I GET /boards
@@ -36,7 +49,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath json = given()
       .accept(ContentType.JSON)
     .when()
-      .get(this.baseUrl() + "/kanban/boards/")
+      .get(this.baseUrl() + "/boards/")
     .then()
       .statusCode(200)
       .body(not(emptyIterable()))
@@ -68,7 +81,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
       .contentType(ContentType.JSON)
       .accept(ContentType.JSON)
     .when()
-      .get(this.baseUrl() + "/kanban/boards/" + String.valueOf(boardId))
+      .get(this.baseUrl() + "/boards/" + String.valueOf(boardId))
     .then()
       .statusCode(200)
       .body("id", equalTo(boardId))
@@ -123,7 +136,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     .expect()
       .statusCode(200)
     .when()
-      .put(this.baseUrl() + "/kanban/boards/" + String.valueOf(boardId))
+      .put(this.baseUrl() + "/boards/" + String.valueOf(boardId))
     .then()
       .body("name", equalTo(updatedBoard1.getName()))
       .body("id", equalTo(boardId))
@@ -138,17 +151,24 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
    * I expect to receive not content
    */
   @Test
-  public void testDeleteBoard() {
+  public void shouldSucessfullyDeleteAnEmptyBoard() {
     BoardInputModel board1 = new BoardInputModel("Test1");
     int boardId = this.createBoard(board1).get("id");
     
     given()
       .accept(ContentType.JSON)
     .when()
-      .delete(this.baseUrl() + "/kanban/boards/" + String.valueOf(boardId))
+      .delete(this.baseUrl() + "/boards/" + String.valueOf(boardId))
     .then()
       .statusCode(204)
       .body(equalTo(StringUtils.EMPTY));
+
+    given()
+      .accept(ContentType.JSON)
+      .when()
+        .get(this.baseUrl() + "/boards/" + String.valueOf(boardId))
+      .then()
+        .statusCode(404);
   }
   
   /**
@@ -161,7 +181,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     given()
       .accept(ContentType.JSON)
     .when()
-      .get(this.baseUrl() + "/kanban/boards/" + Integer.MAX_VALUE)
+      .get(this.baseUrl() + "/boards/" + Integer.MAX_VALUE)
     .then()
       .statusCode(404)
       .body("message", not(equalTo(StringUtils.EMPTY)));
@@ -198,7 +218,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   }
 
   private String boardsUrl() {
-    return this.baseUrl() + "/kanban/boards";
+    return this.baseUrl() + "/boards";
   }
 
 }

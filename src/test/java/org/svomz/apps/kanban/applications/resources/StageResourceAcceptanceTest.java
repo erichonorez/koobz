@@ -1,4 +1,4 @@
-package org.svomz.apps.kanban.presentation.resources;
+package org.svomz.apps.kanban.applications.resources;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.emptyIterable;

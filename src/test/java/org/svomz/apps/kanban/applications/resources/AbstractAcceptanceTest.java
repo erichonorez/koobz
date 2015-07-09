@@ -1,8 +1,11 @@
-package org.svomz.apps.kanban.presentation.resources;
+package org.svomz.apps.kanban.applications.resources;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.config.RestAssuredConfig.config;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.isA;
 
 import org.junit.After;
@@ -20,7 +23,7 @@ public class AbstractAcceptanceTest {
   
   @Before
   public void setUp() {
-    RestAssured.config = config().connectionConfig(new ConnectionConfig().closeIdleConnectionsAfterEachResponse());
+    RestAssured.config = config().connectionConfig(new ConnectionConfig());
   }
   
   @After
@@ -35,16 +38,16 @@ public class AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(stage)
     .when()
-      .post(this.baseUrl() + "/kanban/boards/" + boardId + "/stages")
+      .post(this.baseUrl() + "/boards/" + boardId + "/stages")
     .then()
       .statusCode(201)
-      .body("id", isA(Integer.class))
+      .body("id", allOf(isA(Integer.class), is(greaterThan(0))))
       .body("name", equalTo(stage.getName()))
     .extract().response().jsonPath();
   }
 
   protected String baseUrl() {
-    return "http://localhost:8080/";
+    return "http://localhost:8080";
   }
 
   protected JsonPath createBoard(final String name) {
@@ -54,7 +57,7 @@ public class AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(board)
     .when()
-      .post(this.baseUrl() + "/kanban/boards")
+      .post(this.baseUrl() + "/boards")
     .then().extract().response().jsonPath();
     return boardJsonPath;
   }
@@ -67,7 +70,7 @@ public class AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(workItem)
     .when()
-      .post(this.baseUrl() + "/kanban/boards/" + boardId + "/workitems")
+      .post(this.baseUrl() + "/boards/" + boardId + "/workitems")
     .then()
       .statusCode(201)
       .body("id", isA(Integer.class))

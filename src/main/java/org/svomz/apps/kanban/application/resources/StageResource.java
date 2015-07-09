@@ -3,9 +3,7 @@ package org.svomz.apps.kanban.application.resources;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -20,6 +18,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.svomz.apps.kanban.application.models.StageInputModel;
 import org.svomz.apps.kanban.domain.Board;
 import org.svomz.apps.kanban.domain.BoardRepository;
@@ -31,15 +31,13 @@ import org.svomz.apps.kanban.infrastructure.domain.EntityNotFoundException;
 
 import com.google.common.base.Preconditions;
 
-@RequestScoped
-@Transactional
+@Component
 @Path("/boards/{boardId}/stages")
+@Transactional
 public class StageResource {
 
   private BoardRepository boardRepository;
   private StageRepository stageRepository;
-  
-  public StageResource() {}
   
   @Inject
   public StageResource(final BoardRepository boardRepository, final StageRepository stageRepository) {
@@ -52,18 +50,21 @@ public class StageResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<Stage> getStages(@PathParam("boardId") final long boardId) throws EntityNotFoundException {
-    Board board = this.boardRepository.find(boardId);
+  public List<Stage> getStages(@PathParam("boardId") final long boardId)
+    throws EntityNotFoundException {
+    Board board = this.boardRepository.findOrThrowException(boardId);
     return new ArrayList<>(board.getStages());
   }
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response createStage(@PathParam("boardId") final long boardId, @NotNull @Valid final StageInputModel stageInputModel) throws EntityNotFoundException {
+  public Response createStage(@PathParam("boardId") final long boardId, @NotNull @Valid final StageInputModel stageInputModel)
+
+    throws EntityNotFoundException {
     Preconditions.checkNotNull(stageInputModel);
 
-    Board board = this.boardRepository.find(boardId);
+    Board board = this.boardRepository.findOrThrowException(boardId);
     Stage stage = new Stage(stageInputModel.getName());
     board.addStage(stage);
     
@@ -78,7 +79,7 @@ public class StageResource {
       @NotNull @Valid final StageInputModel stageInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(stageInputModel);
 
-    Stage stage = this.stageRepository.find(stageId);
+    Stage stage = this.stageRepository.findOrThrowException(stageId);
     stage.setName(stageInputModel.getName());
     
     return stage;
@@ -86,10 +87,10 @@ public class StageResource {
 
   @DELETE
   @Path("{stageId}")
-  public void delete(@PathParam("boardId") final long boardId, @PathParam("stageId") final long stageId) throws EntityNotFoundException,
-      StageNotInProcessException, StageNotEmptyException {
-    Board board = this.boardRepository.find(boardId);
-    Stage stage = this.stageRepository.find(stageId);
+  public void delete(@PathParam("boardId") final long boardId, @PathParam("stageId") final long stageId)
+    throws StageNotInProcessException, StageNotEmptyException, EntityNotFoundException {
+    Board board = this.boardRepository.findOrThrowException(boardId);
+    Stage stage = this.stageRepository.findOrThrowException(stageId);
     board.removeStage(stage);
   }
 
