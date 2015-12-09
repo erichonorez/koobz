@@ -1,0 +1,44 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<section class="container-fluid">
+
+  <div class="row board">
+
+    <div class="stage-container">
+      <div class="col-md-{{12/board.stages.length}} stage" id="stage-{{stage.id}}" ng-repeat="stage in board.stages"
+           data-stage-id="{{stage.id}}">
+        <header class="stage-header">
+          <h3 class="stage-title">{{stage.name}}</h3>
+          <ul class="stage-actions pull-right">
+            <li class="stage-action"><a href="#" ng-click="editStage(stage)"><i class="fa fa-edit"></i></a></li>
+          </ul>
+          <div class="clear">&nbsp;</div>
+        </header>
+        <div class="stage-content">
+          <ul class="workitems" dnd-list="stage.workitems" style="min-height: 650px;" dnd-drop="dropCallback(event, index, item)">
+            <li class="workitem-container" id="workitem-{{workitem.id}}" ng-repeat="workitem in stage.workitems"
+                dnd-draggable="workitem" dnd-selected="selected = workitem" dnd-effect-allowed="move"
+                dnd-moved="stage.workitems.splice($index, 1)" data-workitem-id="{{workitem.id}}">
+              <div class="workitem">
+                <h4 class="workitem-title">{{workitem.title}}</h4>
+                <ul class="workitem-actions pull-right">
+                  <li class="workitem-action"><a href="" ng-click="editWorkItem(workitem)"><i class="fa fa-edit"></i></a></li>
+                  <li class="workitem-action"><a href="" ng-click="deleteWorkItem(workitem)"><i class="fa fa-times"></i></a></li>
+                </ul>
+                <div class="break">&nbsp;</div>
+                <p ng-show="workitem.description != ''">{{workitem.description}}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+</section>
+
+<div ng-include="'app/main/main.add_workitem.html'"></div>
+<div ng-include="'app/main/main.delete_workitem.html'"></div>
+<div ng-include="'app/main/main.edit_stage.html'"></div>
+<div ng-include="'app/main/main.edit_board.html'"></div>

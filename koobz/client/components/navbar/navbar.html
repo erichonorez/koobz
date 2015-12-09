@@ -1,0 +1,15 @@
+<nav class="navbar navbar-default koobz-navbar" role="navigation" role="navigation" ng-controller="NavbarCtrl">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">koobz</a>
+    </div>
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav pull-right">
+        <li class="board-name">{{board.name}}</li>
+        <li><a href="#" ng-click="editBoard()"><i class="fa fa-pencil"></i> Edit</a></li>
+        <li><a href="#" ng-click="addStage()"><i class="fa fa-plus"></i> Add stage</a></li>
+        <li ng-show="board.stages.length > 0"><a href="#" ng-click="addWorkItem()"><i class="fa fa-plus"></i> Add work item</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>

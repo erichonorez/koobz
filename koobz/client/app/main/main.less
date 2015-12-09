@@ -1,0 +1,210 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+@light-blue: #3c8dbc;
+@navbar-hover-bg: #f9f9f9;
+@navbar-font-color: lighten(@light-blue, 45%);
+@navbar-font-color-hover: lighten(@light-blue, 65%);
+@workitem-bg: #fefbed;
+@workitem-border-color: #f1e7bc;
+@workitem-title-color: #C09853;
+
+.koobz-navbar {
+
+  background-color: @light-blue;
+  color: @navbar-font-color;
+  font-size: 12px;
+  font-family: 'Open Sans', sans-serif;
+  border: none;
+  border-radius: 0px;
+  margin-bottom: 0px;
+
+  .navbar-header {
+
+    > .navbar-brand {
+        color: @navbar-font-color !important;
+        &:hover {
+          color: @navbar-font-color-hover !important;
+        }
+      }
+    }
+
+    .nav > li {
+
+      &:hover {
+        background-color: lighten(@light-blue, 5%);
+      }
+      > a {
+        color: @navbar-font-color;
+        &:hover {
+          color: @navbar-font-color-hover;
+        }
+      }
+    }
+
+  .board-name {
+    display: block;
+    padding: 15px;
+    line-height: 20px;
+
+    &:hover {
+      background-color: @light-blue !important;
+    }
+
+  }
+
+}
+
+
+.board {
+
+  .stage {
+
+    list-style: none;
+    display: inline-block;
+    padding-left: 0px;
+    padding-right: 0px;
+
+    .stage-header {
+
+        padding: 15px 10px 10px 15px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1);
+
+        .stage-title {
+
+          color: #555;
+          font-size: 14px;
+          margin: 0px;
+          float: left;
+
+        }
+
+        .stage-actions {
+
+          list-style: none;
+
+
+          .stage-action {
+
+            display: inline;
+            padding-left: 5px;
+
+            a {
+              color: lighten(#555, 30%);
+
+              &:hover {
+                color: lighten(#555, 10%);
+              }
+            }
+
+          }
+
+        }
+
+      }
+
+    .stage-content {
+
+      .workitems {
+
+        list-style: none;
+        padding-left: 5px;
+        padding-right: 5px;
+
+        .workitem {
+
+          margin: 0 0 10px 0;
+          padding: 10px 15px 10px 5px;
+          border-left: 5px solid #eee;
+          background-color: @workitem-bg;
+          border-color: @workitem-border-color;
+          font-size: 12px;
+          font-family: 'Open Sans', sans-serif;
+
+          h4 {
+              font-size: 14px;
+              margin-top: 0;
+              margin-bottom: 5px;
+              color: @workitem-title-color;
+          }
+          p:last-child {
+              clear: both;
+              margin-bottom: 0;
+          }
+          code,
+          .highlight {
+              background-color: #fff;
+          }
+
+          .workitem-title {
+            float: left;
+          }
+
+          .workitem-actions {
+
+            list-style: none;
+
+            .workitem-action  {
+
+              display: inline;
+              padding-left: 5px;
+
+              a {
+                color: @workitem-title-color;
+
+                &:hover {
+                  color: darken(@workitem-title-color, 15%);
+                }
+              }
+
+            }
+
+          }
+
+
+        }
+      }
+
+    }
+
+  }
+
+}
+
+.modal-content {
+
+  font-size: 12px;
+
+  .modal-header {
+
+    padding: 10px;
+
+    background-color: @light-blue;
+
+    > h4 {
+
+      color: @navbar-font-color;
+      font-size: 16px;
+      font-family: 'Open Sans', sans-serif;
+
+    }
+
+  }
+
+}
+
+ul[dnd-list] .dndDraggingSource {
+    display: none;
+}
+
+ul[dnd-list] .dndPlaceholder {
+    display: block;
+    background-color: #ddd;
+    min-height: 42px;
+}
+
+ul[dnd-list] li.selected {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
