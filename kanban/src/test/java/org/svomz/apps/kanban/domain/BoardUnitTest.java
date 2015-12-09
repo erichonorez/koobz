@@ -2,13 +2,6 @@ package org.svomz.apps.kanban.domain;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.svomz.apps.kanban.domain.Board;
-import org.svomz.apps.kanban.domain.Stage;
-import org.svomz.apps.kanban.domain.StageNotEmptyException;
-import org.svomz.apps.kanban.domain.StageNotInProcessException;
-import org.svomz.apps.kanban.domain.WorkItem;
-import org.svomz.apps.kanban.domain.WorkItemNotInStageException;
-import org.svomz.apps.kanban.domain.WorkItemNotOnBoardException;
 
 public class BoardUnitTest {
 
