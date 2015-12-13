@@ -90,6 +90,7 @@ public class Board {
     Preconditions.checkNotNull(stage, "The given stage must not be null.");
 
     stage.setBoard(this);
+    stage.setOrder(this.stages.size());
     this.stages.add(stage);
     return this;
   }
@@ -107,6 +108,42 @@ public class Board {
     }
 
     this.stages.remove(stage);
+    return this;
+  }
+
+  public Board reorderStage(final Stage stage,final int position)
+    throws StageNotInProcessException {
+    Preconditions.checkNotNull(stage, "The given stage must not be null");
+
+    if (!this.stages.contains(stage)) {
+      throw new StageNotInProcessException();
+    }
+
+    if (position == stage.getOrder()) {
+      return this;
+    }
+
+    int order = position;
+    if (order >= this.stages.size()) {
+      order = this.stages.size() - 1;
+    }
+
+    if (order > stage.getOrder()) {
+      for (Stage item : this.stages) {
+        if (item.getOrder() > stage.getOrder() && item.getOrder() <= order) {
+          item.setOrder(item.getOrder() - 1);
+        }
+      }
+    } else {
+      for (Stage item : this.stages) {
+        if (item.getOrder() >= position && item.getOrder() < stage.getOrder()) {
+          item.setOrder(item.getOrder() + 1);
+        }
+      }
+    }
+
+    stage.setOrder(order);
+
     return this;
   }
 

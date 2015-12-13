@@ -31,6 +31,7 @@ import com.google.common.base.Preconditions;
 
 @Component
 @Path("/boards")
+@Transactional
 public class BoardResource {
 
   private BoardRepository boardRepository;

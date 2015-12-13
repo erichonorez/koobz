@@ -85,7 +85,6 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
       .statusCode(200)
       .body("id", equalTo(boardId))
       .body("name", equalTo(board.getName()))
-      .body("workItems", emptyIterable())
       .body("stages", emptyIterable());
   }
   

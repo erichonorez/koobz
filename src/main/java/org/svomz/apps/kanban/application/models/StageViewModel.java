@@ -20,7 +20,7 @@ public class StageViewModel {
     this.stage = stage;
   }
 
-  @JsonProperty("stage_id")
+  @JsonProperty("id")
   public Long getId() {
     return this.stage.getId();
   }
@@ -30,7 +30,12 @@ public class StageViewModel {
     return this.stage.getName();
   }
 
-  @JsonProperty("work_items")
+  @JsonProperty("order")
+  public int getOrder() {
+    return this.stage.getOrder();
+  }
+
+  @JsonProperty("workItems")
   @JsonView(BoardViewModel.FullView.class)
   public List<WorkItemViewModel> getWorkItems() {
     List<WorkItemViewModel> models = new ArrayList<>();

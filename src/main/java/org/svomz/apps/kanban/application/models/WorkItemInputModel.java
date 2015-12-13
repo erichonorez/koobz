@@ -20,7 +20,7 @@ public class WorkItemInputModel {
 
   @JsonCreator
   public WorkItemInputModel(@JsonProperty("text") final String text,
-      @JsonProperty("stage_id") final long stageId,
+      @JsonProperty("stageId") final long stageId,
       @Nullable @JsonProperty("order") final Integer order) {
     Preconditions.checkNotNull(text);
 

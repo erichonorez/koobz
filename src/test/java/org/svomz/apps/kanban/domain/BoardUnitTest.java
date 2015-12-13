@@ -1,5 +1,6 @@
 package org.svomz.apps.kanban.domain;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -228,7 +229,7 @@ public class BoardUnitTest {
   }
   
   @Test
-  public void reorderWorkItem_WithBigPositionPutTheWotkItemAtTheEnd() throws StageNotInProcessException, WorkItemNotOnBoardException, WorkItemNotInStageException {
+  public void reorderWorkItem_WithBigPositionPutTheWorkItemAtTheEnd() throws StageNotInProcessException, WorkItemNotOnBoardException, WorkItemNotInStageException {
     Board board = new Board("Project board");
     Stage todoStage = new Stage("Todo");
     board.addStage(todoStage);
@@ -242,6 +243,72 @@ public class BoardUnitTest {
     board.reoderWorkItem(workItemA, Integer.MAX_VALUE);
     Assert.assertEquals(0, workItemB.getOrder());
     Assert.assertEquals(1, workItemA.getOrder());
+  }
+
+  @Test
+  public void shouldIncrementStageOrderByOne() {
+    Board board = new Board("new board");
+    Stage todo = new Stage("todo");
+    board.addStage(todo);
+
+    Stage wip = new Stage("wip");
+    board.addStage(wip);
+
+    Stage done = new Stage("done");
+    board.addStage(done);
+
+    Assert.assertEquals(0, todo.getOrder());
+    Assert.assertEquals(1, wip.getOrder());
+    Assert.assertEquals(2, done.getOrder());
+  }
+
+  @Test
+  public void shouldReorder_SwapBetweenFirstAndLast() throws StageNotInProcessException {
+    Board board = new Board("new board");
+    Stage todo = new Stage("todo");
+    board.addStage(todo);
+
+    Stage wip = new Stage("wip");
+    board.addStage(wip);
+
+    Stage validation = new Stage("validation");
+    board.addStage(validation);
+
+    Stage done = new Stage("done");
+    board.addStage(done);
+
+    board.reorderStage(todo, 4);
+    Assert.assertEquals(0, wip.getOrder());
+    Assert.assertEquals(1, validation.getOrder());
+    Assert.assertEquals(2, done.getOrder());
+    Assert.assertEquals(3, todo.getOrder());
+  }
+
+  @Test
+  public void shouldReorder_AllEmenetBetweenTwoElement() throws StageNotInProcessException {
+    Board board = new Board("new board");
+    Stage todo = new Stage("todo");
+    board.addStage(todo);
+
+    Stage wip = new Stage("wip");
+    board.addStage(wip);
+
+    Stage validation = new Stage("validation");
+    board.addStage(validation);
+
+    Stage done = new Stage("done");
+    board.addStage(done);
+
+    board.reorderStage(todo, 2);
+    Assert.assertEquals(0, wip.getOrder());
+    Assert.assertEquals(1, validation.getOrder());
+    Assert.assertEquals(2, todo.getOrder());
+    Assert.assertEquals(3, done.getOrder());
+  }
+
+  @Test
+  public void shouldReorderWorkItemsIfMoved() {
+    throw new NotImplementedException("shouldReorderWorkItemsIfMoved");
   }
 
 }

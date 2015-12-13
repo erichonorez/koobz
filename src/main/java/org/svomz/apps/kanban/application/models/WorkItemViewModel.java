@@ -26,11 +26,6 @@ public class WorkItemViewModel {
     return this.workItem.getText();
   }
   
-  @JsonProperty("stageId")
-  public long getStageId() {
-    return this.workItem.getStage().getId();
-  }
-  
   @JsonProperty("order")
   public int getOrder() {
     return this.workItem.getOrder();

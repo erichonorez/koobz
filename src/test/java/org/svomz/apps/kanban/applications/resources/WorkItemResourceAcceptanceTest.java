@@ -124,7 +124,6 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
         .statusCode(200)
         .body("id", allOf(isA(Integer.class), equalTo(workItemId)))
         .body("text", equalTo(editedText))
-        .body("stageId", allOf(isA(Integer.class), equalTo(stageId)))
       .extract().response().jsonPath();
   }
   
@@ -181,7 +180,6 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
         .statusCode(200)
         .body("id", allOf(isA(Integer.class), equalTo(workItemId)))
         .body("text", equalTo(text))
-        .body("stageId", allOf(isA(Integer.class), equalTo(wipStageId)))
       .extract().response().jsonPath();
   }
   

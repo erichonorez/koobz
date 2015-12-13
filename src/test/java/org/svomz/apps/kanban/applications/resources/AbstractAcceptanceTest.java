@@ -75,7 +75,6 @@ public class AbstractAcceptanceTest {
       .statusCode(201)
       .body("id", isA(Integer.class))
       .body("text", equalTo(workItemText))
-      .body("stageId", isA(Integer.class))
     .extract().response().jsonPath();
   }
 

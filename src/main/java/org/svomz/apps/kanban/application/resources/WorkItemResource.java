@@ -47,7 +47,7 @@ public class WorkItemResource {
 
 
   @Inject
-  public WorkItemResource(final BoardRepository boardRepository, final StageRepository stageRepository, final WorkItemRepository workItemRepository) {
+  public WorkItemResource(final BoardRepository boardRepository,final StageRepository stageRepository, final WorkItemRepository workItemRepository) {
     Preconditions.checkNotNull(boardRepository);
     Preconditions.checkNotNull(stageRepository);
     Preconditions.checkNotNull(workItemRepository);

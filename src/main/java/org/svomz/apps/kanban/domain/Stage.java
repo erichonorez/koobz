@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +30,10 @@ public class Stage {
   @Column(name = "name")
   private String name;
 
-  @OneToMany(mappedBy = "stage")
+  @Column(name = "position")
+  private int order;
+
+  @OneToMany(mappedBy = "stage", fetch = FetchType.EAGER)
   private Set<WorkItem> workItems;
   
   @ManyToOne
@@ -121,6 +125,14 @@ public class Stage {
     
     workItem.setOrder(order);
     return this;
+  }
+
+  void setOrder(int order) {
+    this.order = order;
+  }
+
+  public int getOrder() {
+    return this.order;
   }
 
   private static class StageValidation {
