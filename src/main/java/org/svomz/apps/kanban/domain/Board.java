@@ -162,11 +162,11 @@ public class Board {
 
   }
 
-  public Board removeWorkItem(final WorkItem workItem) throws WorkItemNotOnBoardException {
+  public Board removeWorkItem(final WorkItem workItem) throws WorkItemNotInProcessException {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     if (!this.workItems.contains(workItem)) {
-      throw new WorkItemNotOnBoardException();
+      throw new WorkItemNotInProcessException();
     }
 
     workItem.getStage().removeWorkItem(workItem);
@@ -176,12 +176,12 @@ public class Board {
   }
 
   public Board moveWorkItem(final WorkItem workItem, final Stage stage)
-      throws WorkItemNotOnBoardException, StageNotInProcessException {
+    throws WorkItemNotInProcessException, StageNotInProcessException {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
     Preconditions.checkNotNull(stage, "The given stage must not be null");
 
     if (!this.workItems.contains(workItem)) {
-      throw new WorkItemNotOnBoardException();
+      throw new WorkItemNotInProcessException();
     }
     if (!this.stages.contains(stage)) {
       throw new StageNotInProcessException();
@@ -192,11 +192,11 @@ public class Board {
     return this;
   }
   
-  public WorkItem reoderWorkItem(WorkItem workItem, int i) throws WorkItemNotOnBoardException, WorkItemNotInStageException {
+  public WorkItem reoderWorkItem(WorkItem workItem, int i) throws WorkItemNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(workItem);
     
     if (!this.workItems.contains(workItem)) {
-      throw new WorkItemNotOnBoardException();
+      throw new WorkItemNotInProcessException();
     }
     
     workItem.getStage().reoderWorkItem(workItem, i);

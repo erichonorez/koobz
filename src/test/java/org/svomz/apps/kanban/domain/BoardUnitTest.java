@@ -83,7 +83,7 @@ public class BoardUnitTest {
   }
 
   @Test
-  public void testRemovePostIt() throws StageNotInProcessException, WorkItemNotOnBoardException {
+  public void testRemovePostIt() throws StageNotInProcessException, WorkItemNotInProcessException {
     Board board = new Board("todo");
 
     WorkItem postIt = new WorkItem("My first task");
@@ -95,8 +95,8 @@ public class BoardUnitTest {
     Assert.assertTrue(board.getWorkItems().isEmpty());
   }
 
-  @Test(expected = WorkItemNotOnBoardException.class)
-  public void testRemovePostItWithPostItNotOnBoardException() throws WorkItemNotOnBoardException {
+  @Test(expected = WorkItemNotInProcessException.class)
+  public void testRemovePostItWithPostItNotOnBoardException() throws WorkItemNotInProcessException {
     Board board = new Board("todo");
 
     WorkItem postIt = new WorkItem("My first task");
@@ -104,7 +104,7 @@ public class BoardUnitTest {
   }
 
   @Test
-  public void testMovePostIt() throws StageNotInProcessException, WorkItemNotOnBoardException {
+  public void testMovePostIt() throws StageNotInProcessException, WorkItemNotInProcessException {
     Board board = new Board("todo");
 
     WorkItem postIt = new WorkItem("My first task");
@@ -121,9 +121,9 @@ public class BoardUnitTest {
     Assert.assertEquals(columnDone, postIt.getStage());
   }
 
-  @Test(expected = WorkItemNotOnBoardException.class)
-  public void testMovePostItFailWithPostItNotFoundException() throws WorkItemNotOnBoardException,
-      StageNotInProcessException {
+  @Test(expected = WorkItemNotInProcessException.class)
+  public void testMovePostItFailWithPostItNotFoundException() throws WorkItemNotInProcessException,
+                                                                     StageNotInProcessException {
     Board board = new Board("todo");
 
     WorkItem postIt = new WorkItem("My first task");
@@ -139,8 +139,9 @@ public class BoardUnitTest {
   }
   
   @Test(expected = StageNotInProcessException.class)
-  public void testMovePostItFailWithStageNotInProcessException() throws WorkItemNotOnBoardException,
-      StageNotInProcessException {
+  public void testMovePostItFailWithStageNotInProcessException() throws
+                                                                 WorkItemNotInProcessException,
+                                                                 StageNotInProcessException {
     Board board = new Board("todo");
 
     WorkItem postIt = new WorkItem("My first task");
@@ -170,7 +171,8 @@ public class BoardUnitTest {
   }
   
   @Test
-  public void reorderWorkItem_WithExistingWorkItems() throws StageNotInProcessException, WorkItemNotOnBoardException, WorkItemNotInStageException {
+  public void reorderWorkItem_WithExistingWorkItems() throws StageNotInProcessException,
+                                                             WorkItemNotInProcessException, WorkItemNotInStageException {
     Board board = new Board("Project board");
     Stage todoStage = new Stage("Todo");
     board.addStage(todoStage);
@@ -214,7 +216,8 @@ public class BoardUnitTest {
   }
   
   @Test(expected = IllegalArgumentException.class)
-  public void reorderWorkItem_WithNegativePositionThrowsIllegalArgumentException() throws StageNotInProcessException, WorkItemNotOnBoardException, WorkItemNotInStageException {
+  public void reorderWorkItem_WithNegativePositionThrowsIllegalArgumentException() throws StageNotInProcessException,
+                                                                                          WorkItemNotInProcessException, WorkItemNotInStageException {
     Board board = new Board("Project board");
     Stage todoStage = new Stage("Todo");
     board.addStage(todoStage);
@@ -229,7 +232,8 @@ public class BoardUnitTest {
   }
   
   @Test
-  public void reorderWorkItem_WithBigPositionPutTheWorkItemAtTheEnd() throws StageNotInProcessException, WorkItemNotOnBoardException, WorkItemNotInStageException {
+  public void reorderWorkItem_WithBigPositionPutTheWorkItemAtTheEnd() throws StageNotInProcessException,
+                                                                             WorkItemNotInProcessException, WorkItemNotInStageException {
     Board board = new Board("Project board");
     Stage todoStage = new Stage("Todo");
     board.addStage(todoStage);

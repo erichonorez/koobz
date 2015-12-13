@@ -7,13 +7,13 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.svomz.apps.kanban.application.models.ErrorModel;
-import org.svomz.apps.kanban.domain.WorkItemNotOnBoardException;
+import org.svomz.apps.kanban.domain.WorkItemNotInProcessException;
 
 @Provider
-public class WorkItemNotOnBoardMapper implements ExceptionMapper<WorkItemNotOnBoardException> {
+public class WorkItemNotInProcessMapper implements ExceptionMapper<WorkItemNotInProcessException> {
 
   @Override
-  public Response toResponse(WorkItemNotOnBoardException exception) {
+  public Response toResponse(WorkItemNotInProcessException exception) {
     return Response.status(Status.BAD_REQUEST).entity(new ErrorModel(exception.getMessage()))
         .type(MediaType.APPLICATION_JSON).build();
   }

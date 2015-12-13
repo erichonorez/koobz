@@ -30,7 +30,7 @@ import org.svomz.apps.kanban.domain.StageNotInProcessException;
 import org.svomz.apps.kanban.domain.StageRepository;
 import org.svomz.apps.kanban.domain.WorkItem;
 import org.svomz.apps.kanban.domain.WorkItemNotInStageException;
-import org.svomz.apps.kanban.domain.WorkItemNotOnBoardException;
+import org.svomz.apps.kanban.domain.WorkItemNotInProcessException;
 import org.svomz.apps.kanban.domain.WorkItemRepository;
 import org.svomz.apps.kanban.infrastructure.domain.EntityNotFoundException;
 
@@ -92,7 +92,7 @@ public class WorkItemResource {
   @Produces(MediaType.APPLICATION_JSON)
   public WorkItemViewModel update(@PathParam("boardId") final long boardId, @PathParam("id") final long workItemId,
       @NotNull @Valid final WorkItemInputModel workItemInputModel) throws
-                                                                   WorkItemNotOnBoardException,
+                                                                   WorkItemNotInProcessException,
                                                                    StageNotInProcessException,
                                                                    WorkItemNotInStageException,
                                                                    EntityNotFoundException {
@@ -125,7 +125,7 @@ public class WorkItemResource {
   @Path("{id}")
   public void delete(@PathParam("boardId") final long boardId, @PathParam("id") final long workItemId)
 
-    throws WorkItemNotOnBoardException, EntityNotFoundException {
+    throws WorkItemNotInProcessException, EntityNotFoundException {
     Board board = this.boardRepository.findOrThrowException(boardId);
     WorkItem workItem = this.workItemRepository.findOrThrowException(workItemId);
     board.removeWorkItem(workItem);

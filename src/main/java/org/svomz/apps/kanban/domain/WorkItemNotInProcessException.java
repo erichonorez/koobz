@@ -1,6 +1,6 @@
 package org.svomz.apps.kanban.domain;
 
 @SuppressWarnings("serial")
-public class WorkItemNotOnBoardException extends Exception {
+public class WorkItemNotInProcessException extends Exception {
 
 }
