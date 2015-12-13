@@ -6,7 +6,8 @@ angular.module('koobzApp', [
   'ngSanitize',
   'ngRoute',
   'ui.bootstrap',
-  'dndLists'
+  'dndLists',
+  'underscore'
 ])
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider

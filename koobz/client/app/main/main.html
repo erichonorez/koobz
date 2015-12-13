@@ -16,7 +16,7 @@
         </header>
         <div class="stage-content">
           <ul class="workitems" dnd-list="stage.workItems" style="min-height: 650px;" dnd-drop="dropCallback(event, index, item)">
-            <li class="workitem-container" id="workitem-{{workItem.id}}" ng-repeat="workItem in stage.workItems track by workItem.id | orderBy:'order'"
+            <li class="workitem-container" id="workitem-{{workItem.id}}" ng-repeat="workItem in stage.workItems"
                 dnd-draggable="workItem" dnd-selected="selected = workItem" dnd-effect-allowed="move"
                 dnd-moved="stage.workItems.splice($index, 1)" data-workitem-id="{{workItem.id}}">
               <div class="workitem">

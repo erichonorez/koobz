@@ -2,8 +2,17 @@
 
 angular.module('koobzApp')
   .controller('MainCtrl', [
-    '$scope', '$route', '$modal', 'BoardGateway', 'StageGateway', 'WorkItemGateway', 'board'
-        ,function ($scope, $route, $modal, boardGateway, stageGateway, workItemGateway, board) {
+    '$scope', '$route', '$modal', '_', 'BoardGateway', 'StageGateway', 'WorkItemGateway', 'board'
+        ,function ($scope, $route, $modal, _, boardGateway, stageGateway, workItemGateway, board) {
+
+    // before displaying the board sort the workItems by their order property.
+    // This is only done once. This should no be done by angular with orderBy filter
+    // in the ngRepeat directory because that should no be sorted after reorder by dnd.
+    _.each(board.stages, function(stage) {
+        stage.workItems = _.sortBy(stage.workItems, function(workItem) {
+            return workItem.order
+        });
+    });
 
     $scope.board = board;
     $scope.selected = null;
@@ -158,7 +167,7 @@ angular.module('koobzApp')
       var targetStageId = $(event.target).parents('.stage')[0].dataset.stageId;
       item.stageId = targetStageId;
       item.order = index;
-      workItemGateway.update($scope.board.id, item).catch(function(failer) {
+      workItemGateway.update($scope.board.id, item).catch(function(failure) {
       });
       return item;
     };
