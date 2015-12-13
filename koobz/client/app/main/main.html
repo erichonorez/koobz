@@ -20,7 +20,7 @@
                 dnd-draggable="workItem" dnd-selected="selected = workItem" dnd-effect-allowed="move"
                 dnd-moved="stage.workItems.splice($index, 1)" data-workitem-id="{{workItem.id}}">
               <div class="workitem">
-                <h4 class="workitem-title">{{workItem.text}}</h4>
+                <h4 class="workitem-title">{{workItem.title}}</h4>
                 <ul class="workitem-actions pull-right">
                   <li class="workitem-action"><a href="" ng-click="editWorkItem(workItem)"><i class="fa fa-edit"></i></a></li>
                   <li class="workitem-action"><a href="" ng-click="deleteWorkItem(stage, workItem)"><i class="fa fa-times"></i></a></li>

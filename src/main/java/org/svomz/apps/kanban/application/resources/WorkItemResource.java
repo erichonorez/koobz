@@ -80,7 +80,7 @@ public class WorkItemResource {
 
     Board board = this.boardRepository.findOrThrowException(boardId);
     Stage stage = this.stageRepository.findOrThrowException(workItemInputModel.getStageId());
-    WorkItem workItem = new WorkItem(workItemInputModel.getText());
+    WorkItem workItem = new WorkItem(workItemInputModel.getTitle());
     board.addWorkItem(workItem, stage);
 
     return Response.status(Status.CREATED).entity(new WorkItemViewModel(workItem)).build();
@@ -99,8 +99,8 @@ public class WorkItemResource {
     Preconditions.checkNotNull(workItemInputModel);
 
     WorkItem workItem = this.workItemRepository.findOrThrowException(workItemId);
-    if (!workItem.getTitle().equals(workItemInputModel.getText())) {
-      workItem.setTitle(workItemInputModel.getText());
+    if (!workItem.getTitle().equals(workItemInputModel.getTitle())) {
+      workItem.setTitle(workItemInputModel.getTitle());
     }
 
     Stage stage = this.stageRepository.findByBoardIdAndStageId(boardId,

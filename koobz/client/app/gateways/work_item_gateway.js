@@ -14,7 +14,7 @@ angular.module('koobzApp')
 
         persist: function(boardId, workItem) {
             return this.workItemResource.save({boardId: boardId}, {
-                text: workItem.text,
+                title: workItem.title,
                 order: workItem.order,
                 stageId: workItem.stageId
             }).$promise;
@@ -22,7 +22,7 @@ angular.module('koobzApp')
 
         update: function(boardId, workItem) {
             return this.workItemResource.update({boardId: boardId, workItemId: workItem.id}, {
-                text: workItem.text,
+                title: workItem.title,
                 order: workItem.order,
                 stageId: workItem.stageId
             }).$promise;
