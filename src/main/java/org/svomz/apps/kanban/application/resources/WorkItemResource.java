@@ -99,8 +99,8 @@ public class WorkItemResource {
     Preconditions.checkNotNull(workItemInputModel);
 
     WorkItem workItem = this.workItemRepository.findOrThrowException(workItemId);
-    if (!workItem.getText().equals(workItemInputModel.getText())) {
-      workItem.setText(workItemInputModel.getText());
+    if (!workItem.getTitle().equals(workItemInputModel.getText())) {
+      workItem.setTitle(workItemInputModel.getText());
     }
 
     Stage stage = this.stageRepository.findByBoardIdAndStageId(boardId,

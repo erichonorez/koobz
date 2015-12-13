@@ -21,9 +21,9 @@ public class WorkItemViewModel {
     return this.workItem.getId();
   }
   
-  @JsonProperty("text")
-  public String getText() {
-    return this.workItem.getText();
+  @JsonProperty("title")
+  public String getTitle() {
+    return this.workItem.getTitle();
   }
   
   @JsonProperty("order")

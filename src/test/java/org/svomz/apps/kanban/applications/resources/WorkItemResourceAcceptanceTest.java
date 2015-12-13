@@ -55,7 +55,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     .extract()
     .response().jsonPath();
     
-    List<String> texts = json.get("text");
+    List<String> texts = json.get("title");
     Assert.assertThat(texts, allOf(
         not(emptyIterable()),
         containsInAnyOrder(
@@ -123,7 +123,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
       .then()
         .statusCode(200)
         .body("id", allOf(isA(Integer.class), equalTo(workItemId)))
-        .body("text", equalTo(editedText))
+        .body("title", equalTo(editedText))
       .extract().response().jsonPath();
   }
   
@@ -179,7 +179,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
       .then()
         .statusCode(200)
         .body("id", allOf(isA(Integer.class), equalTo(workItemId)))
-        .body("text", equalTo(text))
+        .body("title", equalTo(text))
       .extract().response().jsonPath();
   }
   

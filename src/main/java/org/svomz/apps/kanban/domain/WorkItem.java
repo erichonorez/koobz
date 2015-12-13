@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -20,8 +19,8 @@ public class WorkItem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Column(name = "text")
-  private String text;
+  @Column(name = "title")
+  private String title;
   
   @Column(name = "position")
   private int order;
@@ -34,28 +33,28 @@ public class WorkItem {
    */
   WorkItem() { }
 
-  public WorkItem(final String text) {
-    WorkItemValidation.checkWorkItemText(text);
+  public WorkItem(final String title) {
+    WorkItemValidation.checkTitleText(title);
 
-    this.text = text;
+    this.title = title;
   }
 
   public long getId() {
     return this.id;
   }
 
-  public String getText() {
-    return this.text;
+  public String getTitle() {
+    return this.title;
   }
 
   public Stage getStage() {
     return this.stage;
   }
 
-  public WorkItem setText(String text) {
-    WorkItemValidation.checkWorkItemText(text);
+  public WorkItem setTitle(String title) {
+    WorkItemValidation.checkTitleText(title);
 
-    this.text = text;
+    this.title = title;
     return this;
   }
 
@@ -80,7 +79,7 @@ public class WorkItem {
     private final static String TEXT_IS_NULL_ERR_MSG = "You must give a text to the work item";
     private final static String TEXT_SIZE_ERR_MSG = "The text length must be between %1s and %2s";
 
-    private static void checkWorkItemText(@Nullable final String text) {
+    private static void checkTitleText(@Nullable final String text) {
       Preconditions.checkArgument(text != null, TEXT_IS_NULL_ERR_MSG);
 
       int textLength = text.length();
