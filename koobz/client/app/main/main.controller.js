@@ -2,8 +2,10 @@
 
 angular.module('koobzApp')
   .controller('MainCtrl', [
-    '$scope', '$route', '$modal', '_', 'BoardGateway', 'StageGateway', 'WorkItemGateway', 'board'
-        ,function ($scope, $route, $modal, _, boardGateway, stageGateway, workItemGateway, board) {
+     '$window', '$scope', '$route', '$modal', '_', 'BoardGateway', 'StageGateway', 'WorkItemGateway', 'board'
+        ,function ($window, $scope, $route, $modal, _, boardGateway, stageGateway, workItemGateway, board) {
+
+    $window.document.title = board.name;
 
     // before displaying the board sort the workItems by their order property.
     // This is only done once. This should no be done by angular with orderBy filter
@@ -13,8 +15,8 @@ angular.module('koobzApp')
             return workItem.order
         });
     });
-
     $scope.board = board;
+
     $scope.selected = null;
     $scope.moving = null;
     $scope.movingIndex = null;

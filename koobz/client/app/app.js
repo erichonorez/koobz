@@ -7,11 +7,12 @@ angular.module('koobzApp', [
   'ngRoute',
   'ui.bootstrap',
   'dndLists',
-  'underscore'
+  'underscore',
+  'sluggerizer'
 ])
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider
-      .when('/boards/:boardId', {
+      .when('/boards/:boardId/:boardName', {
         templateUrl: 'app/main/main.html',
         controller: 'MainCtrl',
             resolve: {
