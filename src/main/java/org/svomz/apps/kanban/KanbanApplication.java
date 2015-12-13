@@ -16,8 +16,8 @@ import org.svomz.apps.kanban.infrastructure.domain.KanbanRepositoryFactoryBean;
 @EnableJpaRepositories(repositoryFactoryBeanClass = KanbanRepositoryFactoryBean.class, basePackages = "org.svomz.apps.kanban.domain")
 public class KanbanApplication {
 
-  public static void main(String... args) {
-    SpringApplication.run(KanbanApplication.class, args);
-  }
+    public static void main(String... args) {
+      SpringApplication.run(KanbanApplication.class, args);
+    }
 
 }

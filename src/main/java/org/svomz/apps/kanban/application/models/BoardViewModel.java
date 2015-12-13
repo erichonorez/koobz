@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.svomz.apps.kanban.domain.Board;
-import org.svomz.apps.kanban.domain.Stage;
-import org.svomz.apps.kanban.domain.WorkItem;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -38,14 +36,14 @@ public class BoardViewModel {
   
   @JsonProperty("stages")
   @JsonView(FullView.class)
-  public List<Stage> getStages() {
-    return new ArrayList<>(this.board.getStages());
-  }
-  
-  @JsonProperty("workItems")
-  @JsonView(FullView.class)
-  public List<WorkItem> getWorkItems() {
-    return new ArrayList<>(this.board.getWorkItems());
+  public List<StageViewModel> getStages() {
+    ArrayList<StageViewModel> models = new ArrayList<>();
+
+    this.board.getStages().forEach(stage -> {
+      models.add(new StageViewModel(stage));
+    });
+
+    return models;
   }
   
   /**

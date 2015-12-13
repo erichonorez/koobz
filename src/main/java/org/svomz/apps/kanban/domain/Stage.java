@@ -61,7 +61,7 @@ public class Stage {
     this.name = name;
   }
 
-  Set<WorkItem> getWorkItems() {
+  public Set<WorkItem> getWorkItems() {
     return Collections.unmodifiableSet(this.workItems);
   }
 

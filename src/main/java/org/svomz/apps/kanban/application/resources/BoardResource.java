@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -88,8 +89,8 @@ public class BoardResource {
     Preconditions.checkNotNull(boardInputModel);
     
     Board board = this.boardRepository.findOrThrowException(boardId);
-
     board.setName(boardInputModel.getName());
+
     return new BoardViewModel(board);
   }
 

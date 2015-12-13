@@ -25,13 +25,12 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   public void shouldSuccessfullyCreateNewBoard() {
     BoardInputModel board = new BoardInputModel("Test1");
 
-    System.out.println(given()
+    given()
       .contentType(ContentType.JSON)
       .accept(ContentType.JSON)
       .body(board)
     .when()
-      .post(this.boardsUrl())
-    .asString());
+      .post(this.boardsUrl());
   }
 
   /**
