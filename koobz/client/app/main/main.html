@@ -5,7 +5,7 @@
   <div class="row board">
 
     <div class="stage-container">
-      <div class="col-md-{{12/board.stages.length}} stage" id="stage-{{stage.id}}" ng-repeat="stage in board.stages"
+      <div class="col-md-{{12/board.stages.length}} stage" id="stage-{{stage.id}}" ng-repeat="stage in board.stages | orderBy:'order'"
            data-stage-id="{{stage.id}}">
         <header class="stage-header">
           <h3 class="stage-title">{{stage.name}}</h3>
@@ -15,18 +15,18 @@
           <div class="clear">&nbsp;</div>
         </header>
         <div class="stage-content">
-          <ul class="workitems" dnd-list="stage.workitems" style="min-height: 650px;" dnd-drop="dropCallback(event, index, item)">
-            <li class="workitem-container" id="workitem-{{workitem.id}}" ng-repeat="workitem in stage.workitems"
-                dnd-draggable="workitem" dnd-selected="selected = workitem" dnd-effect-allowed="move"
-                dnd-moved="stage.workitems.splice($index, 1)" data-workitem-id="{{workitem.id}}">
+          <ul class="workitems" dnd-list="stage.workItems" style="min-height: 650px;" dnd-drop="dropCallback(event, index, item)">
+            <li class="workitem-container" id="workitem-{{workItem.id}}" ng-repeat="workItem in stage.workItems track by workItem.id | orderBy:'order'"
+                dnd-draggable="workItem" dnd-selected="selected = workItem" dnd-effect-allowed="move"
+                dnd-moved="stage.workItems.splice($index, 1)" data-workitem-id="{{workItem.id}}">
               <div class="workitem">
-                <h4 class="workitem-title">{{workitem.title}}</h4>
+                <h4 class="workitem-title">{{workItem.text}}</h4>
                 <ul class="workitem-actions pull-right">
-                  <li class="workitem-action"><a href="" ng-click="editWorkItem(workitem)"><i class="fa fa-edit"></i></a></li>
-                  <li class="workitem-action"><a href="" ng-click="deleteWorkItem(workitem)"><i class="fa fa-times"></i></a></li>
+                  <li class="workitem-action"><a href="" ng-click="editWorkItem(workItem)"><i class="fa fa-edit"></i></a></li>
+                  <li class="workitem-action"><a href="" ng-click="deleteWorkItem(stage, workItem)"><i class="fa fa-times"></i></a></li>
                 </ul>
                 <div class="break">&nbsp;</div>
-                <p ng-show="workitem.description != ''">{{workitem.description}}</p>
+                <p ng-show="workitem.description != ''">{{workItem.description}}</p>
               </div>
             </li>
           </ul>

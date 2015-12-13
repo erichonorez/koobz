@@ -12,14 +12,19 @@ angular.module('koobzApp', [
     $routeProvider
       .when('/boards/:boardId', {
         templateUrl: 'app/main/main.html',
-        controller: 'MainCtrl'
+        controller: 'MainCtrl',
+            resolve: {
+                board: function($route, BoardGateway) {
+                    return BoardGateway.find($route.current.params.boardId);
+                }
+            }
       })
       .when('/', {
         templateUrl: 'app/home/home.html',
         controller: 'HomeCtrl'
       })
       .otherwise({
-        redirectTo: '/boards/1'
+        redirectTo: '/'
       });
 
     $locationProvider.html5Mode(true);

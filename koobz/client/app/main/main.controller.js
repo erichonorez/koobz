@@ -1,21 +1,17 @@
 'use strict';
 
 angular.module('koobzApp')
-  .controller('MainCtrl', ['$scope', '$modal', 'boardService', function ($scope, $modal, boardService) {
+  .controller('MainCtrl', [
+    '$scope', '$route', '$modal', 'BoardGateway', 'StageGateway', 'WorkItemGateway', 'board'
+        ,function ($scope, $route, $modal, boardGateway, stageGateway, workItemGateway, board) {
 
-    // var BoardEndpoint = $resource('/boards/:boardId', { boardId: '@boardId' } );
-    // var WorkItemEndPoint = $resource('/boards/:boardId/workitems/:workItemId', { boardId: '@boardId', workItemId: '@workItemId' });
-    // var StageEndPoint = $resource('/boards/:boardId/stages/:stageId', { boardId: '@boardId', stageId: '@stageId' });
-
+    $scope.board = board;
     $scope.selected = null;
+    $scope.moving = null;
+    $scope.movingIndex = null;
 
-    // BoardEndpoint.get({boardId: 1}).$promise.then(function(board) {
-    //   $scope.board = board;
-    // });
 
-    $scope.board = boardService.getCurrentBoard();
-
-    $scope.deleteWorkItem = function (workItem) {
+    $scope.deleteWorkItem = function (stage, workItem) {
       var modalInstance = $modal.open({
         templateUrl: 'delete_workitem.html',
         controller: 'DeleteWorkItemCtrl',
@@ -26,7 +22,16 @@ angular.module('koobzApp')
         }
       });
       modalInstance.result.then(function() {
-        $scope.board.removeWorkItem(workItem);
+        workItemGateway.removeWorkItem($scope.board.id, workItem).then(function(result) {
+            var elementIndex;
+            stage.workItems.forEach(function(currentWorkItem, stageIndex) {
+                if (currentWorkItem.id == workItem.id) {
+                    elementIndex = stageIndex;
+                }
+            });
+            console.log(elementIndex);
+            stage.workItems.splice(elementIndex, 1);
+        });
       });
     };
 
@@ -41,7 +46,9 @@ angular.module('koobzApp')
         }
       });
       modalInstance.result.then(function() {
-        // update board
+        boardGateway.update($scope.board).catch(function(failure) {
+            console.log(failure);
+        });
       });
     }
 
@@ -62,7 +69,8 @@ angular.module('koobzApp')
         }
       });
       modalInstance.result.then(function(editedWorkItem) {
-        boardService.addWorkItem(workItem);
+        workItemGateway.update($scope.board.id, editedWorkItem).catch(function(failure) {
+        });
       });
     };
 
@@ -77,7 +85,9 @@ angular.module('koobzApp')
         }
       });
       modalInstance.result.then(function(stage) {
-        //boardService.updateStage(stage);
+        stageGateway.update($scope.board.id, stage).catch(function(failure) {
+            console.log(failure);
+        })
       });
     };
 
@@ -90,13 +100,18 @@ angular.module('koobzApp')
             return { 
               id: null,
               name: null,
-              workitems: []
+              workItems: []
             };
           }
         }
       });
       modalInstance.result.then(function(stage) {
-        $scope.board.stages.push(stage);
+        stageGateway.persist($scope.board.id, stage).then(function(result) {
+            stage.id = result.id;
+            $scope.board.stages.push(stage)
+        }, function(failure) {
+            console.log(failure);
+        });
       });
     }
 
@@ -108,8 +123,8 @@ angular.module('koobzApp')
           workItem: function () {
             var workItem = {
               id: null,
-              title: null,
-              description: null
+              text: null,
+              stageId: null
             };
             return workItem;
           },
@@ -122,14 +137,29 @@ angular.module('koobzApp')
         }
       });
       modalInstance.result.then(function(workItem) {
-        //boardService.updateWorkItem(workItem);
-        $scope.board.stages[0].workitems.push(workItem);
+      var firstStageIndex = 0;
+      $scope.board.stages.forEach(function(element, index) {
+        if (element.order < $scope.board.stages[firstStageIndex].order) {
+            firstStageIndex = index;
+        }
+      });
+        var stage = $scope.board.stages[firstStageIndex];
+        workItem.stageId = stage.id;
+        workItemGateway.persist($scope.board.id, workItem).then(function(result) {
+            workItem.id = result.id;
+            stage.workItems.push(workItem)
+        }, function(failure) {
+            console.log(failure);
+        });
       });
     };
 
     $scope.dropCallback = function(event, index, item) {
-      //console.log(event)
-      //console.log(index, item, $(event.path[0]).parents('.stage')[0].dataset.stageId);
+      var targetStageId = $(event.target).parents('.stage')[0].dataset.stageId;
+      item.stageId = targetStageId;
+      item.order = index;
+      workItemGateway.update($scope.board.id, item).catch(function(failer) {
+      });
       return item;
     };
 

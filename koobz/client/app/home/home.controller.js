@@ -1,13 +1,14 @@
 'use strict';
 
 angular.module('koobzApp')
-  .controller('HomeCtrl', ['$scope', '$location', 'boardService', function($scope, $location, boardService) {
+  .controller('HomeCtrl', ['$scope', '$location', 'BoardGateway', function($scope, $location, boardGateway) {
     
     $scope.name = null;
 
     $scope.create = function() {
-      boardService.newBoard($scope.name);
-      $location.path('/boards/1');
+      boardGateway.persist($scope.name).then(function(result) {
+        $location.path('/boards/' + result.id);
+      });
     };
 
   }]);

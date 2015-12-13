@@ -3,10 +3,10 @@
     <h1>koobz</h1>
   </div>
   <div class="row">
-    <form class="form-inline">
+    <form class="form-inline" name="newBoardForm" ng-submit="create()">
       <label class="sr-only" for="boardName">Name of your board:</label>
-      <input class="form-control" type="text" name="boardName" required placeholder="Give a name to your board" ng-model="name"/>
-      <button type="submit" class="btn btn-primary" ng-click="create()">Create</button>
+      <input class="form-control" type="text" name="boardName" ng-required="true" placeholder="Give a name to your board" ng-model="name"/>
+      <button type="submit" class="btn btn-primary">Create</button>
     </form>
   </div>
 </div>  
