@@ -134,7 +134,7 @@ angular.module('koobzApp')
           workItem: function () {
             var workItem = {
               id: null,
-              text: null,
+              title: null,
               stageId: null
             };
             return workItem;
