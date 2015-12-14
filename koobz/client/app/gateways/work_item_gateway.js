@@ -16,7 +16,8 @@ angular.module('koobzApp')
             return this.workItemResource.save({boardId: boardId}, {
                 title: workItem.title,
                 order: workItem.order,
-                stageId: workItem.stageId
+                stageId: workItem.stageId,
+                description: workItem.description
             }).$promise;
         },
 
@@ -24,7 +25,8 @@ angular.module('koobzApp')
             return this.workItemResource.update({boardId: boardId, workItemId: workItem.id}, {
                 title: workItem.title,
                 order: workItem.order,
-                stageId: workItem.stageId
+                stageId: workItem.stageId,
+                description: workItem.description
             }).$promise;
         }
 

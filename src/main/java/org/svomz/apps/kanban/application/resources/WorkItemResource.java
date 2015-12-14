@@ -80,7 +80,8 @@ public class WorkItemResource {
 
     Board board = this.boardRepository.findOrThrowException(boardId);
     Stage stage = this.stageRepository.findOrThrowException(workItemInputModel.getStageId());
-    WorkItem workItem = new WorkItem(workItemInputModel.getTitle());
+    WorkItem workItem = new WorkItem(workItemInputModel.getTitle())
+      .setDescription(workItemInputModel.getDescription());
     board.addWorkItem(workItem, stage);
 
     return Response.status(Status.CREATED).entity(new WorkItemViewModel(workItem)).build();
@@ -108,14 +109,20 @@ public class WorkItemResource {
     if (stage == null) {
       throw new EntityNotFoundException();
     }
-
+    
     Board board = this.boardRepository.findOrThrowException(boardId);
     if (stage.getId() != workItem.getStage().getId()) {
       board.moveWorkItem(workItem, stage);
     }
-    
-    if (workItemInputModel.getOrder() != null && workItem.getOrder() != workItemInputModel.getOrder()) {
-      board.reoderWorkItem(workItem, workItemInputModel.getOrder());
+
+    Integer order = workItemInputModel.getOrder();
+    if (order != null && workItem.getOrder() != order) {
+      board.reoderWorkItem(workItem, order);
+    }
+
+    String description = workItemInputModel.getDescription();
+    if (description != null && !description.equals(workItem.getDescription())) {
+      workItem.setDescription(description);
     }
     
     return new WorkItemViewModel(workItem);

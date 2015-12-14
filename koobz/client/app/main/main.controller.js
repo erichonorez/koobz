@@ -63,12 +63,13 @@ angular.module('koobzApp')
       });
     }
 
-    $scope.editWorkItem = function (workItem) {
+    $scope.editWorkItem = function (stage, workItem) {
       var modalInstance = $modal.open({
         templateUrl: 'add_workitem.html',
         controller: 'AddWorkItemCtrl',
         resolve: {
           workItem: function() {
+            workItem.stageId = stage.id;
             return workItem;
           },
           title: function() {
@@ -135,7 +136,8 @@ angular.module('koobzApp')
             var workItem = {
               id: null,
               title: null,
-              stageId: null
+              stageId: null,
+              description: null
             };
             return workItem;
           },

@@ -107,7 +107,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
     int boardId = this.createBoard("Test 1").getInt("id");
     JsonPath stageJson = this.createStage(boardId, "Stage 1");
     int stageId = stageJson.getInt("id");
-    this.createWorkItem(boardId, stageId, "WorkItem 1");
+    this.createWorkItem(boardId, stageId, "WorkItem 1", StringUtils.EMPTY);
     
     given()
       .contentType(ContentType.JSON)

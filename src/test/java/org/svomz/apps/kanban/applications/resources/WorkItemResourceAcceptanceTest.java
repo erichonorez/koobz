@@ -41,9 +41,9 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     String firstWorkItemText = "My first work item";
-    this.createWorkItem(boardId, stageId, firstWorkItemText);
+    this.createWorkItem(boardId, stageId, firstWorkItemText, StringUtils.EMPTY);
     String secondWorkItemText = "My second work item";
-    this.createWorkItem(boardId, stageId, secondWorkItemText);  
+    this.createWorkItem(boardId, stageId, secondWorkItemText, StringUtils.EMPTY);
     
     JsonPath json = given()
       .contentType(ContentType.JSON)
@@ -94,7 +94,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     int boardId = jsonBoard.getInt("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
-    this.createWorkItem(boardId, stageId, "My first work item");
+    this.createWorkItem(boardId, stageId, "My first work item", "a description");
   }
   
   /**
@@ -110,10 +110,11 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     String text = "My first work item";
-    int workItemId = this.createWorkItem(boardId, stageId, text).getInt("id");
+    int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
     
     String editedText = "My first edited work item";
-    WorkItemInputModel updateRequest = new WorkItemInputModel(editedText, stageId, 0);
+    String editedDescription = "a description";
+    WorkItemInputModel updateRequest = new WorkItemInputModel(editedText, stageId, 0, editedDescription);
     given()
         .contentType(ContentType.JSON)
         .accept(ContentType.JSON)
@@ -124,6 +125,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
         .statusCode(200)
         .body("id", allOf(isA(Integer.class), equalTo(workItemId)))
         .body("title", equalTo(editedText))
+
       .extract().response().jsonPath();
   }
   
@@ -140,7 +142,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     String text = "My first work item";
-    int workItemId = this.createWorkItem(boardId, stageId, text).getInt("id");
+    int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
     
     given()
       .contentType(ContentType.JSON)
@@ -165,11 +167,11 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     String text = "My first work item";
-    int workItemId = this.createWorkItem(boardId, stageId, text).getInt("id");
+    int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
     JsonPath jsonStageWIP = this.createStage(boardId, "Work in progress");
     
     int wipStageId = jsonStageWIP.getInt("id");
-    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", wipStageId, null);
+    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", wipStageId, null, null);
     given()
         .contentType(ContentType.JSON)
         .accept(ContentType.JSON)
@@ -200,9 +202,9 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStageBoard2 = this.createStage(boardId2, "Test stage in board 2");
     int stageId = jsonStage.getInt("id");
     String text = "My first work item";
-    int workItemId = this.createWorkItem(boardId, stageId, text).getInt("id");
+    int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
 
-    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", jsonStageBoard2.getInt("id"), null);
+    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", jsonStageBoard2.getInt("id"), null, null);
     given()
         .contentType(ContentType.JSON)
         .accept(ContentType.JSON)
@@ -226,7 +228,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     int boardId = jsonBoard.getInt("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
-    WorkItemInputModel workItem = new WorkItemInputModel(StringUtils.EMPTY, stageId, null);
+    WorkItemInputModel workItem = new WorkItemInputModel(StringUtils.EMPTY, stageId, null, null);
     
     given()
       .contentType(ContentType.JSON)
@@ -237,5 +239,5 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     .then()
       .statusCode(400);
   }
-  
+
 }

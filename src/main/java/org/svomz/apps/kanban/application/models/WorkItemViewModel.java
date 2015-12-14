@@ -30,4 +30,9 @@ public class WorkItemViewModel {
   public int getOrder() {
     return this.workItem.getOrder();
   }
+
+  @JsonProperty("description")
+  public String getDescription() {
+    return this.workItem.getDescription();
+  }
 }

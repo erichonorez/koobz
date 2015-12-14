@@ -13,33 +13,44 @@ public class WorkItemInputModel {
   @NotNull
   @Size(min=1, max=255)
   private final String title;
-  
-  private final long stageId;
+
+  @NotNull
+  private final Long stageId;
 
   private Integer order;
+
+  @Size(max = 2048)
+  private String description;
 
   @JsonCreator
   public WorkItemInputModel(@JsonProperty("title") final String title,
       @JsonProperty("stageId") final long stageId,
-      @Nullable @JsonProperty("order") final Integer order) {
+      @Nullable @JsonProperty("order") final Integer order,
+      @Nullable @JsonProperty("description") final String description) {
     Preconditions.checkNotNull(title);
 
     this.title = title;
     this.stageId = stageId;
     this.order = order;
+    this.description = description;
   }
 
   public String getTitle() {
     return this.title;
   }
 
-  public long getStageId() {
+  public Long getStageId() {
     return this.stageId;
   }
   
   @Nullable
   public Integer getOrder() {
     return this.order;
+  }
+
+  @Nullable
+  public String getDescription() {
+    return this.description;
   }
 
 }

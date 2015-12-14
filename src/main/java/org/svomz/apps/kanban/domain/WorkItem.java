@@ -21,6 +21,9 @@ public class WorkItem {
 
   @Column(name = "title")
   private String title;
+
+  @Column(name = "description")
+  private String description;
   
   @Column(name = "position")
   private int order;
@@ -34,7 +37,7 @@ public class WorkItem {
   WorkItem() { }
 
   public WorkItem(final String title) {
-    WorkItemValidation.checkTitleText(title);
+    WorkItemValidation.checkTitle(title);
 
     this.title = title;
   }
@@ -51,10 +54,22 @@ public class WorkItem {
     return this.stage;
   }
 
+  @Nullable
+  public String getDescription() {
+    return this.description;
+  }
+
   public WorkItem setTitle(String title) {
-    WorkItemValidation.checkTitleText(title);
+    WorkItemValidation.checkTitle(title);
 
     this.title = title;
+    return this;
+  }
+
+  public WorkItem setDescription(@Nullable String description) {
+    WorkItemValidation.checkDescription(description);
+
+    this.description = description;
     return this;
   }
 
@@ -62,31 +77,43 @@ public class WorkItem {
     this.stage = stage;
     return this;
   }
-  
+
   WorkItem setOrder(final int order) {
     this.order = order;
     return this;
   }
-  
+
+  @Nullable
   public int getOrder() {
     return this.order;
   }
 
   private static class WorkItemValidation {
 
-    private final static int TEXT_MIN_SIZE = 1;
-    private final static int TEXT_MAX_SIZE = 255;
-    private final static String TEXT_IS_NULL_ERR_MSG = "You must give a text to the work item";
-    private final static String TEXT_SIZE_ERR_MSG = "The text length must be between %1s and %2s";
+    private final static int TITLE_MIN_SIZE = 1;
+    private final static int TITLE_MAX_SIZE = 255;
+    private final static int DESCRIPTION_MAX_SIZE = 2048;
+    
+    private final static String TITLE_IS_NULL_ERR_MSG = "You must give a text to the work item";
+    private final static String TITLE_SIZE_ERR_MSG = "The title length must be between %1s and %2s";
+    private static final String DESCRIPTION_SIZE_ERR_MESG = "The description length must be lower or equal to %1s";
 
-    private static void checkTitleText(@Nullable final String text) {
-      Preconditions.checkArgument(text != null, TEXT_IS_NULL_ERR_MSG);
+    private static void checkTitle(@Nullable final String title) {
+      Preconditions.checkArgument(title != null, TITLE_IS_NULL_ERR_MSG);
 
-      int textLength = text.length();
-      Preconditions.checkArgument(textLength >= 1 && textLength <= 255,
-          String.format(TEXT_SIZE_ERR_MSG, TEXT_MIN_SIZE, TEXT_MAX_SIZE));
+      int titleLength = title.length();
+      Preconditions.checkArgument(titleLength >= TITLE_MIN_SIZE && titleLength <= TITLE_MAX_SIZE,
+          String.format(TITLE_SIZE_ERR_MSG, TITLE_MIN_SIZE, TITLE_MAX_SIZE));
     }
 
+    public static void checkDescription(@Nullable String description) {
+      if (description == null) {
+        return;
+      }
+
+      Preconditions.checkArgument(description.length() <= 2048,
+        String.format(DESCRIPTION_SIZE_ERR_MESG, DESCRIPTION_MAX_SIZE));
+    }
   }
   
 }

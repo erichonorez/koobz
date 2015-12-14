@@ -62,8 +62,9 @@ public class AbstractAcceptanceTest {
     return boardJsonPath;
   }
 
-  protected JsonPath createWorkItem(final int boardId, final int stageId, final String workItemTitle) {
-    WorkItemInputModel workItem = new WorkItemInputModel(workItemTitle, stageId, 0);
+  protected JsonPath createWorkItem(final int boardId, final int stageId,
+    final String workItemTitle, String workItemDescription) {
+    WorkItemInputModel workItem = new WorkItemInputModel(workItemTitle, stageId, 0, workItemDescription);
     
     return given()
       .contentType(ContentType.JSON)
@@ -75,6 +76,7 @@ public class AbstractAcceptanceTest {
       .statusCode(201)
       .body("id", isA(Integer.class))
       .body("title", equalTo(workItemTitle))
+      .body("description", equalTo(workItemDescription))
     .extract().response().jsonPath();
   }
 
