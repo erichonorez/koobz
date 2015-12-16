@@ -75,12 +75,12 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     BoardInputModel board = new BoardInputModel("Test1");
     JsonPath response = this.createBoard(board);
     
-    int boardId = response.get("id");
+    String boardId = response.get("id");
     given()
       .contentType(ContentType.JSON)
       .accept(ContentType.JSON)
     .when()
-      .get(this.baseUrl() + "/boards/" + String.valueOf(boardId))
+      .get(this.baseUrl() + "/boards/" + boardId)
     .then()
       .statusCode(200)
       .body("id", equalTo(boardId))
@@ -109,7 +109,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     .then()
       .statusCode(201)
       .body("name", equalTo(board.getName()))
-      .body("id", isA(Integer.class))
+      .body("id", isA(String.class))
       .body("workItems", nullValue())
       .body("stages", nullValue())
     .extract().jsonPath();
@@ -123,7 +123,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testPutBoard() {
     BoardInputModel board1 = new BoardInputModel("Test1");
-    int boardId = this.createBoard(board1).get("id");
+    String boardId = this.createBoard(board1).get("id");
     
     BoardInputModel updatedBoard1 = new BoardInputModel("Test2");
     
@@ -151,12 +151,12 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void shouldSucessfullyDeleteAnEmptyBoard() {
     BoardInputModel board1 = new BoardInputModel("Test1");
-    int boardId = this.createBoard(board1).get("id");
+    String boardId = this.createBoard(board1).get("id");
     
     given()
       .accept(ContentType.JSON)
     .when()
-      .delete(this.baseUrl() + "/boards/" + String.valueOf(boardId))
+      .delete(this.baseUrl() + "/boards/" + boardId)
     .then()
       .statusCode(204)
       .body(equalTo(StringUtils.EMPTY));
@@ -164,7 +164,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     given()
       .accept(ContentType.JSON)
       .when()
-        .get(this.baseUrl() + "/boards/" + String.valueOf(boardId))
+        .get(this.baseUrl() + "/boards/" + boardId)
       .then()
         .statusCode(404);
   }

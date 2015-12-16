@@ -31,7 +31,7 @@ public class AbstractAcceptanceTest {
     RestAssured.reset();
   }
 
-  protected JsonPath createStage(int boardId, final String stageName) {
+  protected JsonPath createStage(String boardId, final String stageName) {
     StageInputModel stage = new StageInputModel(stageName);
     return given()
       .contentType(ContentType.JSON)
@@ -62,7 +62,7 @@ public class AbstractAcceptanceTest {
     return boardJsonPath;
   }
 
-  protected JsonPath createWorkItem(final int boardId, final int stageId,
+  protected JsonPath createWorkItem(final String boardId, final int stageId,
     final String workItemTitle, String workItemDescription) {
     WorkItemInputModel workItem = new WorkItemInputModel(workItemTitle, stageId, 0, workItemDescription);
     

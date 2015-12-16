@@ -59,7 +59,7 @@ public class BoardResource {
   @Path("{boardId}")
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.FullView.class)
-  public BoardViewModel getBoard(@PathParam("boardId") final long boardId)
+  public BoardViewModel getBoard(@PathParam("boardId") final String boardId)
     throws EntityNotFoundException {
     Board board = this.boardRepository.findOrThrowException(boardId);
 
@@ -85,7 +85,7 @@ public class BoardResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.SimpleView.class)
-  public BoardViewModel updateBoard(@PathParam("boardId") final long boardId,
+  public BoardViewModel updateBoard(@PathParam("boardId") final String boardId,
       @NotNull @Valid final BoardInputModel boardInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(boardInputModel);
     
@@ -97,7 +97,7 @@ public class BoardResource {
 
   @DELETE
   @Path("{boardId}")
-  public void deleteBoard(@PathParam("boardId") final long boardId)
+  public void deleteBoard(@PathParam("boardId") final String boardId)
     throws EntityNotFoundException {
     Board persistedBoard = this.boardRepository.findOrThrowException(boardId);
 

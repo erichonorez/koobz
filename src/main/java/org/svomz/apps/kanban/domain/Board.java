@@ -3,6 +3,7 @@ package org.svomz.apps.kanban.domain;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
@@ -29,8 +30,8 @@ import com.google.common.base.Preconditions;
 public class Board {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  //@GeneratedValue(strategy = GenerationType.IDENTITY)
+  private String id;
 
   @Column(name = "name")
   private String name;
@@ -43,6 +44,7 @@ public class Board {
   private Set<Stage> stages;
 
   Board() {
+    this.id = UUID.randomUUID().toString();
     this.workItems = new HashSet<WorkItem>();
     this.stages = new HashSet<Stage>();
   }
@@ -54,7 +56,7 @@ public class Board {
     this.name = name;
   }
 
-  public long getId() {
+  public String getId() {
     return this.id;
   }
 

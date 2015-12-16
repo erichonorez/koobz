@@ -37,7 +37,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testGetAllWorkItemsOfABoard() throws JsonParseException, JsonMappingException, IOException {
     JsonPath jsonBoard = this.createBoard("Test board");
-    int boardId = jsonBoard.getInt("id");
+    String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     String firstWorkItemText = "My first work item";
@@ -91,7 +91,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testCreateWorkItem() {
     JsonPath jsonBoard = this.createBoard("Test board");
-    int boardId = jsonBoard.getInt("id");
+    String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     this.createWorkItem(boardId, stageId, "My first work item", "a description");
@@ -106,7 +106,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testUpdateWorkItem() {
     JsonPath jsonBoard = this.createBoard("Test board");
-    int boardId = jsonBoard.getInt("id");
+    String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     String text = "My first work item";
@@ -138,7 +138,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testDeleteWorkItem() {
     JsonPath jsonBoard = this.createBoard("Test board");
-    int boardId = jsonBoard.getInt("id");
+    String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     String text = "My first work item";
@@ -163,7 +163,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testUpdateStageOfAWorkItem() {
     JsonPath jsonBoard = this.createBoard("Test board");
-    int boardId = jsonBoard.getInt("id");
+    String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     String text = "My first work item";
@@ -195,9 +195,9 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testInvalidMoveOfAWorkItem() {
     JsonPath jsonBoard = this.createBoard("Test board");
-    int boardId = jsonBoard.getInt("id");
+    String boardId = jsonBoard.get("id");
     JsonPath jsonBoard2 = this.createBoard("Test board 2");
-    int boardId2 = jsonBoard2.getInt("id");
+    String boardId2 = jsonBoard2.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     JsonPath jsonStageBoard2 = this.createStage(boardId2, "Test stage in board 2");
     int stageId = jsonStage.getInt("id");
@@ -225,7 +225,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testCreateInvalidWorkItem() {
     JsonPath jsonBoard = this.createBoard("Test board");
-    int boardId = jsonBoard.getInt("id");
+    String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     int stageId = jsonStage.getInt("id");
     WorkItemInputModel workItem = new WorkItemInputModel(StringUtils.EMPTY, stageId, null, null);

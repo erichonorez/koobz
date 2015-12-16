@@ -59,7 +59,7 @@ public class WorkItemResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<WorkItemViewModel> getWorkItems(@PathParam("boardId") final long boardId)
+  public List<WorkItemViewModel> getWorkItems(@PathParam("boardId") final String boardId)
     throws EntityNotFoundException {
     Set<WorkItem> workItems = this.boardRepository.findOrThrowException(boardId).getWorkItems();
     
@@ -73,7 +73,7 @@ public class WorkItemResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response create(@PathParam("boardId") final long boardId, @NotNull @Valid final WorkItemInputModel workItemInputModel)
+  public Response create(@PathParam("boardId") final String boardId, @NotNull @Valid final WorkItemInputModel workItemInputModel)
 
     throws StageNotInProcessException, EntityNotFoundException {
     Preconditions.checkNotNull(workItemInputModel);
@@ -91,7 +91,7 @@ public class WorkItemResource {
   @Path("{id}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public WorkItemViewModel update(@PathParam("boardId") final long boardId, @PathParam("id") final long workItemId,
+  public WorkItemViewModel update(@PathParam("boardId") final String boardId, @PathParam("id") final long workItemId,
       @NotNull @Valid final WorkItemInputModel workItemInputModel) throws
                                                                    WorkItemNotInProcessException,
                                                                    StageNotInProcessException,
@@ -109,7 +109,7 @@ public class WorkItemResource {
     if (stage == null) {
       throw new EntityNotFoundException();
     }
-    
+
     Board board = this.boardRepository.findOrThrowException(boardId);
     if (stage.getId() != workItem.getStage().getId()) {
       board.moveWorkItem(workItem, stage);
@@ -130,7 +130,7 @@ public class WorkItemResource {
 
   @DELETE
   @Path("{id}")
-  public void delete(@PathParam("boardId") final long boardId, @PathParam("id") final long workItemId)
+  public void delete(@PathParam("boardId") final String boardId, @PathParam("id") final long workItemId)
 
     throws WorkItemNotInProcessException, EntityNotFoundException {
     Board board = this.boardRepository.findOrThrowException(boardId);

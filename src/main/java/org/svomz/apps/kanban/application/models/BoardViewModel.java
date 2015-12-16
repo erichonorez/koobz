@@ -24,7 +24,7 @@ public class BoardViewModel {
   
   @JsonProperty("id")
   @JsonView(SimpleView.class)
-  public long getId() {
+  public String getId() {
     return this.board.getId();
   }
   

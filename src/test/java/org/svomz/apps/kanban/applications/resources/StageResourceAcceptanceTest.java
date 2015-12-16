@@ -25,7 +25,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
     String boardName = "Test1";
     JsonPath boardJsonPath = createBoard(boardName);
     
-    int boardId = boardJsonPath.getInt("id");
+    String boardId = boardJsonPath.get("id");
     createStage(boardId, "To do");
   }
   
@@ -37,7 +37,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
    */
   @Test
   public void testGetAllStages() {
-    int boardId = this.createBoard("Test 1").getInt("id");
+    String boardId = this.createBoard("Test 1").get("id");
     this.createStage(boardId, "Stage 1");
     
     given()
@@ -58,7 +58,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
    */
   @Test
   public void testUpdateStage() {
-    int boardId = this.createBoard("Test 1").getInt("id");
+    String boardId = this.createBoard("Test 1").get("id");
     JsonPath json = this.createStage(boardId, "Stage 1");
     String stageNewName = "New name for stage 1";
     StageInputModel updateRequest = new StageInputModel(stageNewName);
@@ -84,7 +84,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
    */
   @Test
   public void testDeleteStageWithoutWorkItems() {
-    int boardId = this.createBoard("Test 1").getInt("id");
+    String boardId = this.createBoard("Test 1").get("id");
     JsonPath json = this.createStage(boardId, "Stage 1");
     
     given()
@@ -104,7 +104,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
    */
   @Test
   public void testDeleteStageWithWorkItems() {
-    int boardId = this.createBoard("Test 1").getInt("id");
+    String boardId = this.createBoard("Test 1").get("id");
     JsonPath stageJson = this.createStage(boardId, "Stage 1");
     int stageId = stageJson.getInt("id");
     this.createWorkItem(boardId, stageId, "WorkItem 1", StringUtils.EMPTY);
@@ -127,7 +127,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
    */
   @Test
   public void testCreateInvalidStage() {
-    int boardId = this.createBoard("Test").getInt("id");
+    String boardId = this.createBoard("Test").get("id");
     
     given()
       .contentType(ContentType.JSON)
@@ -167,7 +167,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
    */
   @Test
   public void testUpdateInvalidStage() {
-    int boardId = this.createBoard("Test").getInt("id");
+    String boardId = this.createBoard("Test 1").get("id");
     int stageId = this.createStage(boardId, "Test").getInt("id");
     
     given()

@@ -50,7 +50,7 @@ public class StageResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<Stage> getStages(@PathParam("boardId") final long boardId)
+  public List<Stage> getStages(@PathParam("boardId") final String boardId)
     throws EntityNotFoundException {
     Board board = this.boardRepository.findOrThrowException(boardId);
     return new ArrayList<>(board.getStages());
@@ -59,7 +59,7 @@ public class StageResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response createStage(@PathParam("boardId") final long boardId, @NotNull @Valid final StageInputModel stageInputModel)
+  public Response createStage(@PathParam("boardId") final String boardId, @NotNull @Valid final StageInputModel stageInputModel)
 
     throws EntityNotFoundException {
     Preconditions.checkNotNull(stageInputModel);
@@ -87,7 +87,7 @@ public class StageResource {
 
   @DELETE
   @Path("{stageId}")
-  public void delete(@PathParam("boardId") final long boardId, @PathParam("stageId") final long stageId)
+  public void delete(@PathParam("boardId") final String boardId, @PathParam("stageId") final long stageId)
     throws StageNotInProcessException, StageNotEmptyException, EntityNotFoundException {
     Board board = this.boardRepository.findOrThrowException(boardId);
     Stage stage = this.stageRepository.findOrThrowException(stageId);
