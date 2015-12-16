@@ -91,7 +91,7 @@ public class WorkItemResource {
   @Path("{id}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public WorkItemViewModel update(@PathParam("boardId") final String boardId, @PathParam("id") final long workItemId,
+  public WorkItemViewModel update(@PathParam("boardId") final String boardId, @PathParam("id") final String workItemId,
       @NotNull @Valid final WorkItemInputModel workItemInputModel) throws
                                                                    WorkItemNotInProcessException,
                                                                    StageNotInProcessException,
@@ -130,7 +130,7 @@ public class WorkItemResource {
 
   @DELETE
   @Path("{id}")
-  public void delete(@PathParam("boardId") final String boardId, @PathParam("id") final long workItemId)
+  public void delete(@PathParam("boardId") final String boardId, @PathParam("id") final String workItemId)
 
     throws WorkItemNotInProcessException, EntityNotFoundException {
     Board board = this.boardRepository.findOrThrowException(boardId);

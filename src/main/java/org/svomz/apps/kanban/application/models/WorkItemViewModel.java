@@ -17,7 +17,7 @@ public class WorkItemViewModel {
   }
   
   @JsonProperty("id")
-  public long getId() {
+  public String getId() {
     return this.workItem.getId();
   }
   

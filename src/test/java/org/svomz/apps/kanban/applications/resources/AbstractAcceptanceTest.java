@@ -74,7 +74,7 @@ public class AbstractAcceptanceTest {
       .post(this.baseUrl() + "/boards/" + boardId + "/workitems")
     .then()
       .statusCode(201)
-      .body("id", isA(Integer.class))
+      .body("id", isA(String.class))
       .body("title", equalTo(workItemTitle))
       .body("description", equalTo(workItemDescription))
     .extract().response().jsonPath();

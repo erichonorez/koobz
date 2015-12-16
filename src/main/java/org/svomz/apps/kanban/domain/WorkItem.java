@@ -3,21 +3,20 @@ package org.svomz.apps.kanban.domain;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.google.common.base.Preconditions;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "work_items")
 public class WorkItem {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private String id;
 
   @Column(name = "title")
   private String title;
@@ -34,15 +33,18 @@ public class WorkItem {
   /**
    * No-args constructor required by JPA.
    */
-  WorkItem() { }
+  WorkItem() {
+    this.id = UUID.randomUUID().toString();
+  }
 
   public WorkItem(final String title) {
+    this();
     WorkItemValidation.checkTitle(title);
 
     this.title = title;
   }
 
-  public long getId() {
+  public String getId() {
     return this.id;
   }
 

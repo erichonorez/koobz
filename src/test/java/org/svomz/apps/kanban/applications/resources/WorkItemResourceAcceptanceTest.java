@@ -110,7 +110,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     String stageId = jsonStage.get("id");
     String text = "My first work item";
-    int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
+    String workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).get("id");
     
     String editedText = "My first edited work item";
     String editedDescription = "a description";
@@ -123,7 +123,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
         .put("/boards/" + boardId + "/workitems/" + workItemId)
       .then()
         .statusCode(200)
-        .body("id", allOf(isA(Integer.class), equalTo(workItemId)))
+        .body("id", allOf(isA(String.class), equalTo(workItemId)))
         .body("title", equalTo(editedText))
 
       .extract().response().jsonPath();
@@ -142,7 +142,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     String stageId = jsonStage.get("id");
     String text = "My first work item";
-    int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
+    String workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).get("id");
     
     given()
       .contentType(ContentType.JSON)
@@ -167,7 +167,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     String stageId = jsonStage.get("id");
     String text = "My first work item";
-    int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
+    String workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).get("id");
     JsonPath jsonStageWIP = this.createStage(boardId, "Work in progress");
     
     String wipStageId = jsonStageWIP.get("id");
@@ -180,7 +180,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
         .put("/boards/" + boardId + "/workitems/" + workItemId)
       .then()
         .statusCode(200)
-        .body("id", allOf(isA(Integer.class), equalTo(workItemId)))
+        .body("id", allOf(isA(String.class), equalTo(workItemId)))
         .body("title", equalTo(text))
       .extract().response().jsonPath();
   }
@@ -202,7 +202,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStageBoard2 = this.createStage(boardId2, "Test stage in board 2");
     String stageId = jsonStage.get("id");
     String text = "My first work item";
-    int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
+    String workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).get("id");
 
     WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", jsonStageBoard2.get("id"), null, null);
     given()
