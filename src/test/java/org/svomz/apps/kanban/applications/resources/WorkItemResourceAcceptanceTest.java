@@ -39,7 +39,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonBoard = this.createBoard("Test board");
     String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
-    int stageId = jsonStage.getInt("id");
+    String stageId = jsonStage.get("id");
     String firstWorkItemText = "My first work item";
     this.createWorkItem(boardId, stageId, firstWorkItemText, StringUtils.EMPTY);
     String secondWorkItemText = "My second work item";
@@ -93,7 +93,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonBoard = this.createBoard("Test board");
     String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
-    int stageId = jsonStage.getInt("id");
+    String stageId = jsonStage.get("id");
     this.createWorkItem(boardId, stageId, "My first work item", "a description");
   }
   
@@ -108,7 +108,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonBoard = this.createBoard("Test board");
     String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
-    int stageId = jsonStage.getInt("id");
+    String stageId = jsonStage.get("id");
     String text = "My first work item";
     int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
     
@@ -140,7 +140,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonBoard = this.createBoard("Test board");
     String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
-    int stageId = jsonStage.getInt("id");
+    String stageId = jsonStage.get("id");
     String text = "My first work item";
     int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
     
@@ -165,12 +165,12 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonBoard = this.createBoard("Test board");
     String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
-    int stageId = jsonStage.getInt("id");
+    String stageId = jsonStage.get("id");
     String text = "My first work item";
     int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
     JsonPath jsonStageWIP = this.createStage(boardId, "Work in progress");
     
-    int wipStageId = jsonStageWIP.getInt("id");
+    String wipStageId = jsonStageWIP.get("id");
     WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", wipStageId, null, null);
     given()
         .contentType(ContentType.JSON)
@@ -200,11 +200,11 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     String boardId2 = jsonBoard2.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
     JsonPath jsonStageBoard2 = this.createStage(boardId2, "Test stage in board 2");
-    int stageId = jsonStage.getInt("id");
+    String stageId = jsonStage.get("id");
     String text = "My first work item";
     int workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).getInt("id");
 
-    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", jsonStageBoard2.getInt("id"), null, null);
+    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", jsonStageBoard2.get("id"), null, null);
     given()
         .contentType(ContentType.JSON)
         .accept(ContentType.JSON)
@@ -227,7 +227,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonBoard = this.createBoard("Test board");
     String boardId = jsonBoard.get("id");
     JsonPath jsonStage = this.createStage(boardId, "Test stage");
-    int stageId = jsonStage.getInt("id");
+    String stageId = jsonStage.get("id");
     WorkItemInputModel workItem = new WorkItemInputModel(StringUtils.EMPTY, stageId, null, null);
     
     given()

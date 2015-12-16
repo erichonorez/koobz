@@ -75,8 +75,9 @@ public class StageResource {
   @Path("{stageId}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Stage updateStage(@PathParam("stageId") final long stageId,
+  public Stage updateStage(@PathParam("stageId") final String stageId,
       @NotNull @Valid final StageInputModel stageInputModel) throws EntityNotFoundException {
+    Preconditions.checkNotNull(stageId);
     Preconditions.checkNotNull(stageInputModel);
 
     Stage stage = this.stageRepository.findOrThrowException(stageId);
@@ -87,8 +88,11 @@ public class StageResource {
 
   @DELETE
   @Path("{stageId}")
-  public void delete(@PathParam("boardId") final String boardId, @PathParam("stageId") final long stageId)
+  public void delete(@NotNull @PathParam("boardId") final String boardId, @NotNull @PathParam("stageId") final String stageId)
     throws StageNotInProcessException, StageNotEmptyException, EntityNotFoundException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(stageId);
+
     Board board = this.boardRepository.findOrThrowException(boardId);
     Stage stage = this.stageRepository.findOrThrowException(stageId);
     board.removeStage(stage);

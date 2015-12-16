@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.svomz.apps.kanban.infrastructure.domain.KanbanRepository;
 
-public interface StageRepository extends KanbanRepository<Stage, Long> {
+public interface StageRepository extends KanbanRepository<Stage, String> {
 
   @Query("SELECT s FROM Stage s WHERE s.id = :stageId AND s.board.id = :boardId")
-  Stage findByBoardIdAndStageId(@Param("boardId") String boardId, @Param("stageId") long stageId);
+  Stage findByBoardIdAndStageId(@Param("boardId") String boardId, @Param("stageId") String stageId);
 }

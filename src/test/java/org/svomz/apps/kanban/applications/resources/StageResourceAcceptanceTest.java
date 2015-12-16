@@ -63,7 +63,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
     String stageNewName = "New name for stage 1";
     StageInputModel updateRequest = new StageInputModel(stageNewName);
     
-    int stageId = json.getInt("id");
+    String stageId = json.get("id");
     given()
       .contentType(ContentType.JSON)
       .accept(ContentType.JSON)
@@ -91,7 +91,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
       .contentType(ContentType.JSON)
       .accept(ContentType.JSON)
     .when()
-      .delete("/boards/" + boardId + "/stages/" + json.getInt("id"))
+      .delete("/boards/" + boardId + "/stages/" + json.get("id"))
     .then()
       .statusCode(204);
   }
@@ -106,7 +106,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
   public void testDeleteStageWithWorkItems() {
     String boardId = this.createBoard("Test 1").get("id");
     JsonPath stageJson = this.createStage(boardId, "Stage 1");
-    int stageId = stageJson.getInt("id");
+    String stageId = stageJson.get("id");
     this.createWorkItem(boardId, stageId, "WorkItem 1", StringUtils.EMPTY);
     
     given()
@@ -168,7 +168,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
   @Test
   public void testUpdateInvalidStage() {
     String boardId = this.createBoard("Test 1").get("id");
-    int stageId = this.createStage(boardId, "Test").getInt("id");
+    String stageId = this.createStage(boardId, "Test").get("id");
     
     given()
       .contentType(ContentType.JSON)

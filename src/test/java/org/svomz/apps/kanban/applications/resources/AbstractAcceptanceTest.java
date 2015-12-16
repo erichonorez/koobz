@@ -41,7 +41,7 @@ public class AbstractAcceptanceTest {
       .post(this.baseUrl() + "/boards/" + boardId + "/stages")
     .then()
       .statusCode(201)
-      .body("id", allOf(isA(Integer.class), is(greaterThan(0))))
+      .body("id", isA(String.class))
       .body("name", equalTo(stage.getName()))
     .extract().response().jsonPath();
   }
@@ -62,7 +62,7 @@ public class AbstractAcceptanceTest {
     return boardJsonPath;
   }
 
-  protected JsonPath createWorkItem(final String boardId, final int stageId,
+  protected JsonPath createWorkItem(final String boardId, final String stageId,
     final String workItemTitle, String workItemDescription) {
     WorkItemInputModel workItem = new WorkItemInputModel(workItemTitle, stageId, 0, workItemDescription);
     

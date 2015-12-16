@@ -21,7 +21,7 @@ public class StageViewModel {
   }
 
   @JsonProperty("id")
-  public Long getId() {
+  public String getId() {
     return this.stage.getId();
   }
 

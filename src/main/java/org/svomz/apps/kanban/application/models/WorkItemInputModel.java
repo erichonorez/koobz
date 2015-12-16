@@ -15,7 +15,7 @@ public class WorkItemInputModel {
   private final String title;
 
   @NotNull
-  private final Long stageId;
+  private final String stageId;
 
   private Integer order;
 
@@ -24,9 +24,10 @@ public class WorkItemInputModel {
 
   @JsonCreator
   public WorkItemInputModel(@JsonProperty("title") final String title,
-      @JsonProperty("stageId") final long stageId,
+      @JsonProperty("stageId") final String stageId,
       @Nullable @JsonProperty("order") final Integer order,
       @Nullable @JsonProperty("description") final String description) {
+    Preconditions.checkNotNull(stageId);
     Preconditions.checkNotNull(title);
 
     this.title = title;
@@ -39,7 +40,7 @@ public class WorkItemInputModel {
     return this.title;
   }
 
-  public Long getStageId() {
+  public String getStageId() {
     return this.stageId;
   }
   

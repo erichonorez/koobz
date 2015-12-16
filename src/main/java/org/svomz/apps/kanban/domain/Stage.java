@@ -3,13 +3,12 @@ package org.svomz.apps.kanban.domain;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,8 +23,7 @@ import com.google.common.base.Preconditions;
 public class Stage {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private String id;
 
   @Column(name = "name")
   private String name;
@@ -41,6 +39,7 @@ public class Stage {
   private Board board;
 
   Stage() {
+    this.id = UUID.randomUUID().toString();
     this.workItems = new HashSet<WorkItem>();
   }
 
@@ -48,10 +47,11 @@ public class Stage {
     this();
     StageValidation.checkStageName(name);
 
+
     this.name = name;
   }
 
-  public long getId() {
+  public String getId() {
     return this.id;
   }
 
