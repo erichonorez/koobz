@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -28,8 +29,13 @@ public class WorkItem {
   private int order;
 
   @ManyToOne
+  @JoinColumn(name = "stage_id")
   private Stage stage;
-  
+
+  @ManyToOne
+  @JoinColumn(name = "board_id")
+  private Board board;
+
   /**
    * No-args constructor required by JPA.
    */
@@ -88,6 +94,11 @@ public class WorkItem {
   @Nullable
   public int getOrder() {
     return this.order;
+  }
+
+  WorkItem setBoard(final Board board) {
+    this.board = board;
+    return this;
   }
 
   private static class WorkItemValidation {

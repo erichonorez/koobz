@@ -82,7 +82,6 @@ public class Stage {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     this.workItems.remove(workItem);
-    workItem.setStage(null);
     return this;
   }
   

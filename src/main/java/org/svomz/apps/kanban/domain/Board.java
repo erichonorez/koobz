@@ -36,8 +36,7 @@ public class Board {
   @Column(name = "name")
   private String name;
 
-  @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
-  @JoinColumn(name = "board_id")
+  @OneToMany(mappedBy="board", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
   private Set<WorkItem> workItems;
 
   @OneToMany(mappedBy="board", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -159,6 +158,7 @@ public class Board {
     }
 
     stage.addWorkItem(workItem);
+    workItem.setBoard(this);
     this.workItems.add(workItem);
     return this;
 
