@@ -102,6 +102,18 @@
             <version>2.19</version>
         </dependency>
 
+		<!-- Db -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.27</version>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+
         <!-- TDD & Co. -->
 		<dependency>
 			<groupId>junit</groupId>
