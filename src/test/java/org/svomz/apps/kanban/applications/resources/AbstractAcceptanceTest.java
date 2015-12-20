@@ -20,10 +20,16 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 
 public class AbstractAcceptanceTest {
-  
+
   @Before
   public void setUp() {
     RestAssured.config = config().connectionConfig(new ConnectionConfig());
+
+    String targetUri = System.getProperty("restassured.baseURI");
+    RestAssured.baseURI = targetUri != null ? targetUri : "http://localhost";
+
+    String port = System.getProperty("restassured.port");
+    RestAssured.port = port != null ? Integer.valueOf(port) : 8080;
   }
   
   @After
@@ -38,16 +44,12 @@ public class AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(stage)
     .when()
-      .post(this.baseUrl() + "/boards/" + boardId + "/stages")
+      .post("/boards/" + boardId + "/stages")
     .then()
       .statusCode(201)
       .body("id", isA(String.class))
       .body("name", equalTo(stage.getName()))
     .extract().response().jsonPath();
-  }
-
-  protected String baseUrl() {
-    return "http://localhost:8080";
   }
 
   protected JsonPath createBoard(final String name) {
@@ -57,7 +59,7 @@ public class AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(board)
     .when()
-      .post(this.baseUrl() + "/boards")
+      .post("/boards")
     .then().extract().response().jsonPath();
     return boardJsonPath;
   }
@@ -71,7 +73,7 @@ public class AbstractAcceptanceTest {
       .accept(ContentType.JSON)
       .body(workItem)
     .when()
-      .post(this.baseUrl() + "/boards/" + boardId + "/workitems")
+      .post("/boards/" + boardId + "/workitems")
     .then()
       .statusCode(201)
       .body("id", isA(String.class))
