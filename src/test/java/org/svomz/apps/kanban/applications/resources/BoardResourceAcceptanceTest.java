@@ -48,7 +48,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath json = given()
       .accept(ContentType.JSON)
     .when()
-      .get(this.baseUrl() + "/boards/")
+      .get("/boards/")
     .then()
       .statusCode(200)
       .body(not(emptyIterable()))
@@ -80,7 +80,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
       .contentType(ContentType.JSON)
       .accept(ContentType.JSON)
     .when()
-      .get(this.baseUrl() + "/boards/" + boardId)
+      .get("/boards/" + boardId)
     .then()
       .statusCode(200)
       .body("id", equalTo(boardId))
@@ -134,7 +134,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     .expect()
       .statusCode(200)
     .when()
-      .put(this.baseUrl() + "/boards/" + String.valueOf(boardId))
+      .put("/boards/" + String.valueOf(boardId))
     .then()
       .body("name", equalTo(updatedBoard1.getName()))
       .body("id", equalTo(boardId))
@@ -156,7 +156,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     given()
       .accept(ContentType.JSON)
     .when()
-      .delete(this.baseUrl() + "/boards/" + boardId)
+      .delete("/boards/" + boardId)
     .then()
       .statusCode(204)
       .body(equalTo(StringUtils.EMPTY));
@@ -164,7 +164,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     given()
       .accept(ContentType.JSON)
       .when()
-        .get(this.baseUrl() + "/boards/" + boardId)
+        .get("/boards/" + boardId)
       .then()
         .statusCode(404);
   }
@@ -179,7 +179,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     given()
       .accept(ContentType.JSON)
     .when()
-      .get(this.baseUrl() + "/boards/" + Integer.MAX_VALUE)
+      .get("/boards/" + Integer.MAX_VALUE)
     .then()
       .statusCode(404)
       .body("message", not(equalTo(StringUtils.EMPTY)));
@@ -216,7 +216,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
   }
 
   private String boardsUrl() {
-    return this.baseUrl() + "/boards";
+    return "/boards";
   }
 
 }
