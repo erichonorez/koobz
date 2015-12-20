@@ -311,8 +311,24 @@ public class BoardUnitTest {
   }
 
   @Test
-  public void shouldReorderWorkItemsIfMoved() {
-    throw new NotImplementedException("shouldReorderWorkItemsIfMoved");
+  public void shouldReorderWorkItemsIfMoved()
+    throws StageNotInProcessException, WorkItemNotInProcessException {
+    Board board = new Board("new board");
+    Stage todo = new Stage("todo");
+    board.addStage(todo);
+
+    Stage wip = new Stage("wip");
+    board.addStage(wip);
+
+    WorkItem workItemA = new WorkItem("Work item A");
+    board.addWorkItem(workItemA, todo);
+
+    WorkItem workItemB = new WorkItem("Work item B");
+    board.addWorkItem(workItemB, todo);
+
+    board.moveWorkItem(workItemA, wip);
+    Assert.assertEquals(0, workItemA.getOrder());
+    Assert.assertEquals(0, workItemB.getOrder());
   }
 
 }

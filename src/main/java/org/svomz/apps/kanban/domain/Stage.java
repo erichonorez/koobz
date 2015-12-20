@@ -82,6 +82,16 @@ public class Stage {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     this.workItems.remove(workItem);
+    int workItemOrder = workItem.getOrder();
+
+    //reoder all items after the removed one
+    this.workItems.forEach(item -> {
+      if (item.getOrder() > workItemOrder) {
+        int currentOrder = item.getOrder();
+        item.setOrder(currentOrder - 1);
+      }
+    });
+
     return this;
   }
   

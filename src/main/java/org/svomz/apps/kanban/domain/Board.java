@@ -177,6 +177,16 @@ public class Board {
 
   }
 
+  /**
+   * Move a work item to a stage. The work item is added as the last element in the stage.
+   *
+   * @param workItem the work item to move
+   * @param stage the destination stage
+   * @return the board to which belong the work item and the stage
+   *
+   * @throws WorkItemNotInProcessException
+   * @throws StageNotInProcessException
+   */
   public Board moveWorkItem(final WorkItem workItem, final Stage stage)
     throws WorkItemNotInProcessException, StageNotInProcessException {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
