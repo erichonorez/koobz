@@ -30,7 +30,6 @@ import com.google.common.base.Preconditions;
 public class Board {
 
   @Id
-  //@GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
   @Column(name = "name")
