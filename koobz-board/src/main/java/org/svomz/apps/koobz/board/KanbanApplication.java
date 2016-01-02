@@ -15,7 +15,7 @@ import org.svomz.apps.koobz.board.infrastructure.domain.KanbanRepositoryFactoryB
 @EnableAutoConfiguration
 @ComponentScan
 @EnableTransactionManagement
-@EnableJpaRepositories(repositoryFactoryBeanClass = KanbanRepositoryFactoryBean.class, basePackages = "org.svomz.apps.kanban.domain")
+@EnableJpaRepositories(repositoryFactoryBeanClass = KanbanRepositoryFactoryBean.class, basePackages = "org.svomz.apps.koobz.board.domain")
 public class KanbanApplication {
 
     public static void main(String... args) {

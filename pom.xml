@@ -18,7 +18,8 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<modules>
 		<module>koobz-board</module>
-	</modules>
+        <module>koobz-web</module>
+    </modules>
 	<packaging>pom</packaging>
 	<name>koobz-parent</name>
 

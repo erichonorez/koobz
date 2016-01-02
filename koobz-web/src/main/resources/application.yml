@@ -1,0 +1,9 @@
+server:
+  port: 8081
+zuul:
+  prefix: /api/kanban
+  routes:
+    board:
+      path: /**
+      url: http://localhost:8080
+      stripPrefix: true
