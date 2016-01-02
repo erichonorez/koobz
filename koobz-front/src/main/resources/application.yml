@@ -1,0 +1,12 @@
+server:
+  port: 8081
+zuul:
+  routes:
+    boards:
+      path: /api/boards/**
+      serviceId: boards
+      url: http://localhost:8080/boards
+      stripPrefix: true
+    web:
+      path: /**
+      url: http://localhost:9000

@@ -16,10 +16,10 @@ import org.svomz.apps.koobz.board.infrastructure.domain.KanbanRepositoryFactoryB
 @ComponentScan
 @EnableTransactionManagement
 @EnableJpaRepositories(repositoryFactoryBeanClass = KanbanRepositoryFactoryBean.class, basePackages = "org.svomz.apps.koobz.board.domain")
-public class KanbanApplication {
+public class KoobzBoardApplication {
 
     public static void main(String... args) {
-      SpringApplication.run(KanbanApplication.class, args);
+      SpringApplication.run(KoobzBoardApplication.class, args);
     }
 
 }
