@@ -1,2 +1,6 @@
 server:
   port: 9000
+spring:
+  resources:
+    chain:
+      enabled: true

@@ -20,6 +20,7 @@
 		<module>koobz-board</module>
 		<module>koobz-front</module>
 		<module>koobz-web</module>
+		<module>koobz-web-board</module>
 	</modules>
 	<packaging>pom</packaging>
 	<name>koobz-parent</name>

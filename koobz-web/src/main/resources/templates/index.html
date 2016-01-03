@@ -1,9 +1,49 @@
 <!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <body lang="en">
     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width">
+        <base href="/">
         <title>Koobz</title>
+
+        <link rel="stylesheet" href="css/app.css">
     </head>
-    <body>
-        <h1>Hello, World!</h1>
+    <body ng-app="koobzApp" class="skin-blue">
+        <!--[if lt IE 7]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+
+        <div ng-view=""></div>
+
+
+        <script src="jquery/dist/jquery.js"></script>
+        <script src="angular/angular.js"></script>
+        <script src="angular-resource/angular-resource.js"></script>
+        <script src="angular-sanitize/angular-sanitize.js"></script>
+        <script src="angular-route/angular-route.js"></script>
+        <script src="angular-bootstrap/ui-bootstrap-tpls.js"></script>
+        <script src="lodash/lodash.min.js"></script>
+        <script src="angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
+
+        <script src="js/app.js"></script>
+        <script src="js/gateways/board_gateway.js"></script>
+        <script src="js/gateways/stage_gateway.js"></script>
+        <script src="js/gateways/work_item_gateway.js"></script>
+        <script src="js/controllers/home.controller.js"></script>
+        <script src="js/controllers/main.add_workitem.controller.js"></script>
+        <script src="js/controllers/main.controller.js"></script>
+        <script src="js/controllers/main.delete_workitem.controller.js"></script>
+        <script src="js/controllers/main.edit_board.controller.js"></script>
+        <script src="js/controllers/main.edit_stage.controller.js"></script>
+        <script src="js/services/modal.service.js"></script>
+        <script src="js/controllers/navbar.controller.js"></script>
+        <script src="js/utils/sluggerizer.js"></script>
+        <script src="js/utils/underscore.js"></script>
     </body>
 </body>

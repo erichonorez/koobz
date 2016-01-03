@@ -6,3 +6,5 @@
 .idea/*
 derby.log
 **.iml
+**/bower_components/
+**/node_modules/
