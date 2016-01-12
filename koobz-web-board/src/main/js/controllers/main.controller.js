@@ -2,8 +2,8 @@
 
 angular.module('koobzApp')
   .controller('MainCtrl', [
-     '$window', '$scope', '$route', '$uibModal', '_', '$mdDialog', 'BoardGateway', 'StageGateway', 'WorkItemGateway', 'board'
-        ,function ($window, $scope, $route, $uibModal, _, $mdDialog, boardGateway, stageGateway, workItemGateway, board) {
+     '$window', '$scope', '$route', '_', '$mdDialog', 'BoardGateway', 'StageGateway', 'WorkItemGateway', 'board'
+        ,function ($window, $scope, $route, _, $mdDialog, boardGateway, stageGateway, workItemGateway, board) {
 
     $window.document.title = board.name;
 

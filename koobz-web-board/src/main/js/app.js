@@ -4,7 +4,6 @@ angular.module('koobzApp', [
   'ngResource',
   'ngSanitize',
   'ngRoute',
-  'ui.bootstrap',
   'ngMaterial',
   'ngAnimate',
   'ngAria',
