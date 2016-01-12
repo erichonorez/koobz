@@ -2,8 +2,8 @@
 
 angular.module('koobzApp')
   .controller('MainCtrl', [
-     '$window', '$scope', '$route', '$uibModal', '_', 'BoardGateway', 'StageGateway', 'WorkItemGateway', 'board'
-        ,function ($window, $scope, $route, $uibModal, _, boardGateway, stageGateway, workItemGateway, board) {
+     '$window', '$scope', '$route', '$uibModal', '_', '$mdDialog', 'BoardGateway', 'StageGateway', 'WorkItemGateway', 'board'
+        ,function ($window, $scope, $route, $uibModal, _, $mdDialog, boardGateway, stageGateway, workItemGateway, board) {
 
     $window.document.title = board.name;
 
@@ -21,150 +21,343 @@ angular.module('koobzApp')
     $scope.moving = null;
     $scope.movingIndex = null;
 
-
     $scope.deleteWorkItem = function (stage, workItem) {
-      var modalInstance = $uibModal.open({
-        templateUrl: 'delete_workitem.html',
-        controller: 'DeleteWorkItemCtrl',
-        resolve: {
-          workItem: function() {
-            return workItem
-          }
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        parent: parentEl,
+        template:
+            '<md-dialog-content class="layout-padding">' +
+            '   <p>Are you sure you want to delete this work item?</p>' +
+            '   <form button-form ng-submit="delete()" layout="row" layout-align="center end">' +
+            '       <md-button class="md-raised" type="button" ng-click="closeDialog()">Cancel</md-button>' +
+            '       <md-button class="md-raised md-warn" ng-click="delete()">Delete</md-button>' +
+            '   </form>' +
+            '</md-dialog-content>',
+        locals: {
+            boardId: $scope.board.id,
+            stage: stage,
+            workItem: workItem,
+            removeFn: $scope.removeWorkItemFromStage
+        },
+        controller: function DialogController($scope, $mdDialog, boardId, stage, workItem, removeFn) {
+            $scope.boardId = boardId;
+            $scope.stage = stage;
+            $scope.workItem = workItem;
+            $scope.removeFn = removeFn;
+
+            $scope.closeDialog = function() {
+              $mdDialog.hide();
+            };
+
+            $scope.delete = function() {
+                workItemGateway.removeWorkItem($scope.boardId, $scope.workItem).then(function(result) {
+                    $scope.removeFn.apply(this, [$scope.stage, $scope.workItem]);
+                    $scope.closeDialog();
+                });
+            };
         }
-      });
-      modalInstance.result.then(function() {
-        workItemGateway.removeWorkItem($scope.board.id, workItem).then(function(result) {
-            var elementIndex;
-            stage.workItems.forEach(function(currentWorkItem, stageIndex) {
-                if (currentWorkItem.id == workItem.id) {
-                    elementIndex = stageIndex;
-                }
-            });
-            console.log(elementIndex);
-            stage.workItems.splice(elementIndex, 1);
-        });
       });
     };
 
-    $scope.editBoard = function() {
-      var modalInstance = $uibModal.open({
-        templateUrl: 'edit_board.html',
-        controller: 'EditBoardCtrl',
-        resolve: {
-          board: function() {
-            return $scope.board;
-          }
-        }
-      });
-      modalInstance.result.then(function() {
-        boardGateway.update($scope.board).catch(function(failure) {
-            console.log(failure);
+    $scope.removeWorkItemFromStage = function(stage, workItem) {
+        var elementIndex;
+        stage.workItems.forEach(function(currentWorkItem, stageIndex) {
+            if (currentWorkItem.id == workItem.id) {
+                elementIndex = stageIndex;
+            }
         });
+        stage.workItems.splice(elementIndex, 1);
+    };
+
+    $scope.editBoard = function() {
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+          parent: parentEl,
+          template:
+              '<md-dialog aria-label="Edit board" class="stage-dialog">' +
+              '     <md-toolbar class="layout-padding">' +
+              '       <h3>Edit the board name</h3>' +
+              '     </md-toolbar>' +
+              '     <md-dialog-content class="layout-padding">' +
+              '       <form button-form ng-submit="save()">' +
+              '         <md-input-container class="md-block">' +
+              '           <label for="title">Title</label>' +
+              '           <input type="text" name="title" id="title" required="true" autofocus ng-model="board.name">' +
+              '         </md-input-container>' +
+              '         <md-content layout="row" layout-align="end center">' +
+              '           <md-button class="md-raised" type="button" ng-click="closeDialog()">Cancel</md-button>' +
+              '           <md-button class="md-raised md-primary" ng-click="save()">Submit</md-button>' +
+              '         </md-content>' +
+              '     </form>' +
+              '   </md-dialog-content>' +
+              '</md-dialog>',
+          locals: {
+              board: board,
+          },
+          onComplete: function afterShowAnimation(scope, element, options) {
+              element.find('input:first').focus();
+          },
+          controller: function($scope, $mdDialog, board) {
+              $scope.originalBoard = board;
+              $scope.board = {
+                id: board.id,
+                name: board.name
+              };
+
+              $scope.closeDialog = function() {
+                $mdDialog.hide();
+              };
+
+              $scope.save = function() {
+                  boardGateway.update($scope.board).then(function(result) {
+                    $scope.originalBoard.name = $scope.board.name;
+                    $scope.closeDialog();
+                  }, function(failure) {
+                    console.log(failure);
+                  });
+              };
+          }
       });
     }
 
     $scope.editWorkItem = function (stage, workItem) {
-      var modalInstance = $uibModal.open({
-        templateUrl: 'add_workitem.html',
-        controller: 'AddWorkItemCtrl',
-        resolve: {
-          workItem: function() {
-            workItem.stageId = stage.id;
-            return workItem;
-          },
-          title: function() {
-            return 'Edit work item';
-          },
-          submitBtnLabel: function() {
-            return 'Save'
-          }
-        }
-      });
-      modalInstance.result.then(function(editedWorkItem) {
-        workItemGateway.update($scope.board.id, editedWorkItem).catch(function(failure) {
-        });
-      });
+        $scope.showWorkItemForm(
+        $scope.board.id,
+        $scope.board.stages,
+        {  id: workItem.id,
+           title: workItem.title,
+           stageId: stage.id,
+           description: workItem.description
+        },
+       function(editedWorkItem, innerScope) {
+             workItemGateway.update($scope.board.id, editedWorkItem)
+             .then(function(result) {
+                if (stage.id != editedWorkItem.stageId) {
+                    $scope.removeWorkItemFromStage(stage, workItem);
+                }
+
+                workItem.title = editedWorkItem.title;
+                workItem.description = editedWorkItem.description;
+
+                if (stage.id != editedWorkItem.stageId) {
+                   $scope.addWorkItemOnBoard($scope.board, editedWorkItem);
+                }
+
+                innerScope.closeDialog();
+             }, function(failure) {
+                console.log(failure);
+             });
+         }
+        );
     };
 
     $scope.editStage = function (stage) {
-      var modalInstance = $uibModal.open({
-        templateUrl: 'edit_stage.html',
-        controller: 'EditStageCtrl',
-        resolve: {
-          stage: function () {
-            return stage;
-          }
-        }
-      });
-      modalInstance.result.then(function(stage) {
-        stageGateway.update($scope.board.id, stage).catch(function(failure) {
+      var stageToEdit = {
+        id: stage.id,
+        name: stage.name
+      };
+      $scope.showStageForm($scope.board, stageToEdit, function(editedStage, innerScope) {
+          stageGateway.update($scope.board.id, editedStage).then(function(result) {
+            stage.name = editedStage.name;
+            innerScope.closeDialog();
+          }, function(failure) {
             console.log(failure);
-        })
+          });
       });
     };
 
-    $scope.addStage = function() {
-      var modalInstance = $uibModal.open({
-        templateUrl: 'edit_stage.html',
-        controller: 'EditStageCtrl',
-        resolve: {
-          stage: function () {
-            return { 
-              id: null,
-              name: null,
-              workItems: []
+    $scope.addStage = function () {
+        $scope.showStageForm($scope.board, {
+            id: null,
+            name: null,
+            workItems: []
+        }, function(stage, innerScope) {
+            stageGateway.persist($scope.board.id, stage).then(function(result) {
+                stage.id = result.id;
+                $scope.board.stages.push(stage);
+                innerScope.closeDialog();
+            }, function(failure) {
+                console.log(failure);
+            });
+        });
+    };
+
+    $scope.deleteStage = function(stage) {
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        parent: parentEl,
+        template:
+            '<md-dialog-content class="layout-padding">' +
+            '   <p>Are you sure you want to delete this stage?</p>' +
+            '   <form button-form ng-submit="delete()" layout="row" layout-align="center end">' +
+            '       <md-button class="md-raised" type="button" ng-click="closeDialog()">Cancel</md-button>' +
+            '       <md-button class="md-raised md-warn" ng-click="delete()">Delete</md-button>' +
+            '   </form>' +
+            '</md-dialog-content>',
+        locals: {
+            board: $scope.board,
+            stage: stage
+        },
+        controller: function DialogController($scope, $mdDialog, board, stage) {
+            $scope.board = board;
+            $scope.stage = stage;
+
+            $scope.closeDialog = function() {
+              $mdDialog.hide();
             };
-          }
+
+            $scope.delete = function() {
+                stageGateway.removeStage($scope.board.id, $scope.stage).then(function(result) {
+                    _.each(board.stages, function(stage, index) {
+                        if (stage.id == $scope.stage.id) {
+                            $scope.board.stages.splice(index, 1);
+                            $scope.closeDialog();
+                        }
+                    });
+                }, function(failure) {
+                    console.log(failure);
+                });
+            };
         }
       });
-      modalInstance.result.then(function(stage) {
-        stageGateway.persist($scope.board.id, stage).then(function(result) {
-            stage.id = result.id;
-            $scope.board.stages.push(stage)
-        }, function(failure) {
-            console.log(failure);
+    };
+
+    $scope.showStageForm = function(board, stage, saveFn) {
+        var parentEl = angular.element(document.body);
+        $mdDialog.show({
+            parent: parentEl,
+            template:
+                '<md-dialog aria-label="Edit stage" class="stage-dialog">' +
+                '     <md-toolbar class="layout-padding">' +
+                '       <h3>Add a stage</h3>' +
+                '     </md-toolbar>' +
+                '     <md-dialog-content class="layout-padding">' +
+                '       <form button-form ng-submit="save()">' +
+                '         <md-input-container class="md-block">' +
+                '           <label for="title">Title</label>' +
+                '           <input type="text" name="title" id="title" required="true" autofocus ng-model="stage.name">' +
+                '         </md-input-container>' +
+                '         <md-content layout="row" layout-align="end center">' +
+                '           <md-button class="md-raised" type="button" ng-click="closeDialog()">Cancel</md-button>' +
+                '           <md-button class="md-raised md-primary" ng-click="save()">Submit</md-button>' +
+                '         </md-content>' +
+                '     </form>' +
+                '   </md-dialog-content>' +
+                '</md-dialog>',
+            locals: {
+                board: board,
+                stage: stage,
+                saveFn: saveFn
+            },
+            onComplete: function afterShowAnimation(scope, element, options) {
+                element.find('input:first').focus();
+            },
+            controller: function($scope, $mdDialog, stage, board, saveFn) {
+                $scope.stage = stage;
+                $scope.board = board;
+                $scope.saveFn = saveFn;
+
+                $scope.closeDialog = function() {
+                  $mdDialog.hide();
+                };
+
+                $scope.save = function() {
+                    $scope.saveFn.apply(this, [$scope.stage, $scope]);
+                };
+            }
         });
-      });
+    };
+
+    $scope.showWorkItemForm = function(boardId, stages, workItem, saveFn) {
+        var parentEl = angular.element(document.body);
+        $mdDialog.show({
+            parent: parentEl,
+            template:
+                '<md-dialog aria-label="Add a work item" class="workitem-dialog">' +
+                '   <md-toolbar class="layout-padding">' +
+                '       <h3>Add a work item</h3>' +
+                '   </md-toolbar>' +
+                '   <md-dialog-content class="layout-padding">' +
+                '     <form button-form ng-submit="save()">' +
+                '       <md-input-container class="md-block">' +
+                '         <label for="title">Title</label>' +
+                '         <input type="text" name="title" id="title" required="true" autofocus ng-model="workItem.title">' +
+                '       </md-input-container>' +
+                '       <md-input-container class="md-block">' +
+                '         <label>Stage</label>' +
+                '         <md-select ng-model="workItem.stageId">' +
+                '           <md-option ng-repeat="stage in stages | orderBy:\'order\'" value="{{stage.id}}" ng-selected="workItem.stageId == null ? $index == 0 : workItem.stageId == stage.id">' +
+                '             {{stage.name}}' +
+                '           </md-option>' +
+                '         </md-select>' +
+                '       </md-input-container>' +
+                '       <md-input-container class="md-block">' +
+                '         <label for="description">Description</label>' +
+                '         <textarea class="form-control"name="description" id="description" ng-model="workItem.description"></textarea>' +
+                '       </md-input-container>' +
+                '       <md-content layout="row" layout-align="end center">' +
+                '         <md-button class="md-raised" ng-click="closeDialog()" type="button">Cancel</md-button>' +
+                '         <md-button class="md-raised md-primary" ng-click="save()">Submit</md-button>' +
+                '       </md-content>' +
+                '     </form>' +
+                '   </md-dialog-content>' +
+                '</md-dialog>',
+            locals: {
+                workItem: workItem,
+                 stages: stages,
+                 saveFn: saveFn
+            },
+            onComplete: function afterShowAnimation(scope, element, options) {
+                element.find('input:first').focus();
+            },
+            controller: function DialogController($scope, $mdDialog, workItem, stages, saveFn) {
+                $scope.workItem = workItem;
+                $scope.stages = stages;
+                $scope.saveFn = saveFn;
+
+                $scope.closeDialog = function() {
+                  $mdDialog.hide();
+                };
+
+                $scope.save = function() {
+                    $scope.saveFn.apply(this, [$scope.workItem, $scope]);
+                };
+            }
+        });
     }
 
-    $scope.addWorkItem = function () {
-      var modalInstance = $uibModal.open({
-        templateUrl: 'add_workitem.html',
-        controller: 'AddWorkItemCtrl',
-        resolve: {
-          workItem: function () {
-            var workItem = {
-              id: null,
-              title: null,
-              stageId: null,
-              description: null
-            };
-            return workItem;
-          },
-          title: function () {
-            return 'New work item';
-          },
-          submitBtnLabel: function() {
-            return 'Add'
-          }
-        }
-      });
-      modalInstance.result.then(function(workItem) {
-      var firstStageIndex = 0;
-      $scope.board.stages.forEach(function(element, index) {
-        if (element.order < $scope.board.stages[firstStageIndex].order) {
-            firstStageIndex = index;
-        }
-      });
-        var stage = $scope.board.stages[firstStageIndex];
-        workItem.stageId = stage.id;
-        workItemGateway.persist($scope.board.id, workItem).then(function(result) {
-            workItem.id = result.id;
-            stage.workItems.push(workItem)
-        }, function(failure) {
-            console.log(failure);
-        });
-      });
+    $scope.addWorkItem = function() {
+        $scope.addWorkItemToStage(null);
+    };
+
+    $scope.addWorkItemToStage = function(stageId) {
+        $scope.showWorkItemForm(
+            $scope.board.id,
+            $scope.board.stages,
+            {  id: null,
+               title: null,
+               stageId: stageId,
+               description: null
+            },
+           function(workItem, innerScope) {
+                 workItemGateway.persist($scope.board.id, workItem).then(function(result) {
+                    workItem.id = result.id;
+                    $scope.addWorkItemOnBoard($scope.board, workItem);
+
+                     innerScope.closeDialog();
+                 }, function(failure) {
+                     console.log(failure);
+                 });
+             }
+        );
+    };
+
+    $scope.addWorkItemOnBoard = function(board, workItem) {
+         _.each(board.stages, function(stage) {
+             if (stage.id == workItem.stageId) {
+                stage.workItems.push(workItem);
+             }
+         });
     };
 
     $scope.dropCallback = function(event, index, item) {
@@ -175,5 +368,9 @@ angular.module('koobzApp')
       });
       return item;
     };
+
+    if ($scope.board.stages.length == 0) {
+        $scope.addStage();
+    }
 
   }]);

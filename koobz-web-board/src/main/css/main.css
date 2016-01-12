@@ -1,0 +1,95 @@
+body, html, div[ng-view].ng-scope, .home-container {
+    background: #fafafa;
+    height: 100%;
+}
+
+.koobz-logo-container {
+    margin-right: 20px;
+}
+
+.koobz-logo {
+    color: #1E88E5;
+}
+
+.board-content {
+    background: #fafafa;
+}
+
+.stage .md-subheader {
+    background: #fafafa;
+}
+
+.md-fab-top-right {
+    top: 5px !important;
+}
+
+.stage-content {
+    background: #fafafa;
+}
+
+.stage-workitems-container {
+    min-height: 5px;
+}
+
+.dndDraggingSource {
+    display: none;
+}
+
+.dndPlaceholder {
+    display: block;
+    background-color: #ddd;
+    min-height: 75px;
+    margin: 8px;
+}
+
+.workitem-dialog,
+.stage-dialog {
+    width: 50%;
+}
+
+.paper-shadow {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+
+.workitem-header-container {
+    padding-top: 8px;
+    padding-bottom: 0px;
+}
+
+.workitem-header-container md-menu {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.workitem-header-container md-menu button {
+    padding-left: 24px !important;
+    padding-right: 0px !important;
+    margin-right: 0px !important;
+}
+
+.workitem-header-container md-card-header {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    color: rgba(0,0,0,0.87);
+    font-size: 14px;
+}
+
+.workitem-body-container {
+    paddin-top: 0px;
+    color: rgba(0,0,0,0.54);
+    font-size: 14px;
+}
+
+.workitem md-card-content {
+    padding-top: 8px;
+}
+
+
+.md-subheader-inner {
+    padding-top: 24px !important;
+    padding-bottom: 8px !important;
+}
+
+md-fab-speed-dial  md-fab-actions button  md-icon {
+    color: rgba(0,0,0,0.54) !important;
+}

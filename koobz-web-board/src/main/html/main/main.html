@@ -1,44 +1,91 @@
 <div ng-include="'html/navbar/navbar.html'"></div>
 
-<section class="container-fluid">
+<md-content class="board-content" layout="row" layout-wrap="" layout-align="left start" layout-xs="column">
+  <div class="stage" flex="{{Math.round(100/board.stages.length)}}" flex-sm="100" flex-xs="100" layout="column" class="column" id="stage-{{stage.id}}"
+       ng-repeat="stage in board.stages | orderBy:'order'" data-stage-id="{{stage.id}}">
+          <div class="stage-top-container" layout="row">
+              <md-subheader class="md-primary">
+                  {{stage.name}}
+              </md-subheader>
+              <span flex></span>
+              <md-menu layout-align="center end" md-position-mode="target-right target">
+                  <md-button class="md-icon-button" aria-label="Work item menu" ng-click="$mdOpenMenu($event)">
+                      <md-icon md-font-library="material-icons" aria-label="Stage options">more_vert</md-icon>
+                  </md-button>
+                  <md-menu-content width="2">
+                      <md-menu-item>
+                          <md-button aria-label="Edit stage" ng-click="editStage(stage)">
+                              <md-icon md-font-library="material-icons">edit</md-icon>
+                              Edit
+                          </md-button>
+                      </md-menu-item>
+                      <md-menu-item ng-show="stage.workItems.length == 0">
+                          <md-button aria-label="Remove stage" ng-click="deleteStage(stage)">
+                              <md-icon md-font-library="material-icons">remove</md-icon>
+                              Remove
+                          </md-button>
+                      </md-menu-item>
+                  </md-menu-content>
+              </md-menu>
+          </div>
+          <md-content class="stage-content">
+              <div class="stage-workitems-container" dnd-list="stage.workItems" dnd-drop="dropCallback(event, index, item)">
+              <md-card id="workitem-{{workItem.id}}" ng-repeat="workItem in stage.workItems" dnd-draggable="workItem"
+                       dnd-selected="selected = workItem" dnd-effect-allowed="move" dnd-moved="stage.workItems.splice($index, 1)"
+                       data-workitem-id="{{workItem.id}}" class="workitem">
+                  <md-card-header layout="row" class="workitem-header-container">
+                      <md-card-header-text layout-align="center start">{{workItem.title}}</md-card-header-text>
+                      <md-menu layout-align="center end" md-position-mode="target-right target">
+                          <md-button class="md-icon-button" aria-label="Work item menu" ng-click="$mdOpenMenu($event)">
+                              <md-icon md-font-library="material-icons" aria-label="Work item options">more_vert</md-icon>
+                          </md-button>
+                          <md-menu-content width="2">
+                              <md-menu-item>
+                                  <md-button aria-label="Edit work item" ng-click="editWorkItem(stage, workItem)">
+                                      <md-icon md-font-library="material-icons">edit</md-icon>
+                                      Edit
+                                  </md-button>
+                              </md-menu-item>
+                              <md-menu-item>
+                                  <md-button aria-label="Remove work item" ng-click="deleteWorkItem(stage, workItem)">
+                                      <md-icon md-font-library="material-icons">remove</md-icon>
+                                      Remove
+                                  </md-button>
+                              </md-menu-item>
+                          </md-menu-content>
+                      </md-menu>
 
-  <div class="row board">
-
-    <div class="stage-container">
-      <div class="col-md-{{12/board.stages.length}} stage" id="stage-{{stage.id}}" ng-repeat="stage in board.stages | orderBy:'order'"
-           data-stage-id="{{stage.id}}">
-        <header class="stage-header">
-          <h3 class="stage-title">{{stage.name}}</h3>
-          <ul class="stage-actions pull-right">
-            <li class="stage-action"><a href="#" ng-click="editStage(stage)"><i class="fa fa-edit"></i></a></li>
-          </ul>
-          <div class="clear">&nbsp;</div>
-        </header>
-        <div class="stage-content">
-          <ul class="workitems" dnd-list="stage.workItems" style="min-height: 650px;" dnd-drop="dropCallback(event, index, item)">
-            <li class="workitem-container" id="workitem-{{workItem.id}}" ng-repeat="workItem in stage.workItems"
-                dnd-draggable="workItem" dnd-selected="selected = workItem" dnd-effect-allowed="move"
-                dnd-moved="stage.workItems.splice($index, 1)" data-workitem-id="{{workItem.id}}">
-              <div class="workitem">
-                <h4 class="workitem-title">{{workItem.title}}</h4>
-                <ul class="workitem-actions pull-right">
-                  <li class="workitem-action"><a href="" ng-click="editWorkItem(stage, workItem)"><i class="fa fa-edit"></i></a></li>
-                  <li class="workitem-action"><a href="" ng-click="deleteWorkItem(stage, workItem)"><i class="fa fa-times"></i></a></li>
-                </ul>
-                <div class="break">&nbsp;</div>
-                <p ng-show="workitem.description != ''">{{workItem.description}}</p>
+                  </md-card-header>
+                  <md-card-content ng-show="workitem.description != ''" class="workitem-body-container">
+                      {{workItem.description}}
+                  </md-card-content>
+              </md-card>
               </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    
+              <md-button class="md-raised md-primary" ng-click="addWorkItemToStage(stage.id)">add a work item</md-button>
+          </md-content>
   </div>
+</md-content>
 
-</section>
+<md-fab-speed-dial md-open="isOpen" md-direction="up" class="md-scale md-fab-bottom-right"
+               ng-mouseenter="isOpen=true" ng-mouseleave="isOpen=false">
+    <md-fab-trigger>
+        <md-button aria-label="menu" class="md-fab">
+            <md-icon md-font-library="material-icons">menu</md-icon>
+        </md-button>
+    </md-fab-trigger>
+    <md-fab-actions>
+        <md-button aria-label="Work item" class="md-fab md-raised md-mini" ng-click="addWorkItem()">
+            <md-icon md-font-library="material-icons" aria-label="Add work item">playlist_add</md-icon>
+            <md-tooltip md-direction="left" md-visible="false" md-autohide="true">Add work item</md-tooltip>
+        </md-button>
+        <md-button aria-label="Stage" class="md-fab md-raised md-mini" ng-click="addStage()">
+            <md-icon md-font-library="material-icons" aria-label="Add stage">view_column</md-icon>
+            <md-tooltip md-direction="left" md-visible="false" md-autohide="true">Add stage</md-tooltip>
+        </md-button>
+        <md-button aria-label="Edit board title" class="md-fab md-raised md-mini" ng-click="editBoard()">
+            <md-icon md-font-library="material-icons" aria-label="Edit board title">mode_edit</md-icon>
+            <md-tooltip md-direction="left" md-visible="false" md-autohide="true">Edit board title</md-tooltip>
+        </md-button>
+    </md-fab-actions>
+</md-fab-speed-dial>
 
-<div ng-include="'html/main/main.add_workitem.html'"></div>
-<div ng-include="'html/main/main.delete_workitem.html'"></div>
-<div ng-include="'html/main/main.edit_stage.html'"></div>
-<div ng-include="'html/main/main.edit_board.html'"></div>

@@ -14,7 +14,11 @@ angular.module('koobzApp')
 
         update: function(boardId, stage) {
             return this.stageResource.update({boardId: boardId, stageId: stage.id}, {name: stage.name}).$promise;
-        }
+        },
+
+        removeStage: function(boardId, stage) {
+            return this.stageResource.delete({boardId: boardId, stageId: stage.id}).$promise;
+        },
     }
 
 }]);

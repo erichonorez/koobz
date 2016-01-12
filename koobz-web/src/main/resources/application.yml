@@ -4,3 +4,13 @@ spring:
   resources:
     chain:
       enabled: true
+    static-locations:
+      - 'classpath:/static/'
+      - 'file:./koobz-web-board/src/main/'
+      - 'file:./koobz-web-board/bower_components/'
+  devtools:
+    restart:
+      additional-paths:
+        - './koobz-web-board/src/main/'
+        - './koobz-web-board/bower_components/'
+      additional-exclude: '**/*.js, **/*.css'

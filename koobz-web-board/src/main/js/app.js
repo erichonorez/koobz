@@ -5,11 +5,15 @@ angular.module('koobzApp', [
   'ngSanitize',
   'ngRoute',
   'ui.bootstrap',
+  'ngMaterial',
+  'ngAnimate',
+  'ngAria',
+  'ngMessages',
   'dndLists',
   'underscore',
   'sluggerizer'
 ])
-  .config(function ($routeProvider, $locationProvider) {
+  .config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
     $routeProvider
       .when('/boards/:boardId/:boardName', {
         templateUrl: 'html/main/main.html',
@@ -29,4 +33,7 @@ angular.module('koobzApp', [
       });
 
     $locationProvider.html5Mode(true);
+
+    $mdThemingProvider.theme('default')
+        .primaryPalette('blue');
   });

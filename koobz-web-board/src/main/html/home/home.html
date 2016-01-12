@@ -1,12 +1,15 @@
-<div class="container-fluid">
-  <div class="row">
-    <h1>koobz</h1>
-  </div>
-  <div class="row">
-    <form class="form-inline" name="newBoardForm" ng-submit="create()">
-      <label class="sr-only" for="boardName">Name of your board:</label>
-      <input class="form-control" type="text" name="boardName" ng-required="true" placeholder="Give a name to your board" ng-model="name"/>
-      <button type="submit" class="btn btn-primary">Create</button>
-    </form>
-  </div>
-</div>  
+<md-content layout="row" layout-align="center center" layout-fill class="home-container">
+  <md-container>
+    <h1>Koobz</h1>
+    <div>
+      <form ng-submit="create()">
+        <md-input-container>
+          <label for="boardName">Enter a name for your board</label>
+          <input type="text" id="boardName" name="boardName" required ng-required="true" ng-model="name"/>
+        </md-input-container>
+        <md-button class="md-raised md-primary" ng-click="create()">Create</md-button>
+      </form>
+    </div>
+  </md-container>
+
+</md-content>
