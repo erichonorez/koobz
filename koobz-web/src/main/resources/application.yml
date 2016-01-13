@@ -4,6 +4,12 @@ spring:
   resources:
     chain:
       enabled: true
+
+---
+
+spring:
+  profiles: development
+  resources:
     static-locations:
       - 'classpath:/static/'
       - 'file:./koobz-web-board/src/main/'
