@@ -1,4 +1,21 @@
 server:
+  port: 80
+zuul:
+  routes:
+    boards:
+      path: /api/boards/**
+      serviceId: boards
+      url: http://koobz-board:8080/boards
+      stripPrefix: true
+    web:
+      path: /**
+      url: http://koobz-web:9000
+
+---
+
+spring:
+  profiles: development
+server:
   port: 8081
 zuul:
   routes:
@@ -10,3 +27,4 @@ zuul:
     web:
       path: /**
       url: http://localhost:9000
+
