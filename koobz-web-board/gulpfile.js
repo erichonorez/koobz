@@ -6,20 +6,19 @@ var less = require('gulp-less');
 var paths = {
     "js": "src/main/js/**",
     "html": "src/main/html/**",
-    "less": "src/main/less/**/*.less",
+    "css": "src/main/css/*.css",
     "dist": "target/dist/"
 };
 
 gulp.task('minify-css', function() {
-    return gulp.src(paths.less)
-        .pipe(less())
+    return gulp.src(paths.css)
         .pipe(minifyCss())
         .pipe(gulp.dest(paths.dist + 'css/'));
 });
 
 gulp.task('minify-js', function() {
     return gulp.src(paths.js)
-        //.pipe(uglify())
+        .pipe(uglify())
         .pipe(gulp.dest(paths.dist + 'js/'));
 });
 

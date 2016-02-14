@@ -2,8 +2,10 @@ package org.svomz.apps.koobz.board.domain;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -15,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 
@@ -51,6 +54,12 @@ public class Stage {
     this.name = name;
   }
 
+  @VisibleForTesting
+  Stage(final String name, final List<WorkItem> workItems) {
+    this(name);
+    workItems.forEach(workItem -> this.addWorkItem(workItem));
+  }
+
   public String getId() {
     return this.id;
   }
@@ -65,8 +74,16 @@ public class Stage {
     this.name = name;
   }
 
+  /**
+   * @return the list of work items on the board. This list does not contains archived items.
+   */
   public Set<WorkItem> getWorkItems() {
-    return Collections.unmodifiableSet(this.workItems);
+    Set<WorkItem>
+      notArchivedWorkItems = this.workItems.stream()
+      .filter(workItem -> !workItem.isArchived())
+      .collect(Collectors.toSet());
+
+    return Collections.unmodifiableSet(notArchivedWorkItems);
   }
 
   Stage addWorkItem(final WorkItem workItem) {
@@ -142,6 +159,10 @@ public class Stage {
 
   public int getOrder() {
     return this.order;
+  }
+
+  boolean hasWorkItems() {
+    return this.getWorkItems().size() > 0;
   }
 
   private static class StageValidation {

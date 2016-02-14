@@ -1,9 +1,24 @@
 package org.svomz.apps.koobz.board.domain;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import static org.svomz.apps.koobz.board.domain.BoardMaker.*;
+import static org.svomz.apps.koobz.board.domain.StageMaker.*;
+import static org.svomz.apps.koobz.board.domain.WorkItemMaker.*;
+import static com.natpryce.makeiteasy.MakeItEasy.*;
+
+import static org.assertj.core.api.Assertions.*;
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+  BoardUnitTest.ArchivingFeatures.class
+})
 public class BoardUnitTest {
 
   @Test
@@ -329,6 +344,159 @@ public class BoardUnitTest {
     board.moveWorkItem(workItemA, wip);
     Assert.assertEquals(0, workItemA.getOrder());
     Assert.assertEquals(0, workItemB.getOrder());
+  }
+
+  @Test
+  public void itShouldAddStageWorkItemsIfStageContainsWorkItemWhenAddedToBoard() {
+    Board board = make(a(Board,
+      with(name, "Hello"),
+      with(stages, listOf(
+        a(Stage,
+          with(stageName, "TODO"),
+          with(workItems, listOf(
+            a(WorkItem, with(workItemName, "Un")),
+            a(WorkItem, with(workItemName, "Deux"))
+          ))),
+        a(Stage, with(stageName, "WIP")),
+        a(Stage, with(stageName, "DONE"))
+      ))
+    ));
+
+    assertThat(board.getWorkItems())
+      .hasSize(2);
+  }
+
+  public static class ArchivingFeatures {
+
+    @Test
+    public void itShouldReturnsArchivedWorkItems() throws WorkItemNotInProcessException {
+      Board board = make(a(Board,
+        with(name, "Hello"),
+        with(stages, listOf(
+          a(Stage,
+            with(stageName, "TODO"),
+            with(workItems, listOf(
+              a(WorkItem, with(workItemName, "Un")),
+              a(WorkItem, with(workItemName, "Deux"))
+            ))),
+          a(Stage, with(stageName, "WIP")),
+          a(Stage, with(stageName, "DONE"))
+        ))
+      ));
+
+      Iterator<WorkItem> workItemsOnTheBoard = board.getWorkItems().iterator();
+      WorkItem workItem =  workItemsOnTheBoard.next();
+      board.archive(workItem);
+
+      Set<WorkItem> workItemsReferencedByTheTodoStage
+        = board.getStages()
+        .stream()
+        .filter(stage -> "TODO".equals(stage.getName()))
+        .findFirst()
+        .get()
+        .getWorkItems();
+
+      assertThat(workItemsReferencedByTheTodoStage)
+        .hasSize(1)
+        .doesNotContain(workItem);
+
+      assertThat(board.getWorkItems())
+        .hasSize(1)
+        .doesNotContain(workItem);
+    }
+
+    @Test
+    public void itShouldUnarchiveWorkItemsInTheStageTheyWereBeforeArchving() throws WorkItemNotInProcessException {
+      Board board = make(a(Board,
+        with(name, "Hello"),
+        with(stages, listOf(
+          a(Stage,
+            with(stageName, "TODO"),
+            with(workItems, listOf(
+              a(WorkItem, with(workItemName, "Deux")),
+              a(WorkItem, with(workItemName, "Un"))
+            ))),
+          a(Stage, with(stageName, "WIP")),
+          a(Stage, with(stageName, "DONE"))
+        ))
+      ));
+
+      WorkItem workItem = board.getWorkItems().iterator().next();
+      board.archive(workItem);
+      board.unarchive(workItem);
+
+      Set<WorkItem> workItemsReferencedByTheTodoStage
+        = board.getStages()
+        .stream()
+        .filter(stage -> "TODO".equals(stage.getName()))
+        .findFirst()
+        .get()
+        .getWorkItems();
+
+      assertThat(workItemsReferencedByTheTodoStage)
+        .hasSize(2)
+        .contains(workItem);
+
+      assertThat(board.getWorkItems())
+        .hasSize(2)
+        .contains(workItem);
+    }
+
+    @Test
+    public void itShouldConsiderArchivedWorkItemsWhenReordering()
+      throws WorkItemNotInProcessException, WorkItemNotInStageException {
+      Board board = make(a(Board,
+        with(name, "Hello"),
+        with(stages, listOf(
+          a(Stage,
+            with(stageName, "TODO"),
+            with(workItems, listOf(
+              a(WorkItem, with(workItemName, "One")),
+              a(WorkItem, with(workItemName, "Two")),
+              a(WorkItem, with(workItemName, "Tree"))
+            ))),
+          a(Stage, with(stageName, "WIP")),
+          a(Stage, with(stageName, "DONE"))
+        ))
+      ));
+
+      //Archive the work item with the title "One"
+      WorkItem one = board.getWorkItems()
+        .stream()
+        .filter(workItem -> "One".equals(workItem.getTitle()))
+        .findFirst()
+        .get();
+
+      board.archive(one);
+
+      //Move tree to the first position
+      WorkItem tree = board.getWorkItems()
+        .stream()
+        .filter(workItem -> "Tree".equals(workItem.getTitle()))
+        .findFirst()
+        .get();
+
+      board.reoderWorkItem(tree, 0);
+
+      //When unarchiving "One" it should be in second position
+      board.unarchive(one);
+
+      assertThat(tree.getOrder())
+        .isEqualTo(0);
+
+      assertThat(one.getOrder())
+        .isEqualTo(1);
+
+      WorkItem two = board.getWorkItems()
+        .stream()
+        .filter(workItem -> "Two".equals(workItem.getTitle()))
+        .findFirst()
+        .get();
+
+      assertThat(two.getOrder())
+        .isEqualTo(2);
+    }
+
   }
 
 }

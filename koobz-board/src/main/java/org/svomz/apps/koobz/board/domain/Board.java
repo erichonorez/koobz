@@ -2,8 +2,10 @@ package org.svomz.apps.koobz.board.domain;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
@@ -17,7 +19,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 
 /**
  * Description: The board object is the aggregated root to manipulate the board itself and its
@@ -54,6 +58,14 @@ public class Board {
     this.name = name;
   }
 
+  @VisibleForTesting
+  Board(final String name, final List<Stage> stages) {
+    this(name);
+    for (Stage stage : stages) {
+      this.addStage(stage);
+    }
+  }
+
   public String getId() {
     return this.id;
   }
@@ -69,12 +81,19 @@ public class Board {
   }
 
   /**
-   * @return the list of work items on the board. This list is a unmodifiable Set to prevent direct
-   *         manipulations (add / remove) of the set. If you want to add or remove work items you
-   *         must use {@link #removeWorkItem(WorkItem)} and {@link #addWorkItem(WorkItem, Stage)}.
+   * @return the list of work items on the board. This list does not contains archived items.
+   *
+   * This list is a unmodifiable Set to prevent direct manipulations (add / remove) of the set.
+   * If you want to add or remove work items you must use {@link #removeWorkItem(WorkItem)}
+   * and {@link #addWorkItem(WorkItem, Stage)}.
    */
   public Set<WorkItem> getWorkItems() {
-    return Collections.unmodifiableSet(this.workItems);
+    Set<WorkItem>
+      notArchivedWorkItems = this.getAllWorkItems().stream()
+        .filter(workItem -> !workItem.isArchived())
+        .collect(Collectors.toSet());
+
+    return Collections.unmodifiableSet(notArchivedWorkItems);
   }
 
   /**
@@ -92,6 +111,18 @@ public class Board {
     stage.setBoard(this);
     stage.setOrder(this.stages.size());
     this.stages.add(stage);
+
+    if (stage.hasWorkItems()) {
+      stage.getWorkItems().forEach(workItem -> {
+        try {
+          this.addWorkItem(workItem, stage);
+        } catch (StageNotInProcessException e) {
+          // This should never happen
+          throw new IllegalStateException(e);
+        }
+      });
+    }
+
     return this;
   }
 
@@ -206,13 +237,54 @@ public class Board {
   public WorkItem reoderWorkItem(WorkItem workItem, int i) throws WorkItemNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(workItem);
     
-    if (!this.workItems.contains(workItem)) {
+    if (!this.getAllWorkItems().contains(workItem)) {
       throw new WorkItemNotInProcessException();
     }
     
     workItem.getStage().reoderWorkItem(workItem, i);
     return workItem;
   }
+
+  public Board archiveWorkItem(final WorkItem workItem) throws WorkItemNotInProcessException {
+    Preconditions.checkNotNull(workItem);
+
+    if (!this.workItems.contains(workItem)) {
+      throw new WorkItemNotInProcessException();
+    }
+
+    return this;
+  }
+
+  public Board archive(WorkItem workItem) throws WorkItemNotInProcessException {
+    Preconditions.checkNotNull(workItem);
+
+    if (!this.getWorkItems().contains(workItem)) {
+      throw new WorkItemNotInProcessException();
+    }
+
+    workItem.setArchived(true);
+    return this;
+  }
+
+  public Board unarchive(WorkItem workItem) throws WorkItemNotInProcessException {
+    Preconditions.checkNotNull(workItem);
+
+    if (!this.getAllWorkItems().contains(workItem)) {
+      throw new WorkItemNotInProcessException();
+    }
+
+    workItem.setArchived(false);
+    return this;
+  }
+
+  /**
+   * @return the list of work items event the archived ones.
+   */
+  private Set<WorkItem> getAllWorkItems() {
+    return this.workItems;
+  }
+
+
 
   private static class BoardValidation {
 

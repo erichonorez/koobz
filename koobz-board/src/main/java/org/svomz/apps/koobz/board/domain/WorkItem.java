@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class WorkItem {
   @ManyToOne
   @JoinColumn(name = "board_id")
   private Board board;
+  private boolean archived;
 
   /**
    * No-args constructor required by JPA.
@@ -48,6 +50,12 @@ public class WorkItem {
     WorkItemValidation.checkTitle(title);
 
     this.title = title;
+  }
+
+  @VisibleForTesting
+  WorkItem(final String title, final String description) {
+    this(title);
+    this.setDescription(description);
   }
 
   public String getId() {
@@ -99,6 +107,14 @@ public class WorkItem {
   WorkItem setBoard(final Board board) {
     this.board = board;
     return this;
+  }
+
+  void setArchived(boolean archived) {
+    this.archived = archived;
+  }
+
+  boolean isArchived() {
+    return this.archived;
   }
 
   private static class WorkItemValidation {
