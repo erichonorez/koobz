@@ -18,7 +18,6 @@ gulp.task('minify-css', function() {
 
 gulp.task('minify-js', function() {
     return gulp.src(paths.js)
-        .pipe(uglify())
         .pipe(gulp.dest(paths.dist + 'js/'));
 });
 
