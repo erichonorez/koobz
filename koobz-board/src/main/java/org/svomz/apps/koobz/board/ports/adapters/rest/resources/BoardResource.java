@@ -20,6 +20,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.springframework.stereotype.Component;
+import org.svomz.apps.koobz.board.application.BoardApplicationService;
+import org.svomz.apps.koobz.board.application.BoardNotFoundException;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardViewModel;
 import org.svomz.apps.koobz.board.domain.model.Board;
@@ -31,21 +33,25 @@ import com.google.common.base.Preconditions;
 
 @Component
 @Path("/boards")
-@Transactional
 public class BoardResource {
+
+  private final BoardApplicationService boardApplicationService;
 
   private BoardRepository boardRepository;
 
   @Inject
-  public BoardResource(final BoardRepository boardRepository) {
+  public BoardResource(final BoardRepository boardRepository, final BoardApplicationService boardApplicationService) {
     Preconditions.checkNotNull(boardRepository);
+    Preconditions.checkNotNull(boardApplicationService);
 
     this.boardRepository = boardRepository;
+    this.boardApplicationService = boardApplicationService;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.SimpleView.class)
+  @Transactional
   public List<BoardViewModel> getBoards() {
     Iterable<Board> boards = this.boardRepository.findAll();
 
@@ -60,9 +66,8 @@ public class BoardResource {
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.FullView.class)
   public BoardViewModel getBoard(@PathParam("boardId") final String boardId)
-    throws EntityNotFoundException {
-    Board board = this.boardRepository.findOrThrowException(boardId);
-
+    throws BoardNotFoundException {
+    Board board = this.boardApplicationService.findBoard(boardId);
     return new BoardViewModel(board);
   }
 
@@ -73,8 +78,7 @@ public class BoardResource {
   public Response createBoard(@NotNull @Valid final BoardInputModel boardInputModel) {
     Preconditions.checkNotNull(boardInputModel);
 
-    Board board = new Board(boardInputModel.getName());
-    this.boardRepository.save(board);
+    Board board = this.boardApplicationService.createBoard(boardInputModel.getName());
     
     BoardViewModel viewModel = new BoardViewModel(board);
     return Response.status(Status.CREATED).entity(viewModel).build();
@@ -85,6 +89,7 @@ public class BoardResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.SimpleView.class)
+  @Transactional
   public BoardViewModel updateBoard(@PathParam("boardId") final String boardId,
       @NotNull @Valid final BoardInputModel boardInputModel) throws EntityNotFoundException {
     Preconditions.checkNotNull(boardInputModel);
@@ -97,6 +102,7 @@ public class BoardResource {
 
   @DELETE
   @Path("{boardId}")
+  @Transactional
   public void deleteBoard(@PathParam("boardId") final String boardId)
     throws EntityNotFoundException {
     Board persistedBoard = this.boardRepository.findOrThrowException(boardId);

@@ -14,10 +14,13 @@ import org.svomz.apps.koobz.board.infrastructure.domain.KanbanRepositoryFactoryB
  */
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan
+@ComponentScan(basePackages = {
+  "org.svomz.apps.koobz.board.application",
+  "org.svomz.apps.koobz.board.ports.adapters.rest"
+})
 @EnableTransactionManagement
-@EnableJpaRepositories(repositoryFactoryBeanClass = KanbanRepositoryFactoryBean.class, basePackages = "org.svomz.apps.koobz.board.domain")
-@EntityScan(basePackages = "org.svomz.apps.koobz.board.domain")
+@EnableJpaRepositories(repositoryFactoryBeanClass = KanbanRepositoryFactoryBean.class, basePackages = "org.svomz.apps.koobz.board.domain.model")
+@EntityScan(basePackages = "org.svomz.apps.koobz.board.domain.model")
 public class KoobzBoardApplication {
 
     public static void main(String... args) {

@@ -3,6 +3,7 @@ package org.svomz.apps.koobz.board.ports.adapters.rest;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
+import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.BoardNotFoundMapper;
 import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.EntityNotFoundMapper;
 import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.IllegalArgumentMapper;
 import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.StageNotEmptyMapper;
@@ -28,6 +29,7 @@ public class KanbanResourceConfig extends ResourceConfig {
     this.register(StageNotEmptyMapper.class);
     this.register(StageNotInProcessMapper.class);
     this.register(WorkItemNotInProcessMapper.class);
+    this.register(BoardNotFoundMapper.class);
   }
 
 }

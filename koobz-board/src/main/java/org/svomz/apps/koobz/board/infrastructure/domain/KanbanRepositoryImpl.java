@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 
@@ -24,5 +25,10 @@ public class KanbanRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
       throw new EntityNotFoundException();
     }
     return entity;
+  }
+
+  @Override
+  public String nextIdentity() {
+    return UUID.randomUUID().toString();
   }
 }

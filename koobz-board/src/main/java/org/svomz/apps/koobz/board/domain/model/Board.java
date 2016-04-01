@@ -55,11 +55,19 @@ public class Board {
   }
 
   @VisibleForTesting
-  Board(final String name, final List<Stage> stages) {
+  public Board(final String name, final List<Stage> stages) {
     this(name);
     for (Stage stage : stages) {
       this.addStage(stage);
     }
+  }
+
+  public Board(final String boardId, final String aBoardName) {
+    Preconditions.checkNotNull(boardId);
+    this.id = boardId;
+    this.workItems = new HashSet<WorkItem>();
+    this.stages = new HashSet<Stage>();
+    this.setName(aBoardName);
   }
 
   public String getId() {
@@ -279,7 +287,6 @@ public class Board {
   private Set<WorkItem> getAllWorkItems() {
     return this.workItems;
   }
-
 
 
   private static class BoardValidation {
