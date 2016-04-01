@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.application.resources;
+package org.svomz.apps.koobz.board.ports.adapters.rest.resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +20,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.springframework.stereotype.Component;
-import org.svomz.apps.koobz.board.application.models.BoardInputModel;
-import org.svomz.apps.koobz.board.application.models.BoardViewModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardViewModel;
 import org.svomz.apps.koobz.board.domain.Board;
 import org.svomz.apps.koobz.board.domain.BoardRepository;
 import org.svomz.apps.koobz.board.infrastructure.domain.EntityNotFoundException;

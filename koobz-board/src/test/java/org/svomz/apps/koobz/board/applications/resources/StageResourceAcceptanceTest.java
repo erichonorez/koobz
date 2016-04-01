@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.not;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.svomz.apps.koobz.board.application.models.StageInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.StageInputModel;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;

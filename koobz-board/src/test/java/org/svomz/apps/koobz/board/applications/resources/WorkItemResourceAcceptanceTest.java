@@ -15,7 +15,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.svomz.apps.koobz.board.application.models.WorkItemInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;

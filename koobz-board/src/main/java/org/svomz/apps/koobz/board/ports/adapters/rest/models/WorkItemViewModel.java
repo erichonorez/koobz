@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.application.models;
+package org.svomz.apps.koobz.board.ports.adapters.rest.models;
 
 
 import org.svomz.apps.koobz.board.domain.WorkItem;

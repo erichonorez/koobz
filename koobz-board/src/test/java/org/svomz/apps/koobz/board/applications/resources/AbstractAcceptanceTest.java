@@ -5,14 +5,13 @@ import static com.jayway.restassured.config.RestAssuredConfig.config;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.isA;
 
 import org.junit.After;
 import org.junit.Before;
-import org.svomz.apps.koobz.board.application.models.BoardInputModel;
-import org.svomz.apps.koobz.board.application.models.StageInputModel;
-import org.svomz.apps.koobz.board.application.models.WorkItemInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.StageInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.ConnectionConfig;

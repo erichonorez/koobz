@@ -12,7 +12,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.svomz.apps.koobz.board.application.models.BoardInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardInputModel;
 import org.svomz.apps.koobz.board.domain.Stage;
 import org.svomz.apps.koobz.board.domain.WorkItem;
 

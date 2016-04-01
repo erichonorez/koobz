@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.application.resources;
+package org.svomz.apps.koobz.board.ports.adapters.rest.resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.svomz.apps.koobz.board.application.models.WorkItemInputModel;
-import org.svomz.apps.koobz.board.application.models.WorkItemViewModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemViewModel;
 import org.svomz.apps.koobz.board.domain.Board;
 import org.svomz.apps.koobz.board.domain.BoardRepository;
 import org.svomz.apps.koobz.board.domain.Stage;

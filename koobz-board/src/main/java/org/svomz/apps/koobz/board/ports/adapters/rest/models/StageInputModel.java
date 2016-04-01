@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.application.models;
+package org.svomz.apps.koobz.board.ports.adapters.rest.models;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
