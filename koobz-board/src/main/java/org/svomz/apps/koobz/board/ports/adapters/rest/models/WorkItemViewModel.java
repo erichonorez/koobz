@@ -1,7 +1,7 @@
 package org.svomz.apps.koobz.board.ports.adapters.rest.models;
 
 
-import org.svomz.apps.koobz.board.domain.WorkItem;
+import org.svomz.apps.koobz.board.domain.model.WorkItem;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;

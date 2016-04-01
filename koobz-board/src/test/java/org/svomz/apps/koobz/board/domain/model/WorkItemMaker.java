@@ -1,10 +1,7 @@
-package org.svomz.apps.koobz.board.domain;
+package org.svomz.apps.koobz.board.domain.model;
 
 import com.natpryce.makeiteasy.Instantiator;
 import com.natpryce.makeiteasy.Property;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by eric on 11/02/16.

@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.domain;
+package org.svomz.apps.koobz.board.domain.model;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,9 +8,9 @@ import org.junit.runners.Suite;
 import java.util.Iterator;
 import java.util.Set;
 
-import static org.svomz.apps.koobz.board.domain.BoardMaker.*;
-import static org.svomz.apps.koobz.board.domain.StageMaker.*;
-import static org.svomz.apps.koobz.board.domain.WorkItemMaker.*;
+import static org.svomz.apps.koobz.board.domain.model.BoardMaker.*;
+import static org.svomz.apps.koobz.board.domain.model.StageMaker.*;
+import static org.svomz.apps.koobz.board.domain.model.WorkItemMaker.*;
 import static com.natpryce.makeiteasy.MakeItEasy.*;
 
 import static org.assertj.core.api.Assertions.*;

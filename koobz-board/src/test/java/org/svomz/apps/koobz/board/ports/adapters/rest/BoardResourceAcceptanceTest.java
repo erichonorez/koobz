@@ -13,8 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardInputModel;
-import org.svomz.apps.koobz.board.domain.Stage;
-import org.svomz.apps.koobz.board.domain.WorkItem;
+import org.svomz.apps.koobz.board.domain.model.Stage;
+import org.svomz.apps.koobz.board.domain.model.WorkItem;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;

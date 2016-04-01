@@ -22,8 +22,8 @@ import javax.ws.rs.core.Response.Status;
 import org.springframework.stereotype.Component;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardViewModel;
-import org.svomz.apps.koobz.board.domain.Board;
-import org.svomz.apps.koobz.board.domain.BoardRepository;
+import org.svomz.apps.koobz.board.domain.model.Board;
+import org.svomz.apps.koobz.board.domain.model.BoardRepository;
 import org.svomz.apps.koobz.board.infrastructure.domain.EntityNotFoundException;
 
 import com.fasterxml.jackson.annotation.JsonView;

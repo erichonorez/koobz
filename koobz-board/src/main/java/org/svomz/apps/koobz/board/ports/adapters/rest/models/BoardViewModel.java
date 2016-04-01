@@ -3,7 +3,7 @@ package org.svomz.apps.koobz.board.ports.adapters.rest.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.svomz.apps.koobz.board.domain.Board;
+import org.svomz.apps.koobz.board.domain.model.Board;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;

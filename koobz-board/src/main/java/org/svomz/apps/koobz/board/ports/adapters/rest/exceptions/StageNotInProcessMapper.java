@@ -7,7 +7,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.ErrorModel;
-import org.svomz.apps.koobz.board.domain.StageNotInProcessException;
+import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
 
 @Provider
 public class StageNotInProcessMapper implements ExceptionMapper<StageNotInProcessException> {

@@ -7,7 +7,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.ErrorModel;
-import org.svomz.apps.koobz.board.domain.WorkItemNotInProcessException;
+import org.svomz.apps.koobz.board.domain.model.WorkItemNotInProcessException;
 
 @Provider
 public class WorkItemNotInProcessMapper implements ExceptionMapper<WorkItemNotInProcessException> {

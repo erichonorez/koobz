@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.domain;
+package org.svomz.apps.koobz.board.domain.model;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

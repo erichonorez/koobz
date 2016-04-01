@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.domain;
+package org.svomz.apps.koobz.board.domain.model;
 
 import java.util.Collections;
 import java.util.HashSet;

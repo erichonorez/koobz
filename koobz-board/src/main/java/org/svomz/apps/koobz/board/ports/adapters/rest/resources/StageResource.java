@@ -21,12 +21,12 @@ import javax.ws.rs.core.Response.Status;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.StageInputModel;
-import org.svomz.apps.koobz.board.domain.Board;
-import org.svomz.apps.koobz.board.domain.BoardRepository;
-import org.svomz.apps.koobz.board.domain.Stage;
-import org.svomz.apps.koobz.board.domain.StageNotEmptyException;
-import org.svomz.apps.koobz.board.domain.StageNotInProcessException;
-import org.svomz.apps.koobz.board.domain.StageRepository;
+import org.svomz.apps.koobz.board.domain.model.Board;
+import org.svomz.apps.koobz.board.domain.model.BoardRepository;
+import org.svomz.apps.koobz.board.domain.model.Stage;
+import org.svomz.apps.koobz.board.domain.model.StageNotEmptyException;
+import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
+import org.svomz.apps.koobz.board.domain.model.StageRepository;
 import org.svomz.apps.koobz.board.infrastructure.domain.EntityNotFoundException;
 
 import com.google.common.base.Preconditions;
