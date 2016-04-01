@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -36,6 +37,8 @@ public class WorkItem {
   @ManyToOne
   @JoinColumn(name = "board_id")
   private Board board;
+
+  @Transient
   private boolean archived;
 
   /**

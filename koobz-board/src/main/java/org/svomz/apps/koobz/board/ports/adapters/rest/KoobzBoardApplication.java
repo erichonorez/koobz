@@ -1,7 +1,8 @@
-package org.svomz.apps.koobz.board;
+package org.svomz.apps.koobz.board.ports.adapters.rest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -16,6 +17,7 @@ import org.svomz.apps.koobz.board.infrastructure.domain.KanbanRepositoryFactoryB
 @ComponentScan
 @EnableTransactionManagement
 @EnableJpaRepositories(repositoryFactoryBeanClass = KanbanRepositoryFactoryBean.class, basePackages = "org.svomz.apps.koobz.board.domain")
+@EntityScan(basePackages = "org.svomz.apps.koobz.board.domain")
 public class KoobzBoardApplication {
 
     public static void main(String... args) {
