@@ -3,6 +3,7 @@ package org.svomz.apps.koobz.board.domain.model;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -109,6 +110,7 @@ public class Board {
     return Collections.unmodifiableSet(this.stages);
   }
 
+  @Deprecated
   public Board addStage(final Stage stage) {
     Preconditions.checkNotNull(stage, "The given stage must not be null.");
 
@@ -286,6 +288,15 @@ public class Board {
    */
   private Set<WorkItem> getAllWorkItems() {
     return this.workItems;
+  }
+
+  public Optional<Stage> getStage(String stageId) {
+    Preconditions.checkNotNull(stageId);
+
+    return this.getStages().stream()
+      .filter(stage -> {
+        return stageId.equals(stage.getId());
+      }).findFirst();
   }
 
 

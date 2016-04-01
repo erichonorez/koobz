@@ -55,8 +55,7 @@ public class WorkItem {
     this.title = title;
   }
 
-  @VisibleForTesting
-  WorkItem(final String title, final String description) {
+  public WorkItem(final String title, final String description) {
     this(title);
     this.setDescription(description);
   }

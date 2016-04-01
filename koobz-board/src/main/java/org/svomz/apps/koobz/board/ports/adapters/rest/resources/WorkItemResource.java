@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.svomz.apps.koobz.board.application.BoardApplicationService;
+import org.svomz.apps.koobz.board.application.BoardNotFoundException;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemViewModel;
 import org.svomz.apps.koobz.board.domain.model.Board;
@@ -41,13 +43,19 @@ import com.google.common.base.Preconditions;
 @Transactional
 public class WorkItemResource {
 
+  private final BoardApplicationService boardApplicationService;
+
   private BoardRepository boardRepository;
   private StageRepository stageRepository;
   private WorkItemRepository workItemRepository;
 
 
   @Inject
-  public WorkItemResource(final BoardRepository boardRepository,final StageRepository stageRepository, final WorkItemRepository workItemRepository) {
+  public WorkItemResource(
+    final BoardRepository boardRepository,
+    final StageRepository stageRepository,
+    final WorkItemRepository workItemRepository,
+    final BoardApplicationService boardApplicationService) {
     Preconditions.checkNotNull(boardRepository);
     Preconditions.checkNotNull(stageRepository);
     Preconditions.checkNotNull(workItemRepository);
@@ -55,6 +63,7 @@ public class WorkItemResource {
     this.boardRepository = boardRepository;
     this.stageRepository = stageRepository;
     this.workItemRepository = workItemRepository;
+    this.boardApplicationService = boardApplicationService;
   }
 
   @GET
@@ -73,16 +82,18 @@ public class WorkItemResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response create(@PathParam("boardId") final String boardId, @NotNull @Valid final WorkItemInputModel workItemInputModel)
-
-    throws StageNotInProcessException, EntityNotFoundException {
+  public Response create(@NotNull @PathParam("boardId") final String boardId,
+    @NotNull @Valid final WorkItemInputModel workItemInputModel)
+    throws StageNotInProcessException, BoardNotFoundException {
+    Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemInputModel);
 
-    Board board = this.boardRepository.findOrThrowException(boardId);
-    Stage stage = this.stageRepository.findOrThrowException(workItemInputModel.getStageId());
-    WorkItem workItem = new WorkItem(workItemInputModel.getTitle())
-      .setDescription(workItemInputModel.getDescription());
-    board.addWorkItem(workItem, stage);
+    WorkItem workItem = this.boardApplicationService.createWorkItem(
+      boardId,
+      workItemInputModel.getStageId(),
+      workItemInputModel.getTitle(),
+      workItemInputModel.getDescription()
+    );
 
     return Response.status(Status.CREATED).entity(new WorkItemViewModel(workItem)).build();
   }

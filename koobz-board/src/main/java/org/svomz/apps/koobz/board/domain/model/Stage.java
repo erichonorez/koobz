@@ -54,6 +54,12 @@ public class Stage {
     this.name = name;
   }
 
+  public Stage(final String stageId, final String name) {
+    this(name);
+    Preconditions.checkNotNull(stageId);
+    this.id = stageId;
+  }
+
   @VisibleForTesting
   Stage(final String name, final List<WorkItem> workItems) {
     this(name);
@@ -163,6 +169,10 @@ public class Stage {
 
   boolean hasWorkItems() {
     return this.getWorkItems().size() > 0;
+  }
+
+  public void addToBoard(final Board board) {
+    board.addStage(this);
   }
 
   private static class StageValidation {

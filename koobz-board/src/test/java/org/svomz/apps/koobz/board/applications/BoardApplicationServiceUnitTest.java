@@ -8,6 +8,8 @@ import org.svomz.apps.koobz.board.application.BoardNotFoundException;
 import org.svomz.apps.koobz.board.domain.model.Board;
 import org.svomz.apps.koobz.board.domain.model.BoardRepository;
 import org.svomz.apps.koobz.board.domain.model.Stage;
+import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
+import org.svomz.apps.koobz.board.domain.model.WorkItem;
 
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.when;
   BoardApplicationServiceUnitTest.CreateBoard.class,
   BoardApplicationServiceUnitTest.FindBoard.class,
   BoardApplicationServiceUnitTest.CreateStage.class,
+  BoardApplicationServiceUnitTest.CreateWorkItem.class
 })
 public class BoardApplicationServiceUnitTest {
 
@@ -127,6 +130,47 @@ public class BoardApplicationServiceUnitTest {
       Stage stage = boardApplicationService.createStage(boardId, title);
 
       // Then I get a BoardNotFoundException
+    }
+
+  }
+
+  public static class CreateWorkItem {
+
+    @Test
+    public void itShouldSuccessfullyCreateAWorkItem()
+      throws StageNotInProcessException, BoardNotFoundException {
+      // Given a board with id "35a45cd4-f81f-11e5-9ce9-5e5517507c66" and title "a board"
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aBoardName = "a board";
+      // And having a Stage with id "ac329010-f837-11e5-9ce9-5e5517507c66" and name "to do"
+      String stageId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aStageName = "to do";
+
+      Board board = new Board(boardId, aBoardName);
+      Stage stage = new Stage(stageId, aStageName);
+
+      stage.addToBoard(board);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When user adds a Work Item with title "Drink coffee" to the stage with id "ac329010-f837-11e5-9ce9-5e5517507c66"
+      String aWorkItemTitle = "Drink coffee";
+      String aWorkItemDescription = "At Starbuck";
+
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      WorkItem workItem = boardApplicationService.createWorkItem(
+        boardId,
+        stageId,
+        aWorkItemTitle,
+        aWorkItemDescription
+      );
+
+      // Then the board contains the work item
+      assertThat(board.getWorkItems()).contains(workItem);
+
+      assertThat(workItem.getTitle()).isEqualTo(aWorkItemTitle);
+      assertThat(workItem.getDescription()).isEqualTo(aWorkItemDescription);
     }
 
   }
