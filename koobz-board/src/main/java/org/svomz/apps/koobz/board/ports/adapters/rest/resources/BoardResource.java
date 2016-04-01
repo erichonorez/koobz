@@ -2,6 +2,7 @@ package org.svomz.apps.koobz.board.ports.adapters.rest.resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -22,6 +23,7 @@ import javax.ws.rs.core.Response.Status;
 import org.springframework.stereotype.Component;
 import org.svomz.apps.koobz.board.application.BoardApplicationService;
 import org.svomz.apps.koobz.board.application.BoardNotFoundException;
+import org.svomz.apps.koobz.board.application.BoardQueryService;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardViewModel;
 import org.svomz.apps.koobz.board.domain.model.Board;
@@ -36,16 +38,20 @@ import com.google.common.base.Preconditions;
 public class BoardResource {
 
   private final BoardApplicationService boardApplicationService;
+  private final BoardQueryService boardQueryService;
 
   private BoardRepository boardRepository;
 
   @Inject
-  public BoardResource(final BoardRepository boardRepository, final BoardApplicationService boardApplicationService) {
+  public BoardResource(final BoardRepository boardRepository, final BoardApplicationService boardApplicationService, final
+    BoardQueryService boardQueryService) {
     Preconditions.checkNotNull(boardRepository);
     Preconditions.checkNotNull(boardApplicationService);
+    Preconditions.checkNotNull(boardQueryService);
 
     this.boardRepository = boardRepository;
     this.boardApplicationService = boardApplicationService;
+    this.boardQueryService = boardQueryService;
   }
 
   @GET
@@ -65,10 +71,23 @@ public class BoardResource {
   @Path("{boardId}")
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.FullView.class)
-  public BoardViewModel getBoard(@PathParam("boardId") final String boardId)
+  public Response getBoard(@NotNull @PathParam("boardId") final String boardId)
     throws BoardNotFoundException {
-    Board board = this.boardApplicationService.findBoard(boardId);
-    return new BoardViewModel(board);
+    Preconditions.checkNotNull(boardId);
+
+    Optional<Board> optionalBoard = this.boardQueryService.findBoard(boardId);
+
+    Response response;
+    if (optionalBoard.isPresent()) {
+      response = Response.status(Status.OK)
+        .entity(new BoardViewModel(optionalBoard.get()))
+        .build();
+    } else {
+      response = Response.status(Status.NOT_FOUND)
+        .build();
+    }
+
+    return response;
   }
 
   @POST

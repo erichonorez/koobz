@@ -38,22 +38,11 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public Board findBoard(final String aBoardId) throws BoardNotFoundException {
-    Preconditions.checkNotNull(aBoardId);
-
-    Board board = this.boardRepository().findOne(aBoardId);
-    if (board == null) {
-      throw new BoardNotFoundException(aBoardId);
-    }
-    return board;
-  }
-
-  @Transactional
   public Stage createStage(final String boardId, final String title) throws BoardNotFoundException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(title);
 
-    Board board = this.findBoard(boardId);
+    Board board = this.boardOfId(boardId);
     Stage stage = new Stage(title);
 
     stage.addToBoard(board);
@@ -65,7 +54,7 @@ public class BoardApplicationService {
   public WorkItem createWorkItem(final String boardId, final String stageId, final String aWorkItemTitle,
     final String aWorkItemDescription) throws BoardNotFoundException, StageNotInProcessException {
 
-    Board board = this.findBoard(boardId);
+    Board board = this.boardOfId(boardId);
 
     Optional<Stage> stage = board.getStage(stageId);
     if (!stage.isPresent()) {
@@ -75,6 +64,14 @@ public class BoardApplicationService {
     WorkItem workItem = new WorkItem(aWorkItemTitle, aWorkItemDescription);
     board.addWorkItem(workItem, stage.get());
     return workItem;
+  }
+
+  private Board boardOfId(String boardId) throws BoardNotFoundException {
+    Board board = this.boardRepository().findOne(boardId);
+    if (board == null) {
+      throw new BoardNotFoundException(boardId);
+    }
+    return board;
   }
 
   private BoardRepository boardRepository() {
