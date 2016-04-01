@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.applications.resources;
+package org.svomz.apps.koobz.board.ports.adapters.rest;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.applications.resources;
+package org.svomz.apps.koobz.board.ports.adapters.rest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.allOf;
