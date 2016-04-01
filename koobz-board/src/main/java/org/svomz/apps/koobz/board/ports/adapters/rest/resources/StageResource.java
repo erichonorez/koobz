@@ -20,6 +20,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.svomz.apps.koobz.board.application.BoardApplicationService;
+import org.svomz.apps.koobz.board.application.BoardNotFoundException;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.StageInputModel;
 import org.svomz.apps.koobz.board.domain.model.Board;
 import org.svomz.apps.koobz.board.domain.model.BoardRepository;
@@ -36,16 +38,20 @@ import com.google.common.base.Preconditions;
 @Transactional
 public class StageResource {
 
+  private final BoardApplicationService boardApplicationService;
   private BoardRepository boardRepository;
   private StageRepository stageRepository;
   
   @Inject
-  public StageResource(final BoardRepository boardRepository, final StageRepository stageRepository) {
+  public StageResource(final BoardRepository boardRepository, final StageRepository stageRepository, final
+    BoardApplicationService boardApplicationService) {
     Preconditions.checkNotNull(boardRepository);
     Preconditions.checkNotNull(stageRepository);
+    Preconditions.checkNotNull(boardApplicationService);
     
     this.boardRepository = boardRepository;
     this.stageRepository = stageRepository;
+    this.boardApplicationService = boardApplicationService;
   }
 
   @GET
@@ -59,14 +65,14 @@ public class StageResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response createStage(@PathParam("boardId") final String boardId, @NotNull @Valid final StageInputModel stageInputModel)
-
-    throws EntityNotFoundException {
+  public Response createStage(
+    @NotNull @PathParam("boardId") final String boardId,
+    @NotNull @Valid final StageInputModel stageInputModel)
+    throws BoardNotFoundException {
+    Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(stageInputModel);
 
-    Board board = this.boardRepository.findOrThrowException(boardId);
-    Stage stage = new Stage(stageInputModel.getName());
-    board.addStage(stage);
+    Stage stage = this.boardApplicationService.createStage(boardId, stageInputModel.getName());
     
     return Response.status(Status.CREATED).entity(stage).build();
   }

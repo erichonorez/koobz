@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import org.springframework.stereotype.Service;
 import org.svomz.apps.koobz.board.domain.model.Board;
 import org.svomz.apps.koobz.board.domain.model.BoardRepository;
+import org.svomz.apps.koobz.board.domain.model.Stage;
 
 
 import javax.inject.Inject;
@@ -41,6 +42,18 @@ public class BoardApplicationService {
       throw new BoardNotFoundException(aBoardId);
     }
     return board;
+  }
+
+  @Transactional
+  public Stage createStage(final String boardId, final String title) throws BoardNotFoundException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(title);
+
+    Board board = this.findBoard(boardId);
+    Stage stage = new Stage(title);
+    board.addStage(stage);
+
+    return stage;
   }
 
   private BoardRepository boardRepository() {
