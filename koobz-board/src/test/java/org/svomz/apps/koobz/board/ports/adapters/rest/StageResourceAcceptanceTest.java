@@ -31,27 +31,6 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
   
   /**
    * As an api user
-   * Given a board exists with some stages
-   * When I list all boards
-   * Then I receive them all
-   */
-  @Test
-  public void testGetAllStages() {
-    String boardId = this.createBoard("Test 1").get("id");
-    this.createStage(boardId, "Stage 1");
-    
-    given()
-      .contentType(ContentType.JSON)
-      .accept(ContentType.JSON)
-    .when()
-      .get("/boards/" + boardId + "/stages")
-    .then()
-      .statusCode(200)
-      .body(not(emptyIterable()));
-  }
-  
-  /**
-   * As an api user
    * Given a board exists with a stage
    * When I update this stage
    * Then I receive the updated stage

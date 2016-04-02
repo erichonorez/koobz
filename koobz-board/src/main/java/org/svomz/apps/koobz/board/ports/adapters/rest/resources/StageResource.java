@@ -54,14 +54,6 @@ public class StageResource {
     this.boardApplicationService = boardApplicationService;
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  public List<Stage> getStages(@PathParam("boardId") final String boardId)
-    throws EntityNotFoundException {
-    Board board = this.boardRepository.findOrThrowException(boardId);
-    return new ArrayList<>(board.getStages());
-  }
-
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
