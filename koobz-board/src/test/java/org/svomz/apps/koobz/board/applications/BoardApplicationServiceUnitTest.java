@@ -31,7 +31,8 @@ import static org.mockito.Mockito.when;
   BoardApplicationServiceUnitTest.ArchiveWorkItem.class,
   BoardApplicationServiceUnitTest.ChangeBoardName.class,
   BoardApplicationServiceUnitTest.ChangeStageName.class,
-  BoardApplicationServiceUnitTest.DeleteStage.class
+  BoardApplicationServiceUnitTest.DeleteStage.class,
+  BoardApplicationServiceUnitTest.ChangeWorkItemInformation.class
 })
 public class BoardApplicationServiceUnitTest {
 
@@ -276,6 +277,43 @@ public class BoardApplicationServiceUnitTest {
       );
 
       // Then I get a StageNotInProcessException
+    }
+
+  }
+
+  public static class ChangeWorkItemInformation {
+
+    @Test
+    public void itShouldSuccessfullyUpdateWorkItemTitleAndDescription()
+      throws StageNotInProcessException, WorkItemNotInProcessException, BoardNotFoundException {
+      // Given a board with a stage having a work item A
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aBoardName = "a board";
+      Board board = new Board(boardId, aBoardName);
+
+      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String stageName = "to do";
+      Stage stage = new Stage(stageId, stageName);
+      board.addStage(stage);
+
+      String workItemTitle = "A";
+      String workItemDescription = "A desc";
+      String workItemId = "09021d01-3da9-4584-85c0-85211cfa8467";
+      WorkItem workItem = new WorkItem(workItemId, workItemTitle, workItemDescription);
+      board.addWorkItem(workItem, stage);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I update the work item title with "Ticket 42" and description "Bla bla bla"
+      String newWorkItemName = "Ticket 42";
+      String newWorkItemDescription = "Bla bla bla";
+
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      boardApplicationService.changeWorkItemInformation(boardId, workItemId, newWorkItemName, newWorkItemDescription);
+
+      // Then work item name is "Ticket 42" and its description is "Bla bla bla".
+      assertThat(board.getWorkItems()).contains(workItem);
     }
 
   }

@@ -116,6 +116,26 @@ public class BoardApplicationService {
   }
 
   @Transactional
+  public void changeWorkItemInformation(final String boardId,final String workItemId,
+    final String newWorkItemTitle, final String newWorkItemDescription)
+    throws BoardNotFoundException, WorkItemNotInProcessException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(workItemId);
+    Preconditions.checkNotNull(newWorkItemTitle);
+    Preconditions.checkNotNull(newWorkItemDescription);
+
+    Board board = this.boardOfId(boardId);
+    Optional<WorkItem> optionalWorkItem = board.workItemOfId(workItemId);
+    if (!optionalWorkItem.isPresent()) {
+      throw new WorkItemNotInProcessException();
+    }
+
+    WorkItem workItem = optionalWorkItem.get();
+    workItem.setTitle(newWorkItemTitle);
+    workItem.setDescription(newWorkItemDescription);
+  }
+
+  @Transactional
   public void moveWorkItemToStage(final String boardId, final String aWorkItemId, final String aStageId)
     throws BoardNotFoundException, WorkItemNotInProcessException, StageNotInProcessException {
     Preconditions.checkNotNull(boardId);
