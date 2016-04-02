@@ -1,7 +1,5 @@
 package org.svomz.apps.koobz.board.ports.adapters.rest.resources;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -38,33 +36,17 @@ import com.google.common.base.Preconditions;
 public class BoardResource {
 
   private final BoardApplicationService boardApplicationService;
-  private final BoardQueryService boardQueryService;
 
-  private BoardRepository boardRepository;
+  private final BoardQueryService boardQueryService;
 
   @Inject
   public BoardResource(final BoardRepository boardRepository, final BoardApplicationService boardApplicationService, final
     BoardQueryService boardQueryService) {
-    Preconditions.checkNotNull(boardRepository);
     Preconditions.checkNotNull(boardApplicationService);
     Preconditions.checkNotNull(boardQueryService);
 
-    this.boardRepository = boardRepository;
     this.boardApplicationService = boardApplicationService;
     this.boardQueryService = boardQueryService;
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @JsonView(BoardViewModel.SimpleView.class)
-  @Transactional
-  public List<BoardViewModel> getBoards() {
-    Iterable<Board> boards = this.boardRepository.findAll();
-
-    List<BoardViewModel> viewModels = new ArrayList<>();
-    boards.forEach(board -> viewModels.add(new BoardViewModel(board)));
-
-    return viewModels;
   }
 
   @GET
@@ -118,16 +100,6 @@ public class BoardResource {
 
     return Response.status(Status.OK)
       .build();
-  }
-
-  @DELETE
-  @Path("{boardId}")
-  @Transactional
-  public void deleteBoard(@PathParam("boardId") final String boardId)
-    throws EntityNotFoundException {
-    Board persistedBoard = this.boardRepository.findOrThrowException(boardId);
-
-    this.boardRepository.delete(persistedBoard);
   }
 
 }

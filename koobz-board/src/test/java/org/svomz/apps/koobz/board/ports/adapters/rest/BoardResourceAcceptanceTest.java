@@ -32,38 +32,6 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     .when()
       .post(this.boardsUrl());
   }
-
-  /**
-   * As an api user
-   * When I GET /boards
-   * Then I have the list of boards without their corresponding stages and workitems
-   */
-  @Test
-  public void testGetBoards() {
-    BoardInputModel board1 = new BoardInputModel("Test1");
-    this.createBoard(board1);
-    BoardInputModel board2 = new BoardInputModel("Test2");
-    this.createBoard(board2);
-    
-    JsonPath json = given()
-      .accept(ContentType.JSON)
-    .when()
-      .get("/boards/")
-    .then()
-      .statusCode(200)
-      .body(not(emptyIterable()))
-      .extract().response().jsonPath();
-    
-    List<WorkItem> workItems = json.get("workItems");
-    for (WorkItem workItem : workItems) {
-      Assert.assertNull(workItem);
-    }
-    
-    List<Stage> stages = json.get("stages");
-    for (Stage stage : stages) {
-      Assert.assertNull(stage);
-    }
-  }
   
   /**
    * As an api user
@@ -135,33 +103,6 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
       .statusCode(200)
     .when()
       .put("/boards/" + String.valueOf(boardId));
-  }
-  
-  /**
-   * As an api user
-   * When I create a board
-   * Then I delete this board
-   * I expect to receive not content
-   */
-  @Test
-  public void shouldSucessfullyDeleteAnEmptyBoard() {
-    BoardInputModel board1 = new BoardInputModel("Test1");
-    String boardId = this.createBoard(board1).get("id");
-    
-    given()
-      .accept(ContentType.JSON)
-    .when()
-      .delete("/boards/" + boardId)
-    .then()
-      .statusCode(204)
-      .body(equalTo(StringUtils.EMPTY));
-
-    given()
-      .accept(ContentType.JSON)
-      .when()
-        .get("/boards/" + boardId)
-      .then()
-        .statusCode(404);
   }
   
   /**
