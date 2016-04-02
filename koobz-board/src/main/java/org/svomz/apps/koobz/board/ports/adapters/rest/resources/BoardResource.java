@@ -109,14 +109,15 @@ public class BoardResource {
   @Produces(MediaType.APPLICATION_JSON)
   @JsonView(BoardViewModel.SimpleView.class)
   @Transactional
-  public BoardViewModel updateBoard(@PathParam("boardId") final String boardId,
-      @NotNull @Valid final BoardInputModel boardInputModel) throws EntityNotFoundException {
+  public Response updateBoard(@PathParam("boardId") final String boardId,
+      @NotNull @Valid final BoardInputModel boardInputModel)
+    throws EntityNotFoundException, BoardNotFoundException {
     Preconditions.checkNotNull(boardInputModel);
-    
-    Board board = this.boardRepository.findOrThrowException(boardId);
-    board.setName(boardInputModel.getName());
 
-    return new BoardViewModel(board);
+    this.boardApplicationService.changeBoardName(boardId, boardInputModel.getName());
+
+    return Response.status(Status.OK)
+      .build();
   }
 
   @DELETE

@@ -41,6 +41,16 @@ public class BoardApplicationService {
   }
 
   @Transactional
+  public void changeBoardName(final String boardId, final String newBoardName)
+    throws BoardNotFoundException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(newBoardName);
+
+    Board board = this.boardOfId(boardId);
+    board.setName(newBoardName);
+  }
+
+  @Transactional
   public Stage createStage(final String boardId, final String title) throws BoardNotFoundException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(title);

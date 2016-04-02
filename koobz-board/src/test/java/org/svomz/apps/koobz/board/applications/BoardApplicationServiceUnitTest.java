@@ -51,6 +51,29 @@ public class BoardApplicationServiceUnitTest {
 
   }
 
+  public static class ChangeBoardName {
+
+    @Test
+    public void itShouldSuccessfullyChangeTheNameOfABoard() throws BoardNotFoundException {
+      // Given a board with id "35a45cd4-f81f-11e5-9ce9-5e5517507c66" and name ",World! Hello"
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String boardName = ",World! Hello";
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      Board board = new Board(boardId, boardName);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I update the board name with "Hello, World!"
+      String newBoardName = "Hello, World!";
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      boardApplicationService.changeBoardName(boardId, newBoardName);
+
+      // Then the name is updated
+      assertThat(board.getName()).isEqualTo(newBoardName);
+    }
+
+  }
+
   public static class CreateStage {
 
     @Test

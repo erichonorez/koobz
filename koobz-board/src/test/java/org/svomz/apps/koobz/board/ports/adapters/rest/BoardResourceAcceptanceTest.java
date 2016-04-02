@@ -134,12 +134,7 @@ public class BoardResourceAcceptanceTest extends AbstractAcceptanceTest {
     .expect()
       .statusCode(200)
     .when()
-      .put("/boards/" + String.valueOf(boardId))
-    .then()
-      .body("name", equalTo(updatedBoard1.getName()))
-      .body("id", equalTo(boardId))
-      .body("workItems", nullValue())
-      .body("stages", nullValue());
+      .put("/boards/" + String.valueOf(boardId));
   }
   
   /**
