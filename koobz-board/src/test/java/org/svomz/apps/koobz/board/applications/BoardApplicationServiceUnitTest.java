@@ -478,7 +478,7 @@ public class BoardApplicationServiceUnitTest {
 
   }
 
-  public static class SendBackToBoard {
+  public static class SendWorkItemBackToBoard {
 
     @Test
     public void itShouldMakeWorkItemSentBackToBoardVisible()
@@ -506,7 +506,7 @@ public class BoardApplicationServiceUnitTest {
 
       // When I archive workItemA
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
-      boardApplicationService.sendBackToBoard(boardId, workItemAId);
+      boardApplicationService.sendWorkItemBackToBoard(boardId, workItemAId);
 
       // Then work item A should not be in the list of work items any more
       assertThat(board.getWorkItems()).contains(workItemA);

@@ -188,7 +188,7 @@ public class WorkItemResource {
     if (input.isArchived()) {
       this.boardApplicationService.archiveWorkItem(boardId, workItemId);
     } else {
-      this.boardApplicationService.sendBackToBoard(boardId, workItemId);
+      this.boardApplicationService.sendWorkItemBackToBoard(boardId, workItemId);
     }
 
     return Response.status(Status.OK)

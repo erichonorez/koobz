@@ -146,7 +146,7 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public void sendBackToBoard(final String boardId, final String workItemId)
+  public void sendWorkItemBackToBoard(final String boardId, final String workItemId)
     throws BoardNotFoundException, WorkItemNotArchivedException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
