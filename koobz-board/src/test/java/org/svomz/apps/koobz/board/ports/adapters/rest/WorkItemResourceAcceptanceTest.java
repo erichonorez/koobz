@@ -17,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemMoveInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.resources.WorkItemPositioningInputModel;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -258,6 +259,27 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
       .body(new WorkItemMoveInputModel(jsonDoneStage.get("id")))
     .when()
       .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/move")
+    .then()
+      .statusCode(200);
+  }
+
+  @Test
+  public void itShouldChangeThePositionOfWorkItemsInAStage() {
+    JsonPath jsonBoard = this.createBoard("Test board");
+    String boardId = jsonBoard.get("id");
+    JsonPath jsonTodoStage = this.createStage(boardId, "To do");
+    String stageId = jsonTodoStage.get("id");
+
+    JsonPath jsonWorkItem =
+      this.createWorkItem(boardId, stageId, "My first work item", "a description");
+    this.createWorkItem(boardId, stageId, "My second work item", "a description");
+
+    given()
+      .contentType(ContentType.JSON)
+      .accept(ContentType.JSON)
+      .body(new WorkItemPositioningInputModel(2))
+    .when()
+      .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/positioning")
     .then()
       .statusCode(200);
   }

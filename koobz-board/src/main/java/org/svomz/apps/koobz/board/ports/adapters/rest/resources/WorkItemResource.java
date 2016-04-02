@@ -162,4 +162,16 @@ public class WorkItemResource {
       .build();
   }
 
+  @POST
+  @Path("{id}/positioning")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response putAtPosition(@PathParam("boardId") final String boardId, @PathParam("id") final String workItemId,
+    @NotNull @Valid final WorkItemPositioningInputModel input)
+    throws WorkItemNotInStageException, BoardNotFoundException, WorkItemNotInProcessException {
+
+    this.boardApplicationService.changeWorkItemOrder(boardId, workItemId, input.getNewPosition());
+
+    return Response.status(Status.OK)
+      .build();
+  }
 }
