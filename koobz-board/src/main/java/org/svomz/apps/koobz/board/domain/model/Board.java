@@ -110,7 +110,6 @@ public class Board {
     return Collections.unmodifiableSet(this.stages);
   }
 
-  @Deprecated
   public Board addStage(final Stage stage) {
     Preconditions.checkNotNull(stage, "The given stage must not be null.");
 

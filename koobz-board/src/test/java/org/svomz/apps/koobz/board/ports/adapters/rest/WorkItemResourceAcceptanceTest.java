@@ -14,10 +14,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemMoveInputModel;
-import org.svomz.apps.koobz.board.ports.adapters.rest.resources.WorkItemPositionInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemArchivingInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemPositionInputModel;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -280,6 +282,78 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
       .body(new WorkItemPositionInputModel(2))
     .when()
       .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/position")
+    .then()
+      .statusCode(200);
+  }
+
+  @Ignore
+  @Test
+  public void itShouldArchiveAWorkItem() {
+    JsonPath jsonBoard = this.createBoard("Test board");
+    String boardId = jsonBoard.get("id");
+    JsonPath jsonTodoStage = this.createStage(boardId, "To do");
+    String stageId = jsonTodoStage.get("id");
+
+    JsonPath jsonWorkItem =
+      this.createWorkItem(boardId, stageId, "My first work item", "a description");
+
+    given()
+      .contentType(ContentType.JSON)
+      .accept(ContentType.JSON)
+      .body(new WorkItemArchivingInputModel(true))
+      .when()
+      .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/archiving")
+      .then()
+      .statusCode(200);
+  }
+
+  @Ignore
+  @Test
+  public void itShouldFailIfSendBackToBoardOnANotArchivedWorkItem() {
+    JsonPath jsonBoard = this.createBoard("Test board");
+    String boardId = jsonBoard.get("id");
+    JsonPath jsonTodoStage = this.createStage(boardId, "To do");
+    String stageId = jsonTodoStage.get("id");
+
+    JsonPath jsonWorkItem =
+      this.createWorkItem(boardId, stageId, "My first work item", "a description");
+
+    given()
+      .contentType(ContentType.JSON)
+      .accept(ContentType.JSON)
+      .body(new WorkItemArchivingInputModel(false))
+      .when()
+      .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/archiving")
+      .then()
+      .statusCode(400);
+  }
+
+  @Ignore
+  @Test
+  public void itShouldSendBackToBoardArchivedWorkItem() {
+    JsonPath jsonBoard = this.createBoard("Test board");
+    String boardId = jsonBoard.get("id");
+    JsonPath jsonTodoStage = this.createStage(boardId, "To do");
+    String stageId = jsonTodoStage.get("id");
+
+    JsonPath jsonWorkItem =
+      this.createWorkItem(boardId, stageId, "My first work item", "a description");
+
+    given()
+      .contentType(ContentType.JSON)
+      .accept(ContentType.JSON)
+      .body(new WorkItemArchivingInputModel(true))
+      .when()
+      .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/archiving")
+      .then()
+      .statusCode(200);
+
+    given()
+      .contentType(ContentType.JSON)
+      .accept(ContentType.JSON)
+      .body(new WorkItemArchivingInputModel(false))
+    .when()
+      .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/archiving")
     .then()
       .statusCode(200);
   }

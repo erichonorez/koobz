@@ -8,6 +8,7 @@ import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.EntityNotFoundM
 import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.IllegalArgumentMapper;
 import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.StageNotEmptyMapper;
 import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.StageNotInProcessMapper;
+import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.WorkItemNotArchivedMapper;
 import org.svomz.apps.koobz.board.ports.adapters.rest.exceptions.WorkItemNotInProcessMapper;
 import org.svomz.apps.koobz.board.ports.adapters.rest.resources.BoardResource;
 import org.svomz.apps.koobz.board.ports.adapters.rest.resources.StageResource;
@@ -30,6 +31,7 @@ public class KanbanResourceConfig extends ResourceConfig {
     this.register(StageNotInProcessMapper.class);
     this.register(WorkItemNotInProcessMapper.class);
     this.register(BoardNotFoundMapper.class);
+    this.register(WorkItemNotArchivedMapper.class);
   }
 
 }

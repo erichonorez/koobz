@@ -1,4 +1,4 @@
-package org.svomz.apps.koobz.board.ports.adapters.rest.resources;
+package org.svomz.apps.koobz.board.ports.adapters.rest.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

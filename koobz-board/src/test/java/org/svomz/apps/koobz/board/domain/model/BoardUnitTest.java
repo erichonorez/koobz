@@ -63,7 +63,7 @@ public class BoardUnitTest {
 
     @Test
     public void itShouldUnarchiveWorkItemsInTheStageTheyWereBeforeArchving()
-      throws WorkItemNotInProcessException {
+      throws WorkItemNotInProcessException, WorkItemNotArchivedException {
       Board board = make(a(Board,
         with(name, "Hello"),
         with(stages, listOf(
@@ -101,7 +101,8 @@ public class BoardUnitTest {
 
     @Test
     public void itShouldConsiderArchivedWorkItemsWhenReordering()
-      throws WorkItemNotInProcessException, WorkItemNotInStageException {
+      throws WorkItemNotInProcessException, WorkItemNotInStageException,
+             WorkItemNotArchivedException {
       Board board = make(a(Board,
         with(name, "Hello"),
         with(stages, listOf(

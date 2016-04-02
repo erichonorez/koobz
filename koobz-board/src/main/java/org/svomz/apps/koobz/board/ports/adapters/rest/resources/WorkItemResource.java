@@ -23,8 +23,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.svomz.apps.koobz.board.application.BoardApplicationService;
 import org.svomz.apps.koobz.board.application.BoardNotFoundException;
+import org.svomz.apps.koobz.board.domain.model.WorkItemNotArchivedException;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemArchivingInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemMoveInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemPositionInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemViewModel;
 import org.svomz.apps.koobz.board.domain.model.Board;
 import org.svomz.apps.koobz.board.domain.model.BoardRepository;
@@ -170,6 +173,23 @@ public class WorkItemResource {
     throws WorkItemNotInStageException, BoardNotFoundException, WorkItemNotInProcessException {
 
     this.boardApplicationService.changeWorkItemPosition(boardId, workItemId, input.getNewPosition());
+
+    return Response.status(Status.OK)
+      .build();
+  }
+
+  @POST
+  @Path("{id}/archiving")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response archiving(@PathParam("boardId") final String boardId, @PathParam("id") final String workItemId,
+    @NotNull @Valid final WorkItemArchivingInputModel input)
+    throws WorkItemNotInProcessException, BoardNotFoundException, WorkItemNotArchivedException {
+
+    if (input.isArchived()) {
+      this.boardApplicationService.archiveWorkItem(boardId, workItemId);
+    } else {
+      this.boardApplicationService.sendBackToBoard(boardId, workItemId);
+    }
 
     return Response.status(Status.OK)
       .build();
