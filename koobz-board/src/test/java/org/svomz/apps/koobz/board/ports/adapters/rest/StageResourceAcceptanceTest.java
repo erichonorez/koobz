@@ -71,9 +71,7 @@ public class StageResourceAcceptanceTest extends AbstractAcceptanceTest {
     .when()
       .put("/boards/" + boardId + "/stages/" + stageId)
     .then()
-      .statusCode(200)
-      .body("id", equalTo(stageId))
-      .body("name", equalTo(stageNewName));
+      .statusCode(200);
   }
   
   /**

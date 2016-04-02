@@ -81,15 +81,17 @@ public class StageResource {
   @Path("{stageId}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Stage updateStage(@PathParam("stageId") final String stageId,
-      @NotNull @Valid final StageInputModel stageInputModel) throws EntityNotFoundException {
+  public Response updateStage(@PathParam("boardId") final String boardId,
+      @PathParam("stageId") final String stageId,
+      @NotNull @Valid final StageInputModel stageInputModel)
+    throws StageNotInProcessException, BoardNotFoundException {
     Preconditions.checkNotNull(stageId);
     Preconditions.checkNotNull(stageInputModel);
 
-    Stage stage = this.stageRepository.findOrThrowException(stageId);
-    stage.setName(stageInputModel.getName());
+    this.boardApplicationService.changeStageName(boardId, stageId, stageInputModel.getName());
     
-    return stage;
+    return Response.status(Status.OK)
+      .build();
   }
 
   @DELETE

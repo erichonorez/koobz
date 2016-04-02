@@ -120,6 +120,36 @@ public class BoardApplicationServiceUnitTest {
 
   }
 
+  public static class ChangeStageName {
+
+    @Test
+    public void itShouldSuccessfullyChangeTheNameOfAStage()
+      throws StageNotInProcessException, BoardNotFoundException {
+      // Given a board with id "35a45cd4-f81f-11e5-9ce9-5e5517507c66"
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      Board board = new Board(boardId, "a board");
+      // And with a stage having id "36a45cd4-f81f-11e5-9ce9-5e5517507c67" and name "do To"
+      String aStageId = "36a45cd4-f81f-11e5-9ce9-5e5517507c67";
+      String aStageName = "do To";
+
+      Stage stage = new Stage(boardId, aStageName);
+      board.addStage(stage);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I update the board name with "To do"
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+
+      String newStageName = "To do";
+      boardApplicationService.changeStageName(boardId, aStageId, newStageName);
+
+      // Then the stage name is equal to "To do"
+      assertThat(stage.getName()).isEqualTo(newStageName);
+    }
+
+  }
+
   public static class CreateWorkItem {
 
     @Test

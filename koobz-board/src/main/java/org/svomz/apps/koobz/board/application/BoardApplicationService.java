@@ -64,6 +64,22 @@ public class BoardApplicationService {
   }
 
   @Transactional
+  public void changeStageName(final String boardId, final String aStageId, final String newStageName)
+    throws BoardNotFoundException, StageNotInProcessException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(aStageId);
+    Preconditions.checkNotNull(newStageName);
+
+    Board board = this.boardOfId(boardId);
+    Optional<Stage> optionalStage = board.stageOfId(aStageId);
+    if (!optionalStage.isPresent()) {
+      throw new StageNotInProcessException();
+    }
+
+    optionalStage.get().setName(newStageName);
+  }
+
+  @Transactional
   public WorkItem createWorkItem(final String boardId, final String stageId, final String aWorkItemTitle,
     final String aWorkItemDescription) throws BoardNotFoundException, StageNotInProcessException {
 
@@ -130,7 +146,7 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public void sendBackToBoard(String boardId, String workItemId)
+  public void sendBackToBoard(final String boardId, final String workItemId)
     throws BoardNotFoundException, WorkItemNotArchivedException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
