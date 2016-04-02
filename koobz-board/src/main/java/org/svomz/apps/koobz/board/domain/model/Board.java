@@ -262,14 +262,15 @@ public class Board {
     return this;
   }
 
-  public Board unarchive(WorkItem workItem) throws WorkItemNotInProcessException {
-    Preconditions.checkNotNull(workItem);
+  public Board unarchive(final String workItemId) throws WorkItemNotArchivedException {
+    Preconditions.checkNotNull(workItemId);
 
-    if (!this.getAllWorkItems().contains(workItem)) {
-      throw new WorkItemNotInProcessException();
+    Optional<WorkItem> optionalWorkItem = this.archivedWorkItemOfId(workItemId);
+    if (!optionalWorkItem.isPresent()) {
+      throw new WorkItemNotArchivedException();
     }
 
-    workItem.setArchived(false);
+    optionalWorkItem.get().setArchived(false);
     return this;
   }
 
@@ -325,6 +326,13 @@ public class Board {
     return this.getWorkItems()
       .stream()
       .filter(workItem -> aWorkItemId.equals(workItem.getId()))
+      .findFirst();
+  }
+
+  private Optional<WorkItem> archivedWorkItemOfId(final String workItemId) {
+    return this.getAllWorkItems()
+      .stream()
+      .filter(workItem -> workItem.isArchived() && workItem.getId().equals(workItemId))
       .findFirst();
   }
 

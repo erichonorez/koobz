@@ -8,6 +8,7 @@ import org.svomz.apps.koobz.board.domain.model.BoardRepository;
 import org.svomz.apps.koobz.board.domain.model.Stage;
 import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItem;
+import org.svomz.apps.koobz.board.domain.model.WorkItemNotArchivedException;
 import org.svomz.apps.koobz.board.domain.model.WorkItemNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItemNotInStageException;
 
@@ -116,6 +117,16 @@ public class BoardApplicationService {
     }
 
     board.archive(optionalWorkItem.get());
+  }
+
+  @Transactional
+  public void sendBackToBoard(String boardId, String workItemId)
+    throws BoardNotFoundException, WorkItemNotArchivedException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(workItemId);
+
+    Board board = this.boardOfId(boardId);
+    board.unarchive(workItemId);
   }
 
   private Board boardOfId(String boardId) throws BoardNotFoundException {

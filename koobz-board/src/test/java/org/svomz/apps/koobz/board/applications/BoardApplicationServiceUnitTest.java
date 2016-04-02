@@ -10,6 +10,7 @@ import org.svomz.apps.koobz.board.domain.model.BoardRepository;
 import org.svomz.apps.koobz.board.domain.model.Stage;
 import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItem;
+import org.svomz.apps.koobz.board.domain.model.WorkItemNotArchivedException;
 import org.svomz.apps.koobz.board.domain.model.WorkItemNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItemNotInStageException;
 
@@ -423,5 +424,40 @@ public class BoardApplicationServiceUnitTest {
     }
 
   }
-  
+
+  public static class SendBackToBoard {
+
+    @Test
+    public void itShouldMakeWorkItemSentBackToBoardVisible()
+      throws StageNotInProcessException, BoardNotFoundException, WorkItemNotInProcessException,
+             WorkItemNotArchivedException {
+      // Given a board with a stage having a work item A archived
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aBoardName = "a board";
+      Board board = new Board(boardId, aBoardName);
+
+      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String stageName = "to do";
+      Stage stage = new Stage(stageId, stageName);
+      board.addStage(stage);
+
+      String workItemATitle = "A";
+      String workItemADescription = "A desc";
+      String workItemAId = "09021d01-3da9-4584-85c0-85211cfa8467";
+      WorkItem workItemA = new WorkItem(workItemAId, workItemATitle, workItemADescription);
+      board.addWorkItem(workItemA, stage);
+      board.archive(workItemA);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I archive workItemA
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      boardApplicationService.sendBackToBoard(boardId, workItemAId);
+
+      // Then work item A should not be in the list of work items any more
+      assertThat(board.getWorkItems()).contains(workItemA);
+    }
+
+  }
 }

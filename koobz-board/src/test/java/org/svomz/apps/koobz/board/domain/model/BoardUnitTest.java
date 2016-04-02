@@ -80,7 +80,7 @@ public class BoardUnitTest {
 
       WorkItem workItem = board.getWorkItems().iterator().next();
       board.archive(workItem);
-      board.unarchive(workItem);
+      board.unarchive(workItem.getId());
 
       Set<WorkItem> workItemsReferencedByTheTodoStage
         = board.getStages()
@@ -136,7 +136,7 @@ public class BoardUnitTest {
       board.putWorkItemAtPosition(tree, 0);
 
       //When unarchiving "One" it should be in second position
-      board.unarchive(one);
+      board.unarchive(one.getId());
 
       assertThat(tree.getOrder())
         .isEqualTo(0);
