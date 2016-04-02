@@ -10,6 +10,7 @@ import org.svomz.apps.koobz.board.domain.model.BoardRepository;
 import org.svomz.apps.koobz.board.domain.model.Stage;
 import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItem;
+import org.svomz.apps.koobz.board.domain.model.WorkItemNotInProcessException;
 
 import java.util.UUID;
 
@@ -21,7 +22,8 @@ import static org.mockito.Mockito.when;
 @Suite.SuiteClasses({
   BoardApplicationServiceUnitTest.CreateBoard.class,
   BoardApplicationServiceUnitTest.CreateStage.class,
-  BoardApplicationServiceUnitTest.CreateWorkItem.class
+  BoardApplicationServiceUnitTest.CreateWorkItem.class,
+  BoardApplicationServiceUnitTest.MoveWorkItemToStage.class
 })
 public class BoardApplicationServiceUnitTest {
 
@@ -183,6 +185,119 @@ public class BoardApplicationServiceUnitTest {
       );
 
       // Then I get a StageNotInProcessException
+    }
+
+  }
+
+  public static class MoveWorkItemToStage {
+
+    @Test
+    public void itShouldSuccessfullyMoveWorkItemToStage()
+      throws StageNotInProcessException, BoardNotFoundException, WorkItemNotInProcessException {
+      // Given a board having two stages and a work item in the first one
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aBoardName = "a board";
+      Board board = new Board(boardId, aBoardName);
+
+      String stageAId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String stageAName = "to do";
+      Stage stageA = new Stage(stageAId, stageAName);
+      board.addStage(stageA);
+
+      String stageBId = "7d1eee25-5d9e-4a95-98b0-032a17960a7a";
+      String stageBName = "done";
+      Stage stageB = new Stage(stageBId, stageBName);
+      board.addStage(stageB);
+
+      String aWorkItemTitle = "Drink coffee";
+      String aWorkItemDescription = "At Starbuck";
+      String aWorkItemId = "09021d01-3da9-4584-85c0-85211cfa8467";
+      WorkItem workItem = new WorkItem(aWorkItemId, aWorkItemTitle, aWorkItemDescription);
+      board.addWorkItem(workItem, stageA);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I move the work item from stage A to stage B
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      boardApplicationService.moveWorkItemToStage(boardId, aWorkItemId, stageBId);
+
+      // Then the work item is in stage B
+      assertThat(board.getWorkItemsInStage(stageBId)).contains(workItem);
+      // And the work item is no more in stage A
+      assertThat(board.getWorkItemsInStage(stageAId)).doesNotContain(workItem);
+    }
+
+    @Test(expected = StageNotInProcessException.class)
+    public void itShouldFailIfTheBoardDoesNotHaveTheSpecifiedStage()
+      throws BoardNotFoundException, WorkItemNotInProcessException, StageNotInProcessException {
+      // Given a board having two stages and a work item in the first one
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aBoardName = "a board";
+      Board board = new Board(boardId, aBoardName);
+
+      String stageAId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String stageAName = "to do";
+      Stage stageA = new Stage(stageAId, stageAName);
+      board.addStage(stageA);
+
+      String stageBId = "7d1eee25-5d9e-4a95-98b0-032a17960a7a";
+      String stageBName = "done";
+      Stage stageB = new Stage(stageBId, stageBName);
+      board.addStage(stageB);
+
+      String aWorkItemTitle = "Drink coffee";
+      String aWorkItemDescription = "At Starbuck";
+      String aWorkItemId = "09021d01-3da9-4584-85c0-85211cfa8467";
+      WorkItem workItem = new WorkItem(aWorkItemId, aWorkItemTitle, aWorkItemDescription);
+      board.addWorkItem(workItem, stageA);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I move the work item from stage A to a stage with id "d1a947d2-93b6-4d9a-be8e-b35c47f085ff"
+      String stageCId = "d1a947d2-93b6-4d9a-be8e-b35c47f085ff";
+
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      boardApplicationService.moveWorkItemToStage(boardId, aWorkItemId, stageCId);
+
+      // Then it should fail
+    }
+
+    @Test(expected = WorkItemNotInProcessException.class)
+    public void itShouldFailIfTheBoardDoesNotHaveTheSpecifiedWorkItem()
+      throws StageNotInProcessException, WorkItemNotInProcessException, BoardNotFoundException {
+      // Given a board having two stages and a work item in the first one
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aBoardName = "a board";
+      Board board = new Board(boardId, aBoardName);
+
+      String stageAId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String stageAName = "to do";
+      Stage stageA = new Stage(stageAId, stageAName);
+      board.addStage(stageA);
+
+      String stageBId = "7d1eee25-5d9e-4a95-98b0-032a17960a7a";
+      String stageBName = "done";
+      Stage stageB = new Stage(stageBId, stageBName);
+      board.addStage(stageB);
+
+      String aWorkItemTitle = "Drink coffee";
+      String aWorkItemDescription = "At Starbuck";
+      String aWorkItemId = "09021d01-3da9-4584-85c0-85211cfa8467";
+      WorkItem workItem = new WorkItem(aWorkItemId, aWorkItemTitle, aWorkItemDescription);
+      board.addWorkItem(workItem, stageA);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I move the work item with id ""d1a947d2-93b6-4d9a-be8e-b35c47f085ff"" to stage B
+      String unknownWorkItem = "d1a947d2-93b6-4d9a-be8e-b35c47f085ff";
+
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      boardApplicationService.moveWorkItemToStage(boardId, unknownWorkItem, stageBId);
+
+      // Then it should fail
     }
 
   }

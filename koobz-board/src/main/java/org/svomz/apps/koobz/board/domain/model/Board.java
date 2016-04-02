@@ -223,7 +223,7 @@ public class Board {
    * @throws WorkItemNotInProcessException
    * @throws StageNotInProcessException
    */
-  public Board moveWorkItem(final WorkItem workItem, final Stage stage)
+  public Board moveWorkItemToStage(final WorkItem workItem, final Stage stage)
     throws WorkItemNotInProcessException, StageNotInProcessException {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
     Preconditions.checkNotNull(stage, "The given stage must not be null");
@@ -290,7 +290,7 @@ public class Board {
     return this.workItems;
   }
 
-  public Optional<Stage> getStage(String stageId) {
+  public Optional<Stage> stageOfId(String stageId) {
     Preconditions.checkNotNull(stageId);
 
     return this.getStages().stream()
@@ -299,6 +299,44 @@ public class Board {
       }).findFirst();
   }
 
+  /**
+   * Get the ordered list of non-archived work items in the stage having the specified id.
+   *
+   * @param aStageId the id of the stage
+   * @return the ordered list of work items
+   * @throws StageNotInProcessException if a stage with the specified id is not found in the board.
+   */
+  public List<WorkItem> getWorkItemsInStage(final String aStageId) throws StageNotInProcessException {
+    Preconditions.checkNotNull(aStageId);
+
+    Optional<Stage> optionalStage = this.stageOfId(aStageId);
+    if (!optionalStage.isPresent()) {
+      throw new StageNotInProcessException();
+    }
+
+    Stage stage = optionalStage.get();
+    return stage.getWorkItems()
+      .stream()
+      .sorted((workItem1, workItem2) -> {
+        return workItem1.getOrder() - workItem2.getOrder();
+      }).collect(Collectors.toList());
+  }
+
+  /**
+   * Get the non archived work item by its id
+   *
+   * @param aWorkItemId
+   * @return
+   * @throws WorkItemNotInProcessException
+   */
+  public Optional<WorkItem> workItemOfId(final String aWorkItemId) {
+    Preconditions.checkNotNull(aWorkItemId);
+
+    return this.getWorkItems()
+      .stream()
+      .filter(workItem -> aWorkItemId.equals(workItem.getId()))
+      .findFirst();
+  }
 
   private static class BoardValidation {
 

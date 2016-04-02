@@ -60,6 +60,12 @@ public class WorkItem {
     this.setDescription(description);
   }
 
+  public WorkItem(String aWorkItemId, String aWorkItemTitle, String aWorkItemDescription) {
+    this.id = Preconditions.checkNotNull(aWorkItemId);
+    this.setTitle(aWorkItemTitle);
+    this.setDescription(aWorkItemDescription);
+  }
+
   public String getId() {
     return this.id;
   }

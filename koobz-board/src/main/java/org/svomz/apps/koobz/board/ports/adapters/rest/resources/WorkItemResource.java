@@ -123,7 +123,7 @@ public class WorkItemResource {
 
     Board board = this.boardRepository.findOrThrowException(boardId);
     if (stage.getId() != workItem.getStage().getId()) {
-      board.moveWorkItem(workItem, stage);
+      board.moveWorkItemToStage(workItem, stage);
     }
 
     Integer order = workItemInputModel.getOrder();

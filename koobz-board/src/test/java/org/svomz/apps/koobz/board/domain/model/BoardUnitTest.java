@@ -270,7 +270,7 @@ public class BoardUnitTest {
       Assert.assertEquals(1, board.getWorkItems().size());
       Assert.assertEquals(columnWIP, postIt.getStage());
 
-      board.moveWorkItem(postIt, columnDone);
+      board.moveWorkItemToStage(postIt, columnDone);
       Assert.assertEquals(1, board.getWorkItems().size());
       Assert.assertEquals(columnDone, postIt.getStage());
     }
@@ -288,7 +288,7 @@ public class BoardUnitTest {
       board.addStage(columnDone);
 
       Assert.assertTrue(board.getWorkItems().isEmpty());
-      board.moveWorkItem(postIt, columnDone);
+      board.moveWorkItemToStage(postIt, columnDone);
       Assert.assertEquals(1, board.getWorkItems());
       Assert.assertEquals(columnDone, postIt.getStage());
     }
@@ -305,7 +305,7 @@ public class BoardUnitTest {
       board.addWorkItem(postIt, columnWIP);
       Stage columnDone = new Stage("done");
 
-      board.moveWorkItem(postIt, columnDone);
+      board.moveWorkItemToStage(postIt, columnDone);
       Assert.assertEquals(1, board.getWorkItems());
       Assert.assertEquals(columnDone, postIt.getStage());
     }
@@ -484,7 +484,7 @@ public class BoardUnitTest {
       WorkItem workItemB = new WorkItem("Work item B");
       board.addWorkItem(workItemB, todo);
 
-      board.moveWorkItem(workItemA, wip);
+      board.moveWorkItemToStage(workItemA, wip);
       Assert.assertEquals(0, workItemA.getOrder());
       Assert.assertEquals(0, workItemB.getOrder());
     }

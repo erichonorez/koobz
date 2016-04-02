@@ -8,6 +8,7 @@ import org.svomz.apps.koobz.board.domain.model.BoardRepository;
 import org.svomz.apps.koobz.board.domain.model.Stage;
 import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItem;
+import org.svomz.apps.koobz.board.domain.model.WorkItemNotInProcessException;
 
 
 import java.util.Optional;
@@ -56,7 +57,7 @@ public class BoardApplicationService {
 
     Board board = this.boardOfId(boardId);
 
-    Optional<Stage> stage = board.getStage(stageId);
+    Optional<Stage> stage = board.stageOfId(stageId);
     if (!stage.isPresent()) {
       throw new StageNotInProcessException();
     }
@@ -64,6 +65,26 @@ public class BoardApplicationService {
     WorkItem workItem = new WorkItem(aWorkItemTitle, aWorkItemDescription);
     board.addWorkItem(workItem, stage.get());
     return workItem;
+  }
+
+  @Transactional
+  public void moveWorkItemToStage(final String boardId, final String aWorkItemId, final String aStageId)
+    throws BoardNotFoundException, WorkItemNotInProcessException, StageNotInProcessException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(aWorkItemId);
+
+    Board board = this.boardOfId(boardId);
+    Optional<WorkItem> optionalWorkItem = board.workItemOfId(aWorkItemId);
+    if (!optionalWorkItem.isPresent()) {
+      throw new WorkItemNotInProcessException();
+    }
+
+    Optional<Stage> optionalStage = board.stageOfId(aStageId);
+    if (!optionalStage.isPresent()) {
+      throw new StageNotInProcessException();
+    }
+
+    board.moveWorkItemToStage(optionalWorkItem.get(), optionalStage.get());
   }
 
   private Board boardOfId(String boardId) throws BoardNotFoundException {
