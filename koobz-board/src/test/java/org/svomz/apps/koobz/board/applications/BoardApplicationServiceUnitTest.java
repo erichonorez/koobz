@@ -11,6 +11,7 @@ import org.svomz.apps.koobz.board.domain.model.Stage;
 import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItem;
 import org.svomz.apps.koobz.board.domain.model.WorkItemNotInProcessException;
+import org.svomz.apps.koobz.board.domain.model.WorkItemNotInStageException;
 
 import java.util.UUID;
 
@@ -23,7 +24,8 @@ import static org.mockito.Mockito.when;
   BoardApplicationServiceUnitTest.CreateBoard.class,
   BoardApplicationServiceUnitTest.CreateStage.class,
   BoardApplicationServiceUnitTest.CreateWorkItem.class,
-  BoardApplicationServiceUnitTest.MoveWorkItemToStage.class
+  BoardApplicationServiceUnitTest.MoveWorkItemToStage.class,
+  BoardApplicationServiceUnitTest.ChangeWorkItemOrder.class
 })
 public class BoardApplicationServiceUnitTest {
 
@@ -298,6 +300,85 @@ public class BoardApplicationServiceUnitTest {
       boardApplicationService.moveWorkItemToStage(boardId, unknownWorkItem, stageBId);
 
       // Then it should fail
+    }
+
+  }
+
+  public static class ChangeWorkItemOrder {
+
+    @Test
+    public void itShouldSuccessfullyChangeTheOrderOfWorkItems()
+      throws StageNotInProcessException, WorkItemNotInStageException, BoardNotFoundException,
+             WorkItemNotInProcessException {
+      // Given a board with a stage having two work items A and B
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aBoardName = "a board";
+      Board board = new Board(boardId, aBoardName);
+
+      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String stageName = "to do";
+      Stage stage = new Stage(stageId, stageName);
+      board.addStage(stage);
+
+      String workItemATitle = "A";
+      String workItemADescription = "A desc";
+      String workItemAId = "09021d01-3da9-4584-85c0-85211cfa8467";
+      WorkItem workItemA = new WorkItem(workItemAId, workItemATitle, workItemADescription);
+      board.addWorkItem(workItemA, stage);
+
+      String workItemBTitle = "B";
+      String workItemBDescription = "B desc";
+      String workItemBId = "81963606-76a1-41b5-82aa-5aba7b4dc115";
+      WorkItem workItemB = new WorkItem(workItemBId, workItemBTitle, workItemBDescription);
+      board.addWorkItem(workItemB, stage);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I switch the order of work items
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      boardApplicationService.changeWorkItemOrder(board.getId(), workItemA.getId(), 2);
+
+      // Then B is the first one and A is the last one
+      assertThat(board.getWorkItemsInStage(stageId)).containsExactly(workItemB, workItemA);
+    }
+
+    @Test(expected = WorkItemNotInProcessException.class)
+    public void itShouldFailIfTheWorkItemReorderedIsNotOnTheBoard()
+      throws StageNotInProcessException, WorkItemNotInStageException, BoardNotFoundException,
+             WorkItemNotInProcessException {
+      // Given a board with a stage having two work items A and B
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aBoardName = "a board";
+      Board board = new Board(boardId, aBoardName);
+
+      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String stageName = "to do";
+      Stage stage = new Stage(stageId, stageName);
+      board.addStage(stage);
+
+      String workItemATitle = "A";
+      String workItemADescription = "A desc";
+      String workItemAId = "09021d01-3da9-4584-85c0-85211cfa8467";
+      WorkItem workItemA = new WorkItem(workItemAId, workItemATitle, workItemADescription);
+      board.addWorkItem(workItemA, stage);
+
+      String workItemBTitle = "B";
+      String workItemBDescription = "B desc";
+      String workItemBId = "81963606-76a1-41b5-82aa-5aba7b4dc115";
+      WorkItem workItemB = new WorkItem(workItemBId, workItemBTitle, workItemBDescription);
+      board.addWorkItem(workItemB, stage);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I change the order of an unknown work item
+      String unknownWorkItemId = "1d0c28c7-64c3-41ef-bcd6-e0fce8cfcfa3";
+
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      boardApplicationService.changeWorkItemOrder(board.getId(), unknownWorkItemId, 2);
+
+      // Then I got an exception
     }
 
   }

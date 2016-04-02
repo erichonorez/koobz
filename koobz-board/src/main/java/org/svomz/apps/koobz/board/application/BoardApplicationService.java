@@ -9,6 +9,7 @@ import org.svomz.apps.koobz.board.domain.model.Stage;
 import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItem;
 import org.svomz.apps.koobz.board.domain.model.WorkItemNotInProcessException;
+import org.svomz.apps.koobz.board.domain.model.WorkItemNotInStageException;
 
 
 import java.util.Optional;
@@ -85,6 +86,21 @@ public class BoardApplicationService {
     }
 
     board.moveWorkItemToStage(optionalWorkItem.get(), optionalStage.get());
+  }
+
+  @Transactional
+  public void changeWorkItemOrder(final String boardId, final String workItemId, int newOrder)
+    throws BoardNotFoundException, WorkItemNotInProcessException, WorkItemNotInStageException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(workItemId);
+
+    Board board = this.boardOfId(boardId);
+    Optional<WorkItem> optionalWorkItem = board.workItemOfId(workItemId);
+    if (!optionalWorkItem.isPresent()) {
+      throw new WorkItemNotInProcessException();
+    }
+
+    board.reoderWorkItem(optionalWorkItem.get(), newOrder);
   }
 
   private Board boardOfId(String boardId) throws BoardNotFoundException {
