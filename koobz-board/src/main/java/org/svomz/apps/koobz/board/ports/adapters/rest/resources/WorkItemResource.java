@@ -146,11 +146,11 @@ public class WorkItemResource {
   @DELETE
   @Path("{id}")
   public void delete(@PathParam("boardId") final String boardId, @PathParam("id") final String workItemId)
+    throws WorkItemNotInProcessException, BoardNotFoundException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(workItemId);
 
-    throws WorkItemNotInProcessException, EntityNotFoundException {
-    Board board = this.boardRepository.findOrThrowException(boardId);
-    WorkItem workItem = this.workItemRepository.findOrThrowException(workItemId);
-    board.removeWorkItem(workItem);
+    this.boardApplicationService.deleteWorkItem(boardId, workItemId);
   }
 
   @POST

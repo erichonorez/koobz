@@ -136,6 +136,21 @@ public class BoardApplicationService {
   }
 
   @Transactional
+  public void deleteWorkItem(final String boardId, final String workItemId)
+    throws BoardNotFoundException, WorkItemNotInProcessException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(workItemId);
+
+    Board board = this.boardOfId(boardId);
+    Optional<WorkItem> optionalWorkItem = board.workItemOfId(workItemId);
+    if (!optionalWorkItem.isPresent()) {
+      throw new WorkItemNotInProcessException();
+    }
+
+    board.removeWorkItem(optionalWorkItem.get());
+  }
+
+  @Transactional
   public void moveWorkItemToStage(final String boardId, final String aWorkItemId, final String aStageId)
     throws BoardNotFoundException, WorkItemNotInProcessException, StageNotInProcessException {
     Preconditions.checkNotNull(boardId);
@@ -206,4 +221,5 @@ public class BoardApplicationService {
   private BoardRepository boardRepository() {
     return boardRepository;
   }
+
 }
