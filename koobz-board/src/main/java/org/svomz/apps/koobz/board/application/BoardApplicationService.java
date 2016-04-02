@@ -103,6 +103,21 @@ public class BoardApplicationService {
     board.putWorkItemAtPosition(optionalWorkItem.get(), newPosition);
   }
 
+  @Transactional
+  public void archiveWorkItem(final String boardId, final String workItemId)
+    throws BoardNotFoundException, WorkItemNotInProcessException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(workItemId);
+
+    Board board = this.boardOfId(boardId);
+    Optional<WorkItem> optionalWorkItem = board.workItemOfId(workItemId);
+    if (!optionalWorkItem.isPresent()) {
+      throw new WorkItemNotInProcessException();
+    }
+
+    board.archive(optionalWorkItem.get());
+  }
+
   private Board boardOfId(String boardId) throws BoardNotFoundException {
     Board board = this.boardRepository().findOne(boardId);
     if (board == null) {

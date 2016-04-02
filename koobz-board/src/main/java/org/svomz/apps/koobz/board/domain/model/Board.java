@@ -251,16 +251,6 @@ public class Board {
     return workItem;
   }
 
-  public Board archiveWorkItem(final WorkItem workItem) throws WorkItemNotInProcessException {
-    Preconditions.checkNotNull(workItem);
-
-    if (!this.workItems.contains(workItem)) {
-      throw new WorkItemNotInProcessException();
-    }
-
-    return this;
-  }
-
   public Board archive(WorkItem workItem) throws WorkItemNotInProcessException {
     Preconditions.checkNotNull(workItem);
 
