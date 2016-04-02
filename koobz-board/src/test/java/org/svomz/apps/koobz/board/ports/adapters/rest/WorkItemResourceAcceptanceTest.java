@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemMoveInputModel;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -238,6 +239,27 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
       .post("/boards/" + boardId + "/workitems")
     .then()
       .statusCode(400);
+  }
+
+  @Test
+  public void itShouldMoveWorkItemFromAStageToAnother() {
+    JsonPath jsonBoard = this.createBoard("Test board");
+    String boardId = jsonBoard.get("id");
+    JsonPath jsonTodoStage = this.createStage(boardId, "To do");
+    String stageId = jsonTodoStage.get("id");
+    JsonPath jsonDoneStage = this.createStage(boardId, "Done");
+
+    JsonPath jsonWorkItem =
+      this.createWorkItem(boardId, stageId, "My first work item", "a description");
+
+    given()
+      .contentType(ContentType.JSON)
+      .accept(ContentType.JSON)
+      .body(new WorkItemMoveInputModel(jsonDoneStage.get("id")))
+    .when()
+      .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/move")
+    .then()
+      .statusCode(200);
   }
 
 }

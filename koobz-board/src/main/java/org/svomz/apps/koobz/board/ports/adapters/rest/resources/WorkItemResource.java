@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.svomz.apps.koobz.board.application.BoardApplicationService;
 import org.svomz.apps.koobz.board.application.BoardNotFoundException;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemMoveInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemViewModel;
 import org.svomz.apps.koobz.board.domain.model.Board;
 import org.svomz.apps.koobz.board.domain.model.BoardRepository;
@@ -147,6 +148,18 @@ public class WorkItemResource {
     Board board = this.boardRepository.findOrThrowException(boardId);
     WorkItem workItem = this.workItemRepository.findOrThrowException(workItemId);
     board.removeWorkItem(workItem);
+  }
+
+  @POST
+  @Path("{id}/move")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response move(@PathParam("boardId") final String boardId, @PathParam("id") final String workItemId,
+    @NotNull @Valid final WorkItemMoveInputModel input)
+    throws BoardNotFoundException, WorkItemNotInProcessException, StageNotInProcessException {
+    this.boardApplicationService.moveWorkItemToStage(boardId, workItemId, input.getTo());
+
+    return Response.status(Status.OK)
+      .build();
   }
 
 }
