@@ -8,6 +8,7 @@ import org.svomz.apps.koobz.board.application.BoardNotFoundException;
 import org.svomz.apps.koobz.board.domain.model.Board;
 import org.svomz.apps.koobz.board.domain.model.BoardRepository;
 import org.svomz.apps.koobz.board.domain.model.Stage;
+import org.svomz.apps.koobz.board.domain.model.StageNotEmptyException;
 import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItem;
 import org.svomz.apps.koobz.board.domain.model.WorkItemNotArchivedException;
@@ -27,7 +28,10 @@ import static org.mockito.Mockito.when;
   BoardApplicationServiceUnitTest.CreateWorkItem.class,
   BoardApplicationServiceUnitTest.MoveWorkItemToStage.class,
   BoardApplicationServiceUnitTest.ChangeWorkItemPosition.class,
-  BoardApplicationServiceUnitTest.ArchiveWorkItem.class
+  BoardApplicationServiceUnitTest.ArchiveWorkItem.class,
+  BoardApplicationServiceUnitTest.ChangeBoardName.class,
+  BoardApplicationServiceUnitTest.ChangeStageName.class,
+  BoardApplicationServiceUnitTest.DeleteStage.class
 })
 public class BoardApplicationServiceUnitTest {
 
@@ -132,7 +136,7 @@ public class BoardApplicationServiceUnitTest {
       String aStageId = "36a45cd4-f81f-11e5-9ce9-5e5517507c67";
       String aStageName = "do To";
 
-      Stage stage = new Stage(boardId, aStageName);
+      Stage stage = new Stage(aStageId, aStageName);
       board.addStage(stage);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
@@ -146,6 +150,36 @@ public class BoardApplicationServiceUnitTest {
 
       // Then the stage name is equal to "To do"
       assertThat(stage.getName()).isEqualTo(newStageName);
+    }
+
+  }
+
+  public static class DeleteStage {
+
+    @Test
+    public void itShouldSuccessfullyDeleteAnEmptyStage()
+      throws BoardNotFoundException, StageNotEmptyException, StageNotInProcessException {
+      // Given a board with id "35a45cd4-f81f-11e5-9ce9-5e5517507c66"
+      String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      Board board = new Board(boardId, "a board");
+      // And with a stage having id "36a45cd4-f81f-11e5-9ce9-5e5517507c67"
+      String aStageId = "36a45cd4-f81f-11e5-9ce9-5e5517507c67";
+      String aStageName = "do To";
+
+      Stage stage = new Stage(aStageId, aStageName);
+      board.addStage(stage);
+
+      BoardRepository boardRepository = mock(BoardRepository.class);
+      when(boardRepository.findOne(boardId)).thenReturn(board);
+
+      // When I delete the stage
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+
+      String newStageName = "To do";
+      boardApplicationService.deleteStage(boardId, aStageId);
+
+      // Then board does not contains the stage any more
+      assertThat(board.getStages()).doesNotContain(stage);
     }
 
   }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.svomz.apps.koobz.board.domain.model.Board;
 import org.svomz.apps.koobz.board.domain.model.BoardRepository;
 import org.svomz.apps.koobz.board.domain.model.Stage;
+import org.svomz.apps.koobz.board.domain.model.StageNotEmptyException;
 import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
 import org.svomz.apps.koobz.board.domain.model.WorkItem;
 import org.svomz.apps.koobz.board.domain.model.WorkItemNotArchivedException;
@@ -80,8 +81,27 @@ public class BoardApplicationService {
   }
 
   @Transactional
+  public void deleteStage(final String boardId, final String aStageId)
+    throws BoardNotFoundException, StageNotInProcessException, StageNotEmptyException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(aStageId);
+
+    Board board = this.boardOfId(boardId);
+    Optional<Stage> optionalStage = board.stageOfId(aStageId);
+
+    if (!optionalStage.isPresent()) {
+      throw new StageNotInProcessException();
+    }
+
+    board.removeStage(optionalStage.get());
+  }
+
+  @Transactional
   public WorkItem createWorkItem(final String boardId, final String stageId, final String aWorkItemTitle,
     final String aWorkItemDescription) throws BoardNotFoundException, StageNotInProcessException {
+    Preconditions.checkNotNull(boardId);
+    Preconditions.checkNotNull(stageId);
+    Preconditions.checkNotNull(aWorkItemDescription);
 
     Board board = this.boardOfId(boardId);
 

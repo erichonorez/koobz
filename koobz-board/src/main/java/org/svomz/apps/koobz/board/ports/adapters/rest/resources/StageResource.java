@@ -39,18 +39,11 @@ import com.google.common.base.Preconditions;
 public class StageResource {
 
   private final BoardApplicationService boardApplicationService;
-  private BoardRepository boardRepository;
-  private StageRepository stageRepository;
   
   @Inject
-  public StageResource(final BoardRepository boardRepository, final StageRepository stageRepository, final
-    BoardApplicationService boardApplicationService) {
-    Preconditions.checkNotNull(boardRepository);
-    Preconditions.checkNotNull(stageRepository);
+  public StageResource(final BoardApplicationService boardApplicationService) {
     Preconditions.checkNotNull(boardApplicationService);
-    
-    this.boardRepository = boardRepository;
-    this.stageRepository = stageRepository;
+
     this.boardApplicationService = boardApplicationService;
   }
 
@@ -89,13 +82,11 @@ public class StageResource {
   @DELETE
   @Path("{stageId}")
   public void delete(@NotNull @PathParam("boardId") final String boardId, @NotNull @PathParam("stageId") final String stageId)
-    throws StageNotInProcessException, StageNotEmptyException, EntityNotFoundException {
+    throws StageNotInProcessException, StageNotEmptyException, BoardNotFoundException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(stageId);
 
-    Board board = this.boardRepository.findOrThrowException(boardId);
-    Stage stage = this.stageRepository.findOrThrowException(stageId);
-    board.removeStage(stage);
+    this.boardApplicationService.deleteStage(boardId, stageId);
   }
 
 }
