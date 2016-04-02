@@ -125,7 +125,7 @@ public class Stage {
     return this;
   }
   
-  Stage reoderWorkItem(WorkItem workItem, int order) throws WorkItemNotInStageException {
+  Stage putWorkItemAtPosition(WorkItem workItem, int order) throws WorkItemNotInStageException {
     Preconditions.checkNotNull(workItem);
     Preconditions.checkArgument(order >= 0);
     

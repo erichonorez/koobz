@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
   BoardApplicationServiceUnitTest.CreateStage.class,
   BoardApplicationServiceUnitTest.CreateWorkItem.class,
   BoardApplicationServiceUnitTest.MoveWorkItemToStage.class,
-  BoardApplicationServiceUnitTest.ChangeWorkItemOrder.class
+  BoardApplicationServiceUnitTest.ChangeWorkItemPosition.class
 })
 public class BoardApplicationServiceUnitTest {
 
@@ -304,10 +304,10 @@ public class BoardApplicationServiceUnitTest {
 
   }
 
-  public static class ChangeWorkItemOrder {
+  public static class ChangeWorkItemPosition {
 
     @Test
-    public void itShouldSuccessfullyChangeTheOrderOfWorkItems()
+    public void itShouldSuccessfullyChangeThePositionOfWorkItems()
       throws StageNotInProcessException, WorkItemNotInStageException, BoardNotFoundException,
              WorkItemNotInProcessException {
       // Given a board with a stage having two work items A and B
@@ -337,14 +337,14 @@ public class BoardApplicationServiceUnitTest {
 
       // When I switch the order of work items
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
-      boardApplicationService.changeWorkItemOrder(board.getId(), workItemA.getId(), 2);
+      boardApplicationService.changeWorkItemPosition(board.getId(), workItemA.getId(), 2);
 
       // Then B is the first one and A is the last one
       assertThat(board.getWorkItemsInStage(stageId)).containsExactly(workItemB, workItemA);
     }
 
     @Test(expected = WorkItemNotInProcessException.class)
-    public void itShouldFailIfTheWorkItemReorderedIsNotOnTheBoard()
+    public void itShouldFailIfTheWorkItemIsNotOnTheBoard()
       throws StageNotInProcessException, WorkItemNotInStageException, BoardNotFoundException,
              WorkItemNotInProcessException {
       // Given a board with a stage having two work items A and B
@@ -376,7 +376,7 @@ public class BoardApplicationServiceUnitTest {
       String unknownWorkItemId = "1d0c28c7-64c3-41ef-bcd6-e0fce8cfcfa3";
 
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
-      boardApplicationService.changeWorkItemOrder(board.getId(), unknownWorkItemId, 2);
+      boardApplicationService.changeWorkItemPosition(board.getId(), unknownWorkItemId, 2);
 
       // Then I got an exception
     }

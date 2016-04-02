@@ -17,7 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.WorkItemMoveInputModel;
-import org.svomz.apps.koobz.board.ports.adapters.rest.resources.WorkItemPositioningInputModel;
+import org.svomz.apps.koobz.board.ports.adapters.rest.resources.WorkItemPositionInputModel;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -277,9 +277,9 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     given()
       .contentType(ContentType.JSON)
       .accept(ContentType.JSON)
-      .body(new WorkItemPositioningInputModel(2))
+      .body(new WorkItemPositionInputModel(2))
     .when()
-      .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/positioning")
+      .post("/boards/" + boardId + "/workitems/" + jsonWorkItem.get("id") + "/position")
     .then()
       .statusCode(200);
   }

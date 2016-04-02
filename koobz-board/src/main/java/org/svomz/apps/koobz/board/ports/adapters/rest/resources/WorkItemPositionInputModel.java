@@ -8,13 +8,13 @@ import javax.validation.constraints.NotNull;
 /**
  * Created by eric on 02/04/16.
  */
-public class WorkItemPositioningInputModel {
+public class WorkItemPositionInputModel {
 
   @NotNull
   @Min(0)
   private final int newPosition;
 
-  public WorkItemPositioningInputModel(@JsonProperty("newPosition") int newPosition) {
+  public WorkItemPositionInputModel(@JsonProperty("newPosition") int newPosition) {
     this.newPosition = newPosition;
   }
 

@@ -129,7 +129,7 @@ public class WorkItemResource {
 
     Integer order = workItemInputModel.getOrder();
     if (order != null && workItem.getOrder() != order) {
-      board.reoderWorkItem(workItem, order);
+      board.putWorkItemAtPosition(workItem, order);
     }
 
     String description = workItemInputModel.getDescription();
@@ -163,13 +163,13 @@ public class WorkItemResource {
   }
 
   @POST
-  @Path("{id}/positioning")
+  @Path("{id}/position")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response putAtPosition(@PathParam("boardId") final String boardId, @PathParam("id") final String workItemId,
-    @NotNull @Valid final WorkItemPositioningInputModel input)
+    @NotNull @Valid final WorkItemPositionInputModel input)
     throws WorkItemNotInStageException, BoardNotFoundException, WorkItemNotInProcessException {
 
-    this.boardApplicationService.changeWorkItemOrder(boardId, workItemId, input.getNewPosition());
+    this.boardApplicationService.changeWorkItemPosition(boardId, workItemId, input.getNewPosition());
 
     return Response.status(Status.OK)
       .build();

@@ -133,7 +133,7 @@ public class BoardUnitTest {
         .findFirst()
         .get();
 
-      board.reoderWorkItem(tree, 0);
+      board.putWorkItemAtPosition(tree, 0);
 
       //When unarchiving "One" it should be in second position
       board.unarchive(one);
@@ -345,25 +345,25 @@ public class BoardUnitTest {
       WorkItem workItemD = new WorkItem("Work item D");
       board.addWorkItem(workItemD, todoStage);
 
-      board.reoderWorkItem(workItemC, 0);
+      board.putWorkItemAtPosition(workItemC, 0);
       Assert.assertEquals(0, workItemC.getOrder());
       Assert.assertEquals(1, workItemA.getOrder());
       Assert.assertEquals(2, workItemB.getOrder());
       Assert.assertEquals(3, workItemD.getOrder());
 
-      board.reoderWorkItem(workItemA, 3);
+      board.putWorkItemAtPosition(workItemA, 3);
       Assert.assertEquals(0, workItemC.getOrder());
       Assert.assertEquals(3, workItemA.getOrder());
       Assert.assertEquals(1, workItemB.getOrder());
       Assert.assertEquals(2, workItemD.getOrder());
 
-      board.reoderWorkItem(workItemB, 2);
+      board.putWorkItemAtPosition(workItemB, 2);
       Assert.assertEquals(0, workItemC.getOrder());
       Assert.assertEquals(3, workItemA.getOrder());
       Assert.assertEquals(2, workItemB.getOrder());
       Assert.assertEquals(1, workItemD.getOrder());
 
-      board.reoderWorkItem(workItemB, 2);
+      board.putWorkItemAtPosition(workItemB, 2);
       Assert.assertEquals(0, workItemC.getOrder());
       Assert.assertEquals(3, workItemA.getOrder());
       Assert.assertEquals(2, workItemB.getOrder());
@@ -385,7 +385,7 @@ public class BoardUnitTest {
       WorkItem workItemB = new WorkItem("Work item B");
       board.addWorkItem(workItemB, todoStage);
 
-      board.reoderWorkItem(workItemA, -1);
+      board.putWorkItemAtPosition(workItemA, -1);
     }
 
     @Test
@@ -402,7 +402,7 @@ public class BoardUnitTest {
       WorkItem workItemB = new WorkItem("Work item B");
       board.addWorkItem(workItemB, todoStage);
 
-      board.reoderWorkItem(workItemA, Integer.MAX_VALUE);
+      board.putWorkItemAtPosition(workItemA, Integer.MAX_VALUE);
       Assert.assertEquals(0, workItemB.getOrder());
       Assert.assertEquals(1, workItemA.getOrder());
     }

@@ -89,7 +89,7 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public void changeWorkItemOrder(final String boardId, final String workItemId, int newOrder)
+  public void changeWorkItemPosition(final String boardId, final String workItemId, int newPosition)
     throws BoardNotFoundException, WorkItemNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
@@ -100,7 +100,7 @@ public class BoardApplicationService {
       throw new WorkItemNotInProcessException();
     }
 
-    board.reoderWorkItem(optionalWorkItem.get(), newOrder);
+    board.putWorkItemAtPosition(optionalWorkItem.get(), newPosition);
   }
 
   private Board boardOfId(String boardId) throws BoardNotFoundException {

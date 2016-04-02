@@ -240,14 +240,14 @@ public class Board {
     return this;
   }
   
-  public WorkItem reoderWorkItem(WorkItem workItem, int i) throws WorkItemNotInProcessException, WorkItemNotInStageException {
+  public WorkItem putWorkItemAtPosition(WorkItem workItem, int i) throws WorkItemNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(workItem);
     
     if (!this.getAllWorkItems().contains(workItem)) {
       throw new WorkItemNotInProcessException();
     }
     
-    workItem.getStage().reoderWorkItem(workItem, i);
+    workItem.getStage().putWorkItemAtPosition(workItem, i);
     return workItem;
   }
 
