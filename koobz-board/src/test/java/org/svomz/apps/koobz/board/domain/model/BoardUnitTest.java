@@ -78,7 +78,7 @@ public class BoardUnitTest {
       board.archiveWorkItem(board.workItemOfId(aWorkItemId).get());
 
       // When I send back the work item on the board
-      board.sendWorkItemBackToBoard(aWorkItemId);
+      board.sendBackToBoardWorkItemWithId(aWorkItemId);
 
       // Then the work item is in the To do stage
       assertThat(board.workItemsInStage(aStageIdentity))
@@ -130,7 +130,7 @@ public class BoardUnitTest {
       // When I put the work item at the first position
       board.putWorkItemAtPosition(secondWorkItem, 0);
       // And I send back to board the first work item
-      board.sendWorkItemBackToBoard(aWorkItemId);
+      board.sendBackToBoardWorkItemWithId(aWorkItemId);
 
       // Then the the first work item has position 1
       assertThat(firstWorkItem.getPosition()).isEqualTo(1);

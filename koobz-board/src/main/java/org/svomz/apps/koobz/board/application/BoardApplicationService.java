@@ -203,7 +203,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(workItemId);
 
     Board board = this.boardOfId(boardId);
-    board.sendWorkItemBackToBoard(workItemId);
+    board.sendBackToBoardWorkItemWithId(workItemId);
   }
 
   private Board boardOfId(String boardId) throws BoardNotFoundException {

@@ -250,7 +250,7 @@ public class Board {
     return this;
   }
 
-  public Board sendWorkItemBackToBoard(final String workItemId) throws WorkItemNotArchivedException {
+  public Board sendBackToBoardWorkItemWithId(final String workItemId) throws WorkItemNotArchivedException {
     Preconditions.checkNotNull(workItemId);
 
     Optional<WorkItem> optionalWorkItem = this.archivedWorkItemOfId(workItemId);
