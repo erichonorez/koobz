@@ -109,7 +109,7 @@ public class WorkItemResource {
     @NotNull @Valid final WorkItemPositionInputModel input)
     throws WorkItemNotInStageException, BoardNotFoundException, WorkItemNotInProcessException {
 
-    this.boardApplicationService.changeWorkItemPosition(boardId, workItemId, input.getNewPosition());
+    this.boardApplicationService.moveWorkItemToPosition(boardId, workItemId, input.getNewPosition());
 
     return Response.status(Status.OK)
       .build();

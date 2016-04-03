@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
   BoardApplicationServiceUnitTest.CreateStage.class,
   BoardApplicationServiceUnitTest.CreateWorkItem.class,
   BoardApplicationServiceUnitTest.MoveWorkItemToStage.class,
-  BoardApplicationServiceUnitTest.ChangeWorkItemPosition.class,
+  BoardApplicationServiceUnitTest.MoveWorkItemToPosition.class,
   BoardApplicationServiceUnitTest.ArchiveWorkItem.class,
   BoardApplicationServiceUnitTest.ChangeBoardName.class,
   BoardApplicationServiceUnitTest.ChangeStageName.class,
@@ -494,7 +494,7 @@ public class BoardApplicationServiceUnitTest {
 
   }
 
-  public static class ChangeWorkItemPosition {
+  public static class MoveWorkItemToPosition {
 
     @Test
     public void itShouldSuccessfullyChangeThePositionOfWorkItems()
@@ -527,7 +527,7 @@ public class BoardApplicationServiceUnitTest {
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
         boardIdentityService);
 
-      boardApplicationService.changeWorkItemPosition(board.getId(), workItemA.getId(), 2);
+      boardApplicationService.moveWorkItemToPosition(board.getId(), workItemA.getId(), 2);
 
       // Then B is the first one and A is the last one
       assertThat(board.workItemsInStage(aStageId)).containsExactly(workItemB, workItemA);
@@ -566,7 +566,7 @@ public class BoardApplicationServiceUnitTest {
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
         boardIdentityService);
 
-      boardApplicationService.changeWorkItemPosition(board.getId(), unknownWorkItemId, 2);
+      boardApplicationService.moveWorkItemToPosition(board.getId(), unknownWorkItemId, 2);
 
       // Then I got an exception
     }

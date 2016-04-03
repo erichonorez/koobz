@@ -167,7 +167,7 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public void changeWorkItemPosition(final String boardId, final String workItemId, int newPosition)
+  public void moveWorkItemToPosition(final String boardId, final String workItemId, int newPosition)
     throws BoardNotFoundException, WorkItemNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
