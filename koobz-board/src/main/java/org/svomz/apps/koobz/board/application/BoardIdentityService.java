@@ -14,4 +14,8 @@ public class BoardIdentityService {
   public String nextBoardIdentity() {
     return UUID.randomUUID().toString();
   }
+
+  public String nextWorkItemIdentity() {
+    return UUID.randomUUID().toString();
+  }
 }

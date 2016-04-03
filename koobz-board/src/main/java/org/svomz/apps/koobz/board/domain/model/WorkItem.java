@@ -44,23 +44,10 @@ public class WorkItem {
   /**
    * No-args constructor required by JPA.
    */
-  WorkItem() {
-    this.id = UUID.randomUUID().toString();
+  private WorkItem() {
   }
 
-  public WorkItem(final String title) {
-    this();
-    WorkItemValidation.checkTitle(title);
-
-    this.title = title;
-  }
-
-  public WorkItem(final String title, final String description) {
-    this(title);
-    this.setDescription(description);
-  }
-
-  public WorkItem(String aWorkItemId, String aWorkItemTitle, String aWorkItemDescription) {
+  WorkItem(String aWorkItemId, String aWorkItemTitle, String aWorkItemDescription) {
     this.id = Preconditions.checkNotNull(aWorkItemId);
     this.setTitle(aWorkItemTitle);
     this.setDescription(aWorkItemDescription);

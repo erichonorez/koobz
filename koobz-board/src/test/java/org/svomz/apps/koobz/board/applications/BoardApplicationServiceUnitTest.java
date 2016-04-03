@@ -229,6 +229,8 @@ public class BoardApplicationServiceUnitTest {
       String aWorkItemDescription = "At Starbuck";
 
       BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      when(boardIdentityService.nextWorkItemIdentity()).thenReturn(UUID.randomUUID().toString());
+
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
         boardIdentityService);
 
@@ -324,8 +326,7 @@ public class BoardApplicationServiceUnitTest {
       String workItemTitle = "A";
       String workItemDescription = "A desc";
       String workItemId = "09021d01-3da9-4584-85c0-85211cfa8467";
-      WorkItem workItem = new WorkItem(workItemId, workItemTitle, workItemDescription);
-      board.addWorkItem(workItem, stage);
+      WorkItem workItem = board.addWorkItemToStage(aStageId, workItemId, workItemTitle, workItemDescription);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
@@ -363,8 +364,7 @@ public class BoardApplicationServiceUnitTest {
       String workItemTitle = "A";
       String workItemDescription = "A desc";
       String workItemId = "09021d01-3da9-4584-85c0-85211cfa8467";
-      WorkItem workItem = new WorkItem(workItemId, workItemTitle, workItemDescription);
-      board.addWorkItem(workItem, stage);
+      WorkItem workItem = board.addWorkItemToStage(aStageId, workItemId, workItemTitle, workItemDescription);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
@@ -403,8 +403,7 @@ public class BoardApplicationServiceUnitTest {
       String aWorkItemTitle = "Drink coffee";
       String aWorkItemDescription = "At Starbuck";
       String aWorkItemId = "09021d01-3da9-4584-85c0-85211cfa8467";
-      WorkItem workItem = new WorkItem(aWorkItemId, aWorkItemTitle, aWorkItemDescription);
-      board.addWorkItem(workItem, stageA);
+      WorkItem workItem = board.addWorkItemToStage(stageAId, aWorkItemId, aWorkItemTitle, aWorkItemDescription);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
@@ -441,8 +440,7 @@ public class BoardApplicationServiceUnitTest {
       String aWorkItemTitle = "Drink coffee";
       String aWorkItemDescription = "At Starbuck";
       String aWorkItemId = "09021d01-3da9-4584-85c0-85211cfa8467";
-      WorkItem workItem = new WorkItem(aWorkItemId, aWorkItemTitle, aWorkItemDescription);
-      board.addWorkItem(workItem, stageA);
+      WorkItem workItem = board.addWorkItemToStage(stageAId, aWorkItemId, aWorkItemTitle, aWorkItemDescription);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
@@ -477,8 +475,7 @@ public class BoardApplicationServiceUnitTest {
       String aWorkItemTitle = "Drink coffee";
       String aWorkItemDescription = "At Starbuck";
       String aWorkItemId = "09021d01-3da9-4584-85c0-85211cfa8467";
-      WorkItem workItem = new WorkItem(aWorkItemId, aWorkItemTitle, aWorkItemDescription);
-      board.addWorkItem(workItem, stageA);
+      WorkItem workItem = board.addWorkItemToStage(stageAId, aWorkItemId, aWorkItemTitle, aWorkItemDescription);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
@@ -514,14 +511,12 @@ public class BoardApplicationServiceUnitTest {
       String workItemATitle = "A";
       String workItemADescription = "A desc";
       String workItemAId = "09021d01-3da9-4584-85c0-85211cfa8467";
-      WorkItem workItemA = new WorkItem(workItemAId, workItemATitle, workItemADescription);
-      board.addWorkItem(workItemA, stage);
+      WorkItem workItemA = board.addWorkItemToStage(aStageId, workItemAId, workItemATitle, workItemADescription);
 
       String workItemBTitle = "B";
       String workItemBDescription = "B desc";
       String workItemBId = "81963606-76a1-41b5-82aa-5aba7b4dc115";
-      WorkItem workItemB = new WorkItem(workItemBId, workItemBTitle, workItemBDescription);
-      board.addWorkItem(workItemB, stage);
+      WorkItem workItemB = board.addWorkItemToStage(aStageId, workItemBId, workItemBTitle, workItemBDescription);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
@@ -553,14 +548,12 @@ public class BoardApplicationServiceUnitTest {
       String workItemATitle = "A";
       String workItemADescription = "A desc";
       String workItemAId = "09021d01-3da9-4584-85c0-85211cfa8467";
-      WorkItem workItemA = new WorkItem(workItemAId, workItemATitle, workItemADescription);
-      board.addWorkItem(workItemA, stage);
+      WorkItem workItemA = board.addWorkItemToStage(aStageId, workItemAId, workItemATitle, workItemADescription);
 
       String workItemBTitle = "B";
       String workItemBDescription = "B desc";
       String workItemBId = "81963606-76a1-41b5-82aa-5aba7b4dc115";
-      WorkItem workItemB = new WorkItem(workItemBId, workItemBTitle, workItemBDescription);
-      board.addWorkItem(workItemB, stage);
+      WorkItem workItemB = board.addWorkItemToStage(aStageId, workItemBId, workItemBTitle, workItemBDescription);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
@@ -596,14 +589,12 @@ public class BoardApplicationServiceUnitTest {
       String workItemATitle = "A";
       String workItemADescription = "A desc";
       String workItemAId = "09021d01-3da9-4584-85c0-85211cfa8467";
-      WorkItem workItemA = new WorkItem(workItemAId, workItemATitle, workItemADescription);
-      board.addWorkItem(workItemA, stage);
+      WorkItem workItemA = board.addWorkItemToStage(aStageId, workItemAId, workItemATitle, workItemADescription);
 
       String workItemBTitle = "B";
       String workItemBDescription = "B desc";
       String workItemBId = "81963606-76a1-41b5-82aa-5aba7b4dc115";
-      WorkItem workItemB = new WorkItem(workItemBId, workItemBTitle, workItemBDescription);
-      board.addWorkItem(workItemB, stage);
+      WorkItem workItemB = board.addWorkItemToStage(aStageId, workItemBId, workItemBTitle, workItemBDescription);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
@@ -638,8 +629,7 @@ public class BoardApplicationServiceUnitTest {
       String workItemATitle = "A";
       String workItemADescription = "A desc";
       String workItemAId = "09021d01-3da9-4584-85c0-85211cfa8467";
-      WorkItem workItemA = new WorkItem(workItemAId, workItemATitle, workItemADescription);
-      board.addWorkItem(workItemA, stage);
+      WorkItem workItemA = board.addWorkItemToStage(aStageId, workItemAId, workItemATitle, workItemADescription);
       board.archiveWorkItem(workItemA);
 
       BoardRepository boardRepository = mock(BoardRepository.class);

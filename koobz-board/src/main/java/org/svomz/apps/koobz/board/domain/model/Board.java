@@ -81,7 +81,7 @@ public class Board {
    *
    * This list is a unmodifiable Set to prevent direct manipulations (add / remove) of the set.
    * If you want to add or remove work items you must use {@link #removeWorkItem(WorkItem)}
-   * and {@link #addWorkItem(WorkItem, Stage)}.
+   * and {@link #addWorkItemToStage(String, String, String, String)}.
    */
   public Set<WorkItem> getWorkItems() {
     Set<WorkItem>
@@ -109,17 +109,6 @@ public class Board {
     stage.setBoard(this);
     stage.setPosition(this.stages.size());
     this.stages.add(stage);
-
-    if (stage.hasWorkItems()) {
-      stage.getWorkItems().forEach(workItem -> {
-        try {
-          this.addWorkItem(workItem, stage);
-        } catch (StageNotInProcessException e) {
-          // This should never happen
-          throw new IllegalStateException(e);
-        }
-      });
-    }
 
     return stage;
   }
@@ -176,20 +165,23 @@ public class Board {
     return this;
   }
 
-  public Board addWorkItem(final WorkItem workItem, final Stage stage)
+  public WorkItem addWorkItemToStage(final String aStageId, final String aWorkItemId,
+    String aWorkItemTitle, String aWorkItemDescription)
       throws StageNotInProcessException {
-    Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
-    Preconditions.checkNotNull(stage, "The given stage must not be null");
+    Preconditions.checkNotNull(aWorkItemId, "The given workItem must not be null.");
+    Preconditions.checkNotNull(aStageId, "The given stage must not be null");
 
-    if (!this.stages.contains(stage)) {
+    Optional<Stage> optionalStage = this.stageOfId(aStageId);
+    if (!optionalStage.isPresent()) {
       throw new StageNotInProcessException();
     }
 
+    Stage stage = optionalStage.get();
+    WorkItem workItem = new WorkItem(aWorkItemId, aWorkItemTitle, aWorkItemDescription);
     stage.addWorkItem(workItem);
     workItem.setBoard(this);
     this.workItems.add(workItem);
-    return this;
-
+    return workItem;
   }
 
   public Board removeWorkItem(final WorkItem workItem) throws WorkItemNotInProcessException {

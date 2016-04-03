@@ -115,9 +115,12 @@ public class BoardApplicationService {
       throw new StageNotInProcessException();
     }
 
-    WorkItem workItem = new WorkItem(aWorkItemTitle, aWorkItemDescription);
-    board.addWorkItem(workItem, stage.get());
-    return workItem;
+    return board.addWorkItemToStage(
+      stageId,
+      this.boardIdentityService().nextWorkItemIdentity(),
+      aWorkItemTitle,
+      aWorkItemDescription
+    );
   }
 
   @Transactional
