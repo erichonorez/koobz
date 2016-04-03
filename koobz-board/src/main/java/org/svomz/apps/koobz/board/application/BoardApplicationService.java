@@ -96,7 +96,7 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public WorkItem createWorkItem(final String boardId, final String stageId, final String aWorkItemTitle,
+  public WorkItem addWorkItemToBoard(final String boardId, final String stageId, final String aWorkItemTitle,
     final String aWorkItemDescription) throws BoardNotFoundException, StageNotInProcessException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(stageId);

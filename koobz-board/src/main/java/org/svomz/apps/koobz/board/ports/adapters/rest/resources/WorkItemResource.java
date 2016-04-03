@@ -51,7 +51,7 @@ public class WorkItemResource {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemInputModel);
 
-    WorkItem workItem = this.boardApplicationService.createWorkItem(
+    WorkItem workItem = this.boardApplicationService.addWorkItemToBoard(
       boardId,
       workItemInputModel.getStageId(),
       workItemInputModel.getTitle(),

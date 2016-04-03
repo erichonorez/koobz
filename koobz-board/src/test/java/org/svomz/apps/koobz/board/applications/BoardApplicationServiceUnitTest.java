@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 @Suite.SuiteClasses({
   BoardApplicationServiceUnitTest.CreateBoard.class,
   BoardApplicationServiceUnitTest.AddStageToBoard.class,
-  BoardApplicationServiceUnitTest.CreateWorkItem.class,
+  BoardApplicationServiceUnitTest.AddWorkItemToBoard.class,
   BoardApplicationServiceUnitTest.MoveWorkItemToStage.class,
   BoardApplicationServiceUnitTest.MoveWorkItemToPosition.class,
   BoardApplicationServiceUnitTest.ArchiveWorkItem.class,
@@ -206,7 +206,7 @@ public class BoardApplicationServiceUnitTest {
 
   }
 
-  public static class CreateWorkItem {
+  public static class AddWorkItemToBoard {
 
     @Test
     public void itShouldSuccessfullyCreateAWorkItem()
@@ -234,7 +234,7 @@ public class BoardApplicationServiceUnitTest {
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
         boardIdentityService);
 
-      WorkItem workItem = boardApplicationService.createWorkItem(
+      WorkItem workItem = boardApplicationService.addWorkItemToBoard(
         boardId,
         aStageId,
         aWorkItemTitle,
@@ -265,7 +265,7 @@ public class BoardApplicationServiceUnitTest {
       String aWorkItemTitle = "Drink coffee";
       String aWorkItemDescription = "At Starbuck";
 
-      WorkItem workItem = boardApplicationService.createWorkItem(
+      WorkItem workItem = boardApplicationService.addWorkItemToBoard(
         boardId,
         stageId,
         aWorkItemTitle,
@@ -298,7 +298,7 @@ public class BoardApplicationServiceUnitTest {
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
         boardIdentityService);
 
-      WorkItem workItem = boardApplicationService.createWorkItem(
+      WorkItem workItem = boardApplicationService.addWorkItemToBoard(
         boardId,
         stageId,
         aWorkItemTitle,
