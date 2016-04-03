@@ -631,7 +631,7 @@ public class BoardApplicationServiceUnitTest {
       String workItemADescription = "A desc";
       String workItemAId = "09021d01-3da9-4584-85c0-85211cfa8467";
       WorkItem workItemA = board.addWorkItemToStage(aStageId, workItemAId, workItemATitle, workItemADescription);
-      board.archiveWorkItem(workItemA);
+      board.archiveWorkItemWithId(workItemAId);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);

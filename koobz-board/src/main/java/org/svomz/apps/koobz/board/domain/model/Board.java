@@ -239,13 +239,15 @@ public class Board {
     return workItem;
   }
 
-  public Board archiveWorkItem(final WorkItem workItem) throws WorkItemNotInProcessException {
-    Preconditions.checkNotNull(workItem);
+  public Board archiveWorkItemWithId(final String aWorkItemId) throws WorkItemNotInProcessException {
+    Preconditions.checkNotNull(aWorkItemId);
 
-    if (!this.getWorkItems().contains(workItem)) {
+    Optional<WorkItem> optionalWorkItem = this.workItemOfId(aWorkItemId);
+    if (!optionalWorkItem.isPresent()) {
       throw new WorkItemNotInProcessException();
     }
 
+    WorkItem workItem = optionalWorkItem.get();
     workItem.setArchived(true);
     return this;
   }

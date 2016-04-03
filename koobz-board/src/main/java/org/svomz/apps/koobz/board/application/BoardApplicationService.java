@@ -188,12 +188,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(workItemId);
 
     Board board = this.boardOfId(boardId);
-    Optional<WorkItem> optionalWorkItem = board.workItemOfId(workItemId);
-    if (!optionalWorkItem.isPresent()) {
-      throw new WorkItemNotInProcessException();
-    }
-
-    board.archiveWorkItem(optionalWorkItem.get());
+    board.archiveWorkItemWithId(workItemId);
   }
 
   @Transactional

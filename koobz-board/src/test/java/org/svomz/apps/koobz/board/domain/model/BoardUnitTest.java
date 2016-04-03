@@ -44,7 +44,7 @@ public class BoardUnitTest {
       );
 
       // When I archive the work item
-      board.archiveWorkItem(board.workItemOfId(aWorkItemId).get());
+      board.archiveWorkItemWithId(aWorkItemId);
 
       // It should not be in the stage anymore
       assertThat(board.workItemsInStage(aStageIdentity)).doesNotContain(aWorkItem);
@@ -75,7 +75,7 @@ public class BoardUnitTest {
         aWorkItemName,
         aWorkItemDescription
       );
-      board.archiveWorkItem(board.workItemOfId(aWorkItemId).get());
+      board.archiveWorkItemWithId(aWorkItemId);
 
       // When I send back the work item on the board
       board.sendBackToBoardWorkItemWithId(aWorkItemId);
@@ -125,7 +125,7 @@ public class BoardUnitTest {
         "a"
       );
 
-      board.archiveWorkItem(board.workItemOfId(aWorkItemId).get());
+      board.archiveWorkItemWithId(aWorkItemId);
 
       // When I put the work item at the first position
       board.putWorkItemAtPosition(secondWorkItem, 0);
