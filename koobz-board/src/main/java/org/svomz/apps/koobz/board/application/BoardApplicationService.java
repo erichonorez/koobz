@@ -148,17 +148,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(aWorkItemId);
 
     Board board = this.boardOfId(boardId);
-    Optional<WorkItem> optionalWorkItem = board.workItemOfId(aWorkItemId);
-    if (!optionalWorkItem.isPresent()) {
-      throw new WorkItemNotInProcessException();
-    }
-
-    Optional<Stage> optionalStage = board.stageOfId(aStageId);
-    if (!optionalStage.isPresent()) {
-      throw new StageNotInProcessException();
-    }
-
-    board.moveWorkItemToStage(optionalWorkItem.get(), optionalStage.get());
+    board.moveWorkItemWithIdToStageWithId(aWorkItemId, aStageId);
   }
 
   @Transactional

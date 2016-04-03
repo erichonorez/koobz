@@ -205,26 +205,32 @@ public class Board {
   /**
    * Move a work item to a stage. The work item is added as the last element in the stage.
    *
-   * @param workItem the work item to move
-   * @param stage the destination stage
+   * @param aWorkItemId the work item to move
+   * @param aStageId the destination stage
    * @return the board to which belong the work item and the stage
    *
    * @throws WorkItemNotInProcessException
    * @throws StageNotInProcessException
    */
-  public Board moveWorkItemToStage(final WorkItem workItem, final Stage stage)
+  public Board moveWorkItemWithIdToStageWithId(final String aWorkItemId, final String aStageId)
     throws WorkItemNotInProcessException, StageNotInProcessException {
-    Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
-    Preconditions.checkNotNull(stage, "The given stage must not be null");
+    Preconditions.checkNotNull(aWorkItemId, "The given workItem must not be null.");
+    Preconditions.checkNotNull(aStageId, "The given stage must not be null");
 
-    if (!this.workItems.contains(workItem)) {
+    Optional<WorkItem> optionalWorkItem = this.workItemOfId(aWorkItemId);
+    if (!optionalWorkItem.isPresent()) {
       throw new WorkItemNotInProcessException();
     }
-    if (!this.stages.contains(stage)) {
+
+    Optional<Stage> optionalStage = this.stageOfId(aStageId);
+    if (!optionalStage.isPresent()) {
       throw new StageNotInProcessException();
     }
 
+    WorkItem workItem = optionalWorkItem.get();
     workItem.getStage().removeWorkItem(workItem);
+
+    Stage stage = optionalStage.get();
     stage.addWorkItem(workItem);
     return this;
   }

@@ -274,17 +274,19 @@ public class BoardUnitTest {
         aStageIdentity,
         "work in progress"
       );
+      String doneColumnId = UUID.randomUUID().toString();
       Stage columnDone = board.addStageToBoard(
-        UUID.randomUUID().toString(),
+        doneColumnId,
         "done"
       );
+      String aWorkItemId = UUID.randomUUID().toString();
       WorkItem postIt =
-        board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "My first task",
+        board.addWorkItemToStage(aStageIdentity, aWorkItemId, "My first task",
           "A description");
       Assert.assertEquals(1, board.getWorkItems().size());
       Assert.assertEquals(columnWIP, postIt.getStage());
 
-      board.moveWorkItemToStage(postIt, columnDone);
+      board.moveWorkItemWithIdToStageWithId(aWorkItemId, doneColumnId);
       Assert.assertEquals(1, board.getWorkItems().size());
       Assert.assertEquals(columnDone, postIt.getStage());
     }
@@ -300,13 +302,15 @@ public class BoardUnitTest {
         aStageIdentity,
         "work in progress"
       );
+      String doneColumnId = UUID.randomUUID().toString();
       Stage columnDone = board.addStageToBoard(
-        UUID.randomUUID().toString(),
+        doneColumnId,
         "done"
       );
 
       Assert.assertTrue(board.getWorkItems().isEmpty());
-      board.moveWorkItemToStage(new WorkItem(UUID.randomUUID().toString(), "a", "a"), columnDone);
+      String aWorkItemId = UUID.randomUUID().toString();
+      board.moveWorkItemWithIdToStageWithId(aWorkItemId, doneColumnId);
     }
 
     @Test(expected = StageNotInProcessException.class)
@@ -320,13 +324,15 @@ public class BoardUnitTest {
         aStageIdentity,
         "work in progress"
       );
+      String aWorkItemId = UUID.randomUUID().toString();
       WorkItem postIt =
-        board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "My first task",
+        board.addWorkItemToStage(aStageIdentity, aWorkItemId, "My first task",
           "A description");
 
-      Stage columnDone = new Stage(UUID.randomUUID().toString(), "done");
+      String doneColumnId = UUID.randomUUID().toString();
+      Stage columnDone = new Stage(doneColumnId, "done");
 
-      board.moveWorkItemToStage(postIt, columnDone);
+      board.moveWorkItemWithIdToStageWithId(aWorkItemId, doneColumnId);
       Assert.assertEquals(1, board.getWorkItems());
       Assert.assertEquals(columnDone, postIt.getStage());
     }
@@ -539,18 +545,20 @@ public class BoardUnitTest {
         "to do"
       );
 
+      String wipStageId = UUID.randomUUID().toString();
       Stage wip = board.addStageToBoard(
-        UUID.randomUUID().toString(),
+        wipStageId,
         "wip"
       );
 
-      WorkItem workItemA = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item A",
+      String workItemAId = UUID.randomUUID().toString();
+      WorkItem workItemA = board.addWorkItemToStage(aStageIdentity, workItemAId, "Work item A",
         "A description");
 
       WorkItem workItemB = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item B",
         "A description");
 
-      board.moveWorkItemToStage(workItemA, wip);
+      board.moveWorkItemWithIdToStageWithId(workItemAId, wipStageId);
       Assert.assertEquals(0, workItemA.getPosition());
       Assert.assertEquals(0, workItemB.getPosition());
     }
