@@ -86,7 +86,7 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public void deleteStage(final String boardId, final String aStageId)
+  public void removeStageFromBoard(final String boardId, final String aStageId)
     throws BoardNotFoundException, StageNotInProcessException, StageNotEmptyException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(aStageId);

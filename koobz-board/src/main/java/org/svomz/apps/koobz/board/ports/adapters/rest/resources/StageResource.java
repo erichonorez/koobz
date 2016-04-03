@@ -76,7 +76,7 @@ public class StageResource {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(stageId);
 
-    this.boardApplicationService.deleteStage(boardId, stageId);
+    this.boardApplicationService.removeStageFromBoard(boardId, stageId);
   }
 
 }

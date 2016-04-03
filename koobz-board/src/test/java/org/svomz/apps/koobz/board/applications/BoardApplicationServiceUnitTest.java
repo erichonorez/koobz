@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
   BoardApplicationServiceUnitTest.ArchiveWorkItem.class,
   BoardApplicationServiceUnitTest.ChangeBoardName.class,
   BoardApplicationServiceUnitTest.ChangeStageName.class,
-  BoardApplicationServiceUnitTest.DeleteStage.class,
+  BoardApplicationServiceUnitTest.RemoveStageFromBoard.class,
   BoardApplicationServiceUnitTest.ChangeWorkItemInformation.class,
   BoardApplicationServiceUnitTest.RemoveWorkItemFromBoard.class
 })
@@ -175,10 +175,10 @@ public class BoardApplicationServiceUnitTest {
 
   }
 
-  public static class DeleteStage {
+  public static class RemoveStageFromBoard {
 
     @Test
-    public void itShouldSuccessfullyDeleteAnEmptyStage()
+    public void itShouldSuccessfullyRemoveAnEmptyStage()
       throws BoardNotFoundException, StageNotEmptyException, StageNotInProcessException {
       // Given a board with id "35a45cd4-f81f-11e5-9ce9-5e5517507c66"
       String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
@@ -198,7 +198,7 @@ public class BoardApplicationServiceUnitTest {
         boardIdentityService);
 
       String newStageName = "To do";
-      boardApplicationService.deleteStage(boardId, aStageId);
+      boardApplicationService.removeStageFromBoard(boardId, aStageId);
 
       // Then board does not contains the stage any more
       assertThat(board.getStages()).doesNotContain(stage);
