@@ -47,7 +47,7 @@ public class StageResource {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(stageInputModel);
 
-    Stage stage = this.boardApplicationService.createStage(boardId, stageInputModel.getName());
+    Stage stage = this.boardApplicationService.addStageToBoard(boardId, stageInputModel.getName());
     
     return Response.status(Status.CREATED).entity(stage).build();
   }

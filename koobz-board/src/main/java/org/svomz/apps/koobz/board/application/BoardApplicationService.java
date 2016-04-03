@@ -55,7 +55,7 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public Stage createStage(final String aBoardId, final String aStageTitle) throws BoardNotFoundException {
+  public Stage addStageToBoard(final String aBoardId, final String aStageTitle) throws BoardNotFoundException {
     Preconditions.checkNotNull(aBoardId);
     Preconditions.checkNotNull(aStageTitle);
 

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   BoardApplicationServiceUnitTest.CreateBoard.class,
-  BoardApplicationServiceUnitTest.CreateStage.class,
+  BoardApplicationServiceUnitTest.AddStageToBoard.class,
   BoardApplicationServiceUnitTest.CreateWorkItem.class,
   BoardApplicationServiceUnitTest.MoveWorkItemToStage.class,
   BoardApplicationServiceUnitTest.MoveWorkItemToPosition.class,
@@ -88,7 +88,7 @@ public class BoardApplicationServiceUnitTest {
 
   }
 
-  public static class CreateStage {
+  public static class AddStageToBoard {
 
     @Test
     public void itShouldSuccessfullyCreateANewStage() throws BoardNotFoundException {
@@ -109,7 +109,7 @@ public class BoardApplicationServiceUnitTest {
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
         boardIdentityService);
 
-      Stage stage = boardApplicationService.createStage(boardId, title);
+      Stage stage = boardApplicationService.addStageToBoard(boardId, title);
 
       // Then the board has a new stage
 
@@ -134,7 +134,7 @@ public class BoardApplicationServiceUnitTest {
       // And with "to do" as title
       String title = "to do";
 
-      Stage stage = boardApplicationService.createStage(boardId, title);
+      Stage stage = boardApplicationService.addStageToBoard(boardId, title);
 
       // Then I get a BoardNotFoundException
     }
