@@ -1,14 +1,10 @@
 package org.svomz.apps.koobz.board.ports.adapters.rest.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -19,23 +15,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.svomz.apps.koobz.board.application.BoardApplicationService;
 import org.svomz.apps.koobz.board.application.BoardNotFoundException;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.StageInputModel;
-import org.svomz.apps.koobz.board.domain.model.Board;
-import org.svomz.apps.koobz.board.domain.model.BoardRepository;
 import org.svomz.apps.koobz.board.domain.model.Stage;
 import org.svomz.apps.koobz.board.domain.model.StageNotEmptyException;
 import org.svomz.apps.koobz.board.domain.model.StageNotInProcessException;
-import org.svomz.apps.koobz.board.domain.model.StageRepository;
-import org.svomz.apps.koobz.board.infrastructure.domain.EntityNotFoundException;
 
 import com.google.common.base.Preconditions;
 
 @Component
 @Path("/boards/{boardId}/stages")
-@Transactional
 public class StageResource {
 
   private final BoardApplicationService boardApplicationService;

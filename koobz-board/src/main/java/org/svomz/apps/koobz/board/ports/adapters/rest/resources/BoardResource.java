@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -26,7 +25,6 @@ import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardInputModel;
 import org.svomz.apps.koobz.board.ports.adapters.rest.models.BoardViewModel;
 import org.svomz.apps.koobz.board.domain.model.Board;
 import org.svomz.apps.koobz.board.domain.model.BoardRepository;
-import org.svomz.apps.koobz.board.infrastructure.domain.EntityNotFoundException;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.base.Preconditions;
@@ -93,7 +91,7 @@ public class BoardResource {
   @Transactional
   public Response updateBoard(@PathParam("boardId") final String boardId,
       @NotNull @Valid final BoardInputModel boardInputModel)
-    throws EntityNotFoundException, BoardNotFoundException {
+    throws BoardNotFoundException {
     Preconditions.checkNotNull(boardInputModel);
 
     this.boardApplicationService.changeBoardName(boardId, boardInputModel.getName());

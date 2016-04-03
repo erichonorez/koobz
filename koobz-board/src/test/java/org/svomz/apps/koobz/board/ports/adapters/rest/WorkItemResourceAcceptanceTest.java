@@ -27,64 +27,6 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 
 public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
-
-  /**
-   * As an api user
-   * Given a board with workitems exists
-   * When I get boards/{boardId}/workitems
-   * Then I have the list of work items
-   * @throws IOException 
-   * @throws JsonMappingException 
-   * @throws JsonParseException 
-   */
-  @SuppressWarnings("unchecked")
-  @Test
-  public void testGetAllWorkItemsOfABoard() throws JsonParseException, JsonMappingException, IOException {
-    JsonPath jsonBoard = this.createBoard("Test board");
-    String boardId = jsonBoard.get("id");
-    JsonPath jsonStage = this.createStage(boardId, "Test stage");
-    String stageId = jsonStage.get("id");
-    String firstWorkItemText = "My first work item";
-    this.createWorkItem(boardId, stageId, firstWorkItemText, StringUtils.EMPTY);
-    String secondWorkItemText = "My second work item";
-    this.createWorkItem(boardId, stageId, secondWorkItemText, StringUtils.EMPTY);
-    
-    JsonPath json = given()
-      .contentType(ContentType.JSON)
-      .accept(ContentType.JSON)
-    .when()
-      .get("/boards/" + boardId + "/workitems")
-    .then()
-      .body(not(empty()))
-    .extract()
-    .response().jsonPath();
-    
-    List<String> texts = json.get("title");
-    Assert.assertThat(texts, allOf(
-        not(emptyIterable()),
-        containsInAnyOrder(
-            equalTo("My first work item"), equalTo("My second work item")
-        )
-    ));
-    
-  }
-  
-  /**
-   * As an api user
-   * Given the board with id == Integer.MAX_VALUE doesn't exist
-   * When I get the related work items 
-   * Then I get a 404
-   */
-  @Test
-  public void testGetWorkItemsOfNonExistingBoard() {
-    given()
-      .contentType(ContentType.JSON)
-      .accept(ContentType.JSON)
-    .when()
-      .get("/boards/" + Integer.MAX_VALUE + "/workitems")
-    .then()
-      .statusCode(404);
-  }
   
   /**
    * As an api user
@@ -126,11 +68,7 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
       .when()
         .put("/boards/" + boardId + "/workitems/" + workItemId)
       .then()
-        .statusCode(200)
-        .body("id", allOf(isA(String.class), equalTo(workItemId)))
-        .body("title", equalTo(editedText))
-
-      .extract().response().jsonPath();
+        .statusCode(200);
   }
   
   /**
@@ -175,18 +113,15 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     JsonPath jsonStageWIP = this.createStage(boardId, "Work in progress");
     
     String wipStageId = jsonStageWIP.get("id");
-    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", wipStageId, null, null);
+
     given()
         .contentType(ContentType.JSON)
         .accept(ContentType.JSON)
-        .body(updateRequest)
+        .body(new WorkItemMoveInputModel(wipStageId))
       .when()
-        .put("/boards/" + boardId + "/workitems/" + workItemId)
+        .post("/boards/" + boardId + "/workitems/" + workItemId + "/move")
       .then()
-        .statusCode(200)
-        .body("id", allOf(isA(String.class), equalTo(workItemId)))
-        .body("title", equalTo(text))
-      .extract().response().jsonPath();
+        .statusCode(200);
   }
   
   /**
@@ -208,15 +143,14 @@ public class WorkItemResourceAcceptanceTest extends AbstractAcceptanceTest {
     String text = "My first work item";
     String workItemId = this.createWorkItem(boardId, stageId, text, StringUtils.EMPTY).get("id");
 
-    WorkItemInputModel updateRequest = new WorkItemInputModel("My first work item", jsonStageBoard2.get("id"), null, null);
     given()
         .contentType(ContentType.JSON)
         .accept(ContentType.JSON)
-        .body(updateRequest)
+        .body(new WorkItemMoveInputModel(jsonStageBoard2.get("id")))
       .when()
-        .put("/boards/" + boardId + "/workitems/" + workItemId)
+        .post("/boards/" + boardId + "/workitems/" + workItemId + "/move")
       .then()
-        .statusCode(404);
+        .statusCode(400);
   }
   
   /**
