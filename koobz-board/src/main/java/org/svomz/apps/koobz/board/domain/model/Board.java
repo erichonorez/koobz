@@ -17,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 /**
@@ -53,14 +52,6 @@ public class Board {
     BoardValidation.checkBoardName(name);
 
     this.name = name;
-  }
-
-  @VisibleForTesting
-  public Board(final String name, final List<Stage> stages) {
-    this(name);
-    for (Stage stage : stages) {
-      this.addStage(stage);
-    }
   }
 
   public Board(final String boardId, final String aBoardName) {
@@ -104,17 +95,19 @@ public class Board {
   /**
    * @return the list of stages on the board. This list is a unmodifiable Set to prevent direct
    *         manipulations (add / remove) of the set. If you want to add or remove stages you must
-   *         use {@link #removeStage(Stage)} and {@link #addStage(Stage)}.
+   *         use {@link #removeStage(Stage)} and {@link #addStageToBoard(String, String)}}.
    */
   public Set<Stage> getStages() {
     return Collections.unmodifiableSet(this.stages);
   }
 
-  public Board addStage(final Stage stage) {
-    Preconditions.checkNotNull(stage, "The given stage must not be null.");
+  public Stage addStageToBoard(final String aStageIdentity, final String aStageTitle) {
+    Preconditions.checkNotNull(aStageIdentity);
+    Preconditions.checkNotNull(aStageTitle);
 
+    Stage stage = new Stage(aStageIdentity, aStageTitle);
     stage.setBoard(this);
-    stage.setOrder(this.stages.size());
+    stage.setPosition(this.stages.size());
     this.stages.add(stage);
 
     if (stage.hasWorkItems()) {
@@ -128,7 +121,7 @@ public class Board {
       });
     }
 
-    return this;
+    return stage;
   }
 
   public Board removeStage(final Stage stage) throws StageNotInProcessException,
@@ -155,7 +148,7 @@ public class Board {
       throw new StageNotInProcessException();
     }
 
-    if (position == stage.getOrder()) {
+    if (position == stage.getPosition()) {
       return this;
     }
 
@@ -164,21 +157,21 @@ public class Board {
       order = this.stages.size() - 1;
     }
 
-    if (order > stage.getOrder()) {
+    if (order > stage.getPosition()) {
       for (Stage item : this.stages) {
-        if (item.getOrder() > stage.getOrder() && item.getOrder() <= order) {
-          item.setOrder(item.getOrder() - 1);
+        if (item.getPosition() > stage.getPosition() && item.getPosition() <= order) {
+          item.setPosition(item.getPosition() - 1);
         }
       }
     } else {
       for (Stage item : this.stages) {
-        if (item.getOrder() >= position && item.getOrder() < stage.getOrder()) {
-          item.setOrder(item.getOrder() + 1);
+        if (item.getPosition() >= position && item.getPosition() < stage.getPosition()) {
+          item.setPosition(item.getPosition() + 1);
         }
       }
     }
 
-    stage.setOrder(order);
+    stage.setPosition(order);
 
     return this;
   }
@@ -239,7 +232,8 @@ public class Board {
     return this;
   }
   
-  public WorkItem putWorkItemAtPosition(WorkItem workItem, int i) throws WorkItemNotInProcessException, WorkItemNotInStageException {
+  public WorkItem putWorkItemAtPosition(final WorkItem workItem, int i)
+    throws WorkItemNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(workItem);
     
     if (!this.getAllWorkItems().contains(workItem)) {
@@ -250,7 +244,7 @@ public class Board {
     return workItem;
   }
 
-  public Board archive(WorkItem workItem) throws WorkItemNotInProcessException {
+  public Board archiveWorkItem(final WorkItem workItem) throws WorkItemNotInProcessException {
     Preconditions.checkNotNull(workItem);
 
     if (!this.getWorkItems().contains(workItem)) {
@@ -261,7 +255,7 @@ public class Board {
     return this;
   }
 
-  public Board unarchive(final String workItemId) throws WorkItemNotArchivedException {
+  public Board sendWorkItemBackToBoard(final String workItemId) throws WorkItemNotArchivedException {
     Preconditions.checkNotNull(workItemId);
 
     Optional<WorkItem> optionalWorkItem = this.archivedWorkItemOfId(workItemId);
@@ -296,7 +290,7 @@ public class Board {
    * @return the ordered list of work items
    * @throws StageNotInProcessException if a stage with the specified id is not found in the board.
    */
-  public List<WorkItem> getWorkItemsInStage(final String aStageId) throws StageNotInProcessException {
+  public List<WorkItem> workItemsInStage(final String aStageId) throws StageNotInProcessException {
     Preconditions.checkNotNull(aStageId);
 
     Optional<Stage> optionalStage = this.stageOfId(aStageId);
@@ -308,7 +302,7 @@ public class Board {
     return stage.getWorkItems()
       .stream()
       .sorted((workItem1, workItem2) -> {
-        return workItem1.getOrder() - workItem2.getOrder();
+        return workItem1.getPosition() - workItem2.getPosition();
       }).collect(Collectors.toList());
   }
 

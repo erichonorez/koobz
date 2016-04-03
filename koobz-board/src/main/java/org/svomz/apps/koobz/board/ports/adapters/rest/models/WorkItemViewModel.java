@@ -28,7 +28,7 @@ public class WorkItemViewModel {
   
   @JsonProperty("order")
   public int getOrder() {
-    return this.workItem.getOrder();
+    return this.workItem.getPosition();
   }
 
   @JsonProperty("description")

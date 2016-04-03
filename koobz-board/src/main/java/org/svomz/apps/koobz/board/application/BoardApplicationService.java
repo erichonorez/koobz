@@ -23,10 +23,13 @@ import javax.transaction.Transactional;
 public class BoardApplicationService {
 
   private final BoardRepository boardRepository;
+  private final BoardIdentityService boardIdentityService;
 
   @Inject
-  public BoardApplicationService(final BoardRepository aBoardRepository) {
-    this.boardRepository = aBoardRepository;
+  public BoardApplicationService(final BoardRepository aBoardRepository,
+    BoardIdentityService aBoardIdentityService) {
+    this.boardRepository = Preconditions.checkNotNull(aBoardRepository);
+    this.boardIdentityService = Preconditions.checkNotNull(aBoardIdentityService);
   }
 
   @Transactional
@@ -34,7 +37,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(aBoardName);
 
     Board board = new Board(
-      this.boardRepository().nextIdentity(),
+      this.boardIdentityService().nextBoardIdentity(),
       aBoardName
     );
     this.boardRepository().save(board);
@@ -52,14 +55,15 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public Stage createStage(final String boardId, final String title) throws BoardNotFoundException {
-    Preconditions.checkNotNull(boardId);
-    Preconditions.checkNotNull(title);
+  public Stage createStage(final String aBoardId, final String aStageTitle) throws BoardNotFoundException {
+    Preconditions.checkNotNull(aBoardId);
+    Preconditions.checkNotNull(aStageTitle);
 
-    Board board = this.boardOfId(boardId);
-    Stage stage = new Stage(title);
-
-    stage.addToBoard(board);
+    Board board = this.boardOfId(aBoardId);
+    Stage stage = board.addStageToBoard(
+      this.boardIdentityService.nextStageIdentity(),
+      aStageTitle
+    );
 
     return stage;
   }
@@ -77,7 +81,8 @@ public class BoardApplicationService {
       throw new StageNotInProcessException();
     }
 
-    optionalStage.get().setName(newStageName);
+    Stage stage = optionalStage.get();
+    stage.setName((String) newStageName);
   }
 
   @Transactional
@@ -197,7 +202,7 @@ public class BoardApplicationService {
       throw new WorkItemNotInProcessException();
     }
 
-    board.archive(optionalWorkItem.get());
+    board.archiveWorkItem(optionalWorkItem.get());
   }
 
   @Transactional
@@ -207,7 +212,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(workItemId);
 
     Board board = this.boardOfId(boardId);
-    board.unarchive(workItemId);
+    board.sendWorkItemBackToBoard(workItemId);
   }
 
   private Board boardOfId(String boardId) throws BoardNotFoundException {
@@ -220,6 +225,10 @@ public class BoardApplicationService {
 
   private BoardRepository boardRepository() {
     return boardRepository;
+  }
+
+  private BoardIdentityService boardIdentityService() {
+    return this.boardIdentityService;
   }
 
 }

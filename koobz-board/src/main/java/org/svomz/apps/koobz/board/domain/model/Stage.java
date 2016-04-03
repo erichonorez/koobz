@@ -2,12 +2,9 @@ package org.svomz.apps.koobz.board.domain.model;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 
@@ -41,29 +37,17 @@ public class Stage {
   @JoinColumn(name = "board_id")
   private Board board;
 
-  Stage() {
-    this.id = UUID.randomUUID().toString();
-    this.workItems = new HashSet<WorkItem>();
+  /** Needed by JPA */
+  private Stage() {}
+
+  Stage(final String stageId, final String name) {
+    this.id = Preconditions.checkNotNull(stageId);
+    this.setName(name);
+    this.workItems = new HashSet<>();
   }
 
-  public Stage(final String name) {
-    this();
-    StageValidation.checkStageName(name);
-
-
-    this.name = name;
-  }
-
-  public Stage(final String stageId, final String name) {
-    this(name);
-    Preconditions.checkNotNull(stageId);
-    this.id = stageId;
-  }
-
-  @VisibleForTesting
-  Stage(final String name, final List<WorkItem> workItems) {
-    this(name);
-    workItems.forEach(workItem -> this.addWorkItem(workItem));
+  public void setName(String name) {
+    this.name = Preconditions.checkNotNull(name);
   }
 
   public String getId() {
@@ -72,12 +56,6 @@ public class Stage {
 
   public String getName() {
     return this.name;
-  }
-
-  public void setName(final String name) {
-    StageValidation.checkStageName(name);
-
-    this.name = name;
   }
 
   /**
@@ -96,7 +74,7 @@ public class Stage {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     workItem.setStage(this);
-    workItem.setOrder(this.workItems.size());
+    workItem.setPosition(this.workItems.size());
     this.workItems.add(workItem);
     return this;
   }
@@ -105,13 +83,13 @@ public class Stage {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     this.workItems.remove(workItem);
-    int workItemOrder = workItem.getOrder();
+    int workItemOrder = workItem.getPosition();
 
     //reoder all items after the removed one
     this.workItems.forEach(item -> {
-      if (item.getOrder() > workItemOrder) {
-        int currentOrder = item.getOrder();
-        item.setOrder(currentOrder - 1);
+      if (item.getPosition() > workItemOrder) {
+        int currentOrder = item.getPosition();
+        item.setPosition(currentOrder - 1);
       }
     });
 
@@ -125,71 +103,50 @@ public class Stage {
     return this;
   }
   
-  Stage putWorkItemAtPosition(WorkItem workItem, int order) throws WorkItemNotInStageException {
+  Stage putWorkItemAtPosition(WorkItem workItem, int position) throws WorkItemNotInStageException {
     Preconditions.checkNotNull(workItem);
-    Preconditions.checkArgument(order >= 0);
+    Preconditions.checkArgument(position >= 0);
     
     if (!this.workItems.contains(workItem)) {
       throw new WorkItemNotInStageException();
     }
     
-    if (order == workItem.getOrder()) {
+    if (position == workItem.getPosition()) {
       return this;
     }
     
-    if (order > this.workItems.size()) {
-      order = this.workItems.size() - 1;
+    if (position > this.workItems.size()) {
+      position = this.workItems.size() - 1;
     }
     
-    if (order > workItem.getOrder()) {
+    if (position > workItem.getPosition()) {
       for (WorkItem item : this.workItems) {
-        if (item.getOrder() > workItem.getOrder() && item.getOrder() <= order) {
-          item.setOrder(item.getOrder() - 1);
+        if (item.getPosition() > workItem.getPosition() && item.getPosition() <= position) {
+          item.setPosition(item.getPosition() - 1);
         }
       }
     } else {
       for (WorkItem item : this.workItems) {
-        if (item.getOrder() >= order && item.getOrder() < workItem.getOrder()) {
-          item.setOrder(item.getOrder() + 1);
+        if (item.getPosition() >= position && item.getPosition() < workItem.getPosition()) {
+          item.setPosition(item.getPosition() + 1);
         }
       }
     }
     
-    workItem.setOrder(order);
+    workItem.setPosition(position);
     return this;
   }
 
-  void setOrder(int order) {
+  void setPosition(int order) {
     this.order = order;
   }
 
-  public int getOrder() {
+  public int getPosition() {
     return this.order;
   }
 
   boolean hasWorkItems() {
     return this.getWorkItems().size() > 0;
-  }
-
-  public void addToBoard(final Board board) {
-    board.addStage(this);
-  }
-
-  private static class StageValidation {
-
-    private final static int NAME_MIN_SIZE = 1;
-    private final static int NAME_MAX_SIZE = 255;
-    private final static String NAME_IS_NULL_ERR_MSG = "You must give a name to the stage";
-    private final static String NAME_SIZE_ERR_MSG = "The name length must be between %1s and %2s";
-
-    private static void checkStageName(@Nullable final String name) {
-      Preconditions.checkArgument(name != null, NAME_IS_NULL_ERR_MSG);
-
-      int nameLength = name.length();
-      Preconditions.checkArgument(nameLength >= 1 && nameLength <= 255,
-          String.format(NAME_SIZE_ERR_MSG, NAME_MIN_SIZE, NAME_MAX_SIZE));
-    }
-
   }
 
 }

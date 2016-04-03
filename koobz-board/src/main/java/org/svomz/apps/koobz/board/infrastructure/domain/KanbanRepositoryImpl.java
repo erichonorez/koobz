@@ -26,9 +26,4 @@ public class KanbanRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
     }
     return entity;
   }
-
-  @Override
-  public String nextIdentity() {
-    return UUID.randomUUID().toString();
-  }
 }

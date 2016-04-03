@@ -13,6 +13,4 @@ public interface KanbanRepository<T, ID extends Serializable> extends JpaReposit
 
   T findOrThrowException(ID primaryKey) throws EntityNotFoundException;
 
-  String nextIdentity();
-
 }

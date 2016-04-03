@@ -102,13 +102,13 @@ public class WorkItem {
     return this;
   }
 
-  WorkItem setOrder(final int order) {
+  WorkItem setPosition(final int order) {
     this.order = order;
     return this;
   }
 
   @Nullable
-  public int getOrder() {
+  public int getPosition() {
     return this.order;
   }
 

@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.svomz.apps.koobz.board.application.BoardApplicationService;
+import org.svomz.apps.koobz.board.application.BoardIdentityService;
 import org.svomz.apps.koobz.board.application.BoardNotFoundException;
 import org.svomz.apps.koobz.board.domain.model.Board;
 import org.svomz.apps.koobz.board.domain.model.BoardRepository;
@@ -42,9 +43,12 @@ public class BoardApplicationServiceUnitTest {
     @Test
     public void itShouldCreateANewBoardSuccessfully() {
       BoardRepository boardRepository = mock(BoardRepository.class);
-      BoardApplicationService boardService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      when(boardIdentityService.nextBoardIdentity()).thenReturn(UUID.randomUUID().toString());
 
-      when(boardRepository.nextIdentity()).thenReturn(UUID.randomUUID().toString());
+      BoardApplicationService boardService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
+
       String aBoardName = "A name";
       Board board = boardService.createBoard(aBoardName);
 
@@ -71,7 +75,11 @@ public class BoardApplicationServiceUnitTest {
 
       // When I update the board name with "Hello, World!"
       String newBoardName = "Hello, World!";
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
+
       boardApplicationService.changeBoardName(boardId, newBoardName);
 
       // Then the name is updated
@@ -91,11 +99,15 @@ public class BoardApplicationServiceUnitTest {
       Board board = new Board(boardId, "a board");
       when(boardRepository.findOne(boardId)).thenReturn(board);
 
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
-
       // When I create a new stage on board with id "35a45cd4-f81f-11e5-9ce9-5e5517507c66"
       // And with "to do" as title
       String title = "to do";
+
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      when(boardIdentityService.nextStageIdentity()).thenReturn(UUID.randomUUID().toString());
+
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
 
       Stage stage = boardApplicationService.createStage(boardId, title);
 
@@ -113,7 +125,10 @@ public class BoardApplicationServiceUnitTest {
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(null);
 
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
 
       // When I create a new stage on board with id "35a45cd4-f81f-11e5-9ce9-5e5517507c66"
       // And with "to do" as title
@@ -138,14 +153,18 @@ public class BoardApplicationServiceUnitTest {
       String aStageId = "36a45cd4-f81f-11e5-9ce9-5e5517507c67";
       String aStageName = "do To";
 
-      Stage stage = new Stage(aStageId, aStageName);
-      board.addStage(stage);
+      Stage stage = board.addStageToBoard(
+        aStageId,
+        aStageName
+      );
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
 
       // When I update the board name with "To do"
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
 
       String newStageName = "To do";
       boardApplicationService.changeStageName(boardId, aStageId, newStageName);
@@ -168,14 +187,15 @@ public class BoardApplicationServiceUnitTest {
       String aStageId = "36a45cd4-f81f-11e5-9ce9-5e5517507c67";
       String aStageName = "do To";
 
-      Stage stage = new Stage(aStageId, aStageName);
-      board.addStage(stage);
+      Stage stage = board.addStageToBoard(aStageId, aStageName);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
 
       // When I delete the stage
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
 
       String newStageName = "To do";
       boardApplicationService.deleteStage(boardId, aStageId);
@@ -195,13 +215,11 @@ public class BoardApplicationServiceUnitTest {
       String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
       String aBoardName = "a board";
       // And having a Stage with id "ac329010-f837-11e5-9ce9-5e5517507c66" and name "to do"
-      String stageId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
+      String aStageId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
       String aStageName = "to do";
 
       Board board = new Board(boardId, aBoardName);
-      Stage stage = new Stage(stageId, aStageName);
-
-      stage.addToBoard(board);
+      Stage stage = board.addStageToBoard(aStageId, aStageName);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
@@ -210,17 +228,19 @@ public class BoardApplicationServiceUnitTest {
       String aWorkItemTitle = "Drink coffee";
       String aWorkItemDescription = "At Starbuck";
 
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
+
       WorkItem workItem = boardApplicationService.createWorkItem(
         boardId,
-        stageId,
+        aStageId,
         aWorkItemTitle,
         aWorkItemDescription
       );
 
       // Then the board contains the work item
       assertThat(board.getWorkItems()).contains(workItem);
-
       assertThat(workItem.getTitle()).isEqualTo(aWorkItemTitle);
       assertThat(workItem.getDescription()).isEqualTo(aWorkItemDescription);
     }
@@ -235,7 +255,9 @@ public class BoardApplicationServiceUnitTest {
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(null);
 
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
 
       // When user adds a Work Item with title "Drink coffee" to the stage with id "ac329010-f837-11e5-9ce9-5e5517507c66"
       String aWorkItemTitle = "Drink coffee";
@@ -269,7 +291,10 @@ public class BoardApplicationServiceUnitTest {
       String aWorkItemTitle = "Drink coffee";
       String aWorkItemDescription = "At Starbuck";
 
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
+
       WorkItem workItem = boardApplicationService.createWorkItem(
         boardId,
         stageId,
@@ -292,10 +317,9 @@ public class BoardApplicationServiceUnitTest {
       String aBoardName = "a board";
       Board board = new Board(boardId, aBoardName);
 
-      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
-      String stageName = "to do";
-      Stage stage = new Stage(stageId, stageName);
-      board.addStage(stage);
+      String aStageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String aStageName = "to do";
+      Stage stage = board.addStageToBoard(aStageId, aStageName);
 
       String workItemTitle = "A";
       String workItemDescription = "A desc";
@@ -310,7 +334,10 @@ public class BoardApplicationServiceUnitTest {
       String newWorkItemName = "Ticket 42";
       String newWorkItemDescription = "Bla bla bla";
 
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
+
       boardApplicationService.changeWorkItemInformation(boardId, workItemId, newWorkItemName, newWorkItemDescription);
 
       // Then work item name is "Ticket 42" and its description is "Bla bla bla".
@@ -329,10 +356,9 @@ public class BoardApplicationServiceUnitTest {
       String aBoardName = "a board";
       Board board = new Board(boardId, aBoardName);
 
-      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
-      String stageName = "to do";
-      Stage stage = new Stage(stageId, stageName);
-      board.addStage(stage);
+      String aStageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String aStageName = "to do";
+      Stage stage = board.addStageToBoard(aStageId, aStageName);
 
       String workItemTitle = "A";
       String workItemDescription = "A desc";
@@ -344,7 +370,10 @@ public class BoardApplicationServiceUnitTest {
       when(boardRepository.findOne(boardId)).thenReturn(board);
 
       // When I delete the work item
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
+
       boardApplicationService.deleteWorkItem(boardId, workItemId);
 
       // Then the board does not contains the work item anymore.
@@ -365,13 +394,11 @@ public class BoardApplicationServiceUnitTest {
 
       String stageAId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
       String stageAName = "to do";
-      Stage stageA = new Stage(stageAId, stageAName);
-      board.addStage(stageA);
+      Stage stageA = board.addStageToBoard(stageAId, stageAName);
 
       String stageBId = "7d1eee25-5d9e-4a95-98b0-032a17960a7a";
       String stageBName = "done";
-      Stage stageB = new Stage(stageBId, stageBName);
-      board.addStage(stageB);
+      Stage stageB = board.addStageToBoard(stageBId, stageBName);
 
       String aWorkItemTitle = "Drink coffee";
       String aWorkItemDescription = "At Starbuck";
@@ -383,13 +410,16 @@ public class BoardApplicationServiceUnitTest {
       when(boardRepository.findOne(boardId)).thenReturn(board);
 
       // When I move the work item from stage A to stage B
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
+
       boardApplicationService.moveWorkItemToStage(boardId, aWorkItemId, stageBId);
 
       // Then the work item is in stage B
-      assertThat(board.getWorkItemsInStage(stageBId)).contains(workItem);
+      assertThat(board.workItemsInStage(stageBId)).contains(workItem);
       // And the work item is no more in stage A
-      assertThat(board.getWorkItemsInStage(stageAId)).doesNotContain(workItem);
+      assertThat(board.workItemsInStage(stageAId)).doesNotContain(workItem);
     }
 
     @Test(expected = StageNotInProcessException.class)
@@ -402,13 +432,11 @@ public class BoardApplicationServiceUnitTest {
 
       String stageAId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
       String stageAName = "to do";
-      Stage stageA = new Stage(stageAId, stageAName);
-      board.addStage(stageA);
+      Stage stageA = board.addStageToBoard(stageAId, stageAName);
 
       String stageBId = "7d1eee25-5d9e-4a95-98b0-032a17960a7a";
       String stageBName = "done";
-      Stage stageB = new Stage(stageBId, stageBName);
-      board.addStage(stageB);
+      Stage stageB = board.addStageToBoard(stageBId, stageBName);
 
       String aWorkItemTitle = "Drink coffee";
       String aWorkItemDescription = "At Starbuck";
@@ -422,7 +450,9 @@ public class BoardApplicationServiceUnitTest {
       // When I move the work item from stage A to a stage with id "d1a947d2-93b6-4d9a-be8e-b35c47f085ff"
       String stageCId = "d1a947d2-93b6-4d9a-be8e-b35c47f085ff";
 
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
       boardApplicationService.moveWorkItemToStage(boardId, aWorkItemId, stageCId);
 
       // Then it should fail
@@ -438,13 +468,11 @@ public class BoardApplicationServiceUnitTest {
 
       String stageAId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
       String stageAName = "to do";
-      Stage stageA = new Stage(stageAId, stageAName);
-      board.addStage(stageA);
+      Stage stageA = board.addStageToBoard(stageAId, stageAName);
 
       String stageBId = "7d1eee25-5d9e-4a95-98b0-032a17960a7a";
       String stageBName = "done";
-      Stage stageB = new Stage(stageBId, stageBName);
-      board.addStage(stageB);
+      Stage stageB = board.addStageToBoard(stageBId, stageBName);
 
       String aWorkItemTitle = "Drink coffee";
       String aWorkItemDescription = "At Starbuck";
@@ -458,7 +486,9 @@ public class BoardApplicationServiceUnitTest {
       // When I move the work item with id ""d1a947d2-93b6-4d9a-be8e-b35c47f085ff"" to stage B
       String unknownWorkItem = "d1a947d2-93b6-4d9a-be8e-b35c47f085ff";
 
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
       boardApplicationService.moveWorkItemToStage(boardId, unknownWorkItem, stageBId);
 
       // Then it should fail
@@ -477,10 +507,9 @@ public class BoardApplicationServiceUnitTest {
       String aBoardName = "a board";
       Board board = new Board(boardId, aBoardName);
 
-      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
-      String stageName = "to do";
-      Stage stage = new Stage(stageId, stageName);
-      board.addStage(stage);
+      String aStageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String aStageName = "to do";
+      Stage stage = board.addStageToBoard(aStageId, aStageName);
 
       String workItemATitle = "A";
       String workItemADescription = "A desc";
@@ -498,11 +527,14 @@ public class BoardApplicationServiceUnitTest {
       when(boardRepository.findOne(boardId)).thenReturn(board);
 
       // When I switch the order of work items
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
+
       boardApplicationService.changeWorkItemPosition(board.getId(), workItemA.getId(), 2);
 
       // Then B is the first one and A is the last one
-      assertThat(board.getWorkItemsInStage(stageId)).containsExactly(workItemB, workItemA);
+      assertThat(board.workItemsInStage(aStageId)).containsExactly(workItemB, workItemA);
     }
 
     @Test(expected = WorkItemNotInProcessException.class)
@@ -514,10 +546,9 @@ public class BoardApplicationServiceUnitTest {
       String aBoardName = "a board";
       Board board = new Board(boardId, aBoardName);
 
-      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
-      String stageName = "to do";
-      Stage stage = new Stage(stageId, stageName);
-      board.addStage(stage);
+      String aStageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String aStageName = "to do";
+      Stage stage = board.addStageToBoard(aStageId, aStageName);
 
       String workItemATitle = "A";
       String workItemADescription = "A desc";
@@ -537,7 +568,10 @@ public class BoardApplicationServiceUnitTest {
       // When I change the order of an unknown work item
       String unknownWorkItemId = "1d0c28c7-64c3-41ef-bcd6-e0fce8cfcfa3";
 
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
+
       boardApplicationService.changeWorkItemPosition(board.getId(), unknownWorkItemId, 2);
 
       // Then I got an exception
@@ -555,10 +589,9 @@ public class BoardApplicationServiceUnitTest {
       String aBoardName = "a board";
       Board board = new Board(boardId, aBoardName);
 
-      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
-      String stageName = "to do";
-      Stage stage = new Stage(stageId, stageName);
-      board.addStage(stage);
+      String aStageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String aStageName = "to do";
+      Stage stage = board.addStageToBoard(aStageId, aStageName);
 
       String workItemATitle = "A";
       String workItemADescription = "A desc";
@@ -575,8 +608,10 @@ public class BoardApplicationServiceUnitTest {
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
 
-      // When I archive workItemA
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      // When I archiveWorkItem workItemA
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
       boardApplicationService.archiveWorkItem(boardId, workItemAId);
 
       // Then work item A should not be in the list of work items any more
@@ -596,23 +631,24 @@ public class BoardApplicationServiceUnitTest {
       String aBoardName = "a board";
       Board board = new Board(boardId, aBoardName);
 
-      String stageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
-      String stageName = "to do";
-      Stage stage = new Stage(stageId, stageName);
-      board.addStage(stage);
+      String aStageId = "c7c66e8a-610d-40f5-a8b6-455fad0928f6";
+      String aStageName = "to do";
+      Stage stage = board.addStageToBoard(aStageId, aStageName);
 
       String workItemATitle = "A";
       String workItemADescription = "A desc";
       String workItemAId = "09021d01-3da9-4584-85c0-85211cfa8467";
       WorkItem workItemA = new WorkItem(workItemAId, workItemATitle, workItemADescription);
       board.addWorkItem(workItemA, stage);
-      board.archive(workItemA);
+      board.archiveWorkItem(workItemA);
 
       BoardRepository boardRepository = mock(BoardRepository.class);
       when(boardRepository.findOne(boardId)).thenReturn(board);
 
-      // When I archive workItemA
-      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository);
+      // When I archiveWorkItem workItemA
+      BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
+        boardIdentityService);
       boardApplicationService.sendWorkItemBackToBoard(boardId, workItemAId);
 
       // Then work item A should not be in the list of work items any more

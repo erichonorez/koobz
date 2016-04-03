@@ -5,13 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import static org.svomz.apps.koobz.board.domain.model.BoardMaker.*;
-import static org.svomz.apps.koobz.board.domain.model.StageMaker.*;
-import static org.svomz.apps.koobz.board.domain.model.WorkItemMaker.*;
-import static com.natpryce.makeiteasy.MakeItEasy.*;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,137 +19,130 @@ public class BoardUnitTest {
   public static class ArchivingFeatures {
 
     @Test
-    public void itShouldReturnsArchivedWorkItems() throws WorkItemNotInProcessException {
-      Board board = make(a(Board,
-        with(name, "Hello"),
-        with(stages, listOf(
-          a(Stage,
-            with(stageName, "TODO"),
-            with(workItems, listOf(
-              a(WorkItem, with(workItemName, "Un")),
-              a(WorkItem, with(workItemName, "Deux"))
-            ))),
-          a(Stage, with(stageName, "WIP")),
-          a(Stage, with(stageName, "DONE"))
-        ))
-      ));
+    public void itShouldReturnsArchivedWorkItems()
+      throws WorkItemNotInProcessException, StageNotInProcessException {
+      // Given a board with a stage having one work item
+      Board board = new Board(
+        UUID.randomUUID().toString(),
+        "A board"
+      );
 
-      Iterator<WorkItem> workItemsOnTheBoard = board.getWorkItems().iterator();
-      WorkItem workItem = workItemsOnTheBoard.next();
-      board.archive(workItem);
+      String aStageIdentity = UUID.randomUUID().toString();
+      board.addStageToBoard(
+        aStageIdentity,
+        "To do"
+      );
 
-      Set<WorkItem> workItemsReferencedByTheTodoStage
-        = board.getStages()
-        .stream()
-        .filter(stage -> "TODO".equals(stage.getName()))
-        .findFirst()
-        .get()
-        .getWorkItems();
+      String aWorkItemName = "A work item";
+      String aWorkItemDescription = "A work item description";
+      String aWorkItemId = UUID.randomUUID().toString();
+      WorkItem aWorkItem =
+        new WorkItem(aWorkItemId, aWorkItemName, aWorkItemDescription);
 
-      assertThat(workItemsReferencedByTheTodoStage)
-        .hasSize(1)
-        .doesNotContain(workItem);
+      board.addWorkItem(
+        aWorkItem,
+        board.stageOfId(aStageIdentity).get()
+      );
 
-      assertThat(board.getWorkItems())
-        .hasSize(1)
-        .doesNotContain(workItem);
+      // When I archive the work item
+      board.archiveWorkItem(board.workItemOfId(aWorkItemId).get());
+
+      // It should not be in the stage anymore
+      assertThat(board.workItemsInStage(aStageIdentity)).doesNotContain(aWorkItem);
     }
 
     @Test
-    public void itShouldUnarchiveWorkItemsInTheStageTheyWereBeforeArchving()
-      throws WorkItemNotInProcessException, WorkItemNotArchivedException {
-      Board board = make(a(Board,
-        with(name, "Hello"),
-        with(stages, listOf(
-          a(Stage,
-            with(stageName, "TODO"),
-            with(workItems, listOf(
-              a(WorkItem, with(workItemName, "Deux")),
-              a(WorkItem, with(workItemName, "Un"))
-            ))),
-          a(Stage, with(stageName, "WIP")),
-          a(Stage, with(stageName, "DONE"))
-        ))
-      ));
+    public void itShouldSendBackWorkItemsToBoardInTheStageTheyWereBeforeArchiving()
+      throws WorkItemNotInProcessException, WorkItemNotArchivedException,
+             StageNotInProcessException {
+      // Given a board with a stage having one work item archived
+      Board board = new Board(
+        UUID.randomUUID().toString(),
+        "A board"
+      );
 
-      WorkItem workItem = board.getWorkItems().iterator().next();
-      board.archive(workItem);
-      board.unarchive(workItem.getId());
+      String aStageIdentity = UUID.randomUUID().toString();
+      board.addStageToBoard(
+        aStageIdentity,
+        "To do"
+      );
 
-      Set<WorkItem> workItemsReferencedByTheTodoStage
-        = board.getStages()
-        .stream()
-        .filter(stage -> "TODO".equals(stage.getName()))
-        .findFirst()
-        .get()
-        .getWorkItems();
+      String aWorkItemName = "A work item";
+      String aWorkItemDescription = "A work item description";
+      String aWorkItemId = UUID.randomUUID().toString();
+      WorkItem aWorkItem =
+        new WorkItem(aWorkItemId, aWorkItemName, aWorkItemDescription);
 
-      assertThat(workItemsReferencedByTheTodoStage)
-        .hasSize(2)
-        .contains(workItem);
+      board.addWorkItem(
+        aWorkItem,
+        board.stageOfId(aStageIdentity).get()
+      );
+      board.archiveWorkItem(board.workItemOfId(aWorkItemId).get());
 
-      assertThat(board.getWorkItems())
-        .hasSize(2)
-        .contains(workItem);
+      // When I send back the work item on the board
+      board.sendWorkItemBackToBoard(aWorkItemId);
+
+      // Then the work item is in the To do stage
+      assertThat(board.workItemsInStage(aStageIdentity))
+        .contains(aWorkItem);
     }
 
     @Test
     public void itShouldConsiderArchivedWorkItemsWhenReordering()
       throws WorkItemNotInProcessException, WorkItemNotInStageException,
-             WorkItemNotArchivedException {
-      Board board = make(a(Board,
-        with(name, "Hello"),
-        with(stages, listOf(
-          a(Stage,
-            with(stageName, "TODO"),
-            with(workItems, listOf(
-              a(WorkItem, with(workItemName, "One")),
-              a(WorkItem, with(workItemName, "Two")),
-              a(WorkItem, with(workItemName, "Tree"))
-            ))),
-          a(Stage, with(stageName, "WIP")),
-          a(Stage, with(stageName, "DONE"))
-        ))
-      ));
+             WorkItemNotArchivedException, StageNotInProcessException {
+      // Given a board with a stage having one work item archived and two work item non archived
+      Board board = new Board(
+        UUID.randomUUID().toString(),
+        "A board"
+      );
 
-      //Archive the work item with the title "One"
-      WorkItem one = board.getWorkItems()
-        .stream()
-        .filter(workItem -> "One".equals(workItem.getTitle()))
-        .findFirst()
-        .get();
+      String aStageIdentity = UUID.randomUUID().toString();
+      board.addStageToBoard(
+        aStageIdentity,
+        "To do"
+      );
 
-      board.archive(one);
+      String aWorkItemName = "A work item";
+      String aWorkItemDescription = "A work item description";
+      String aWorkItemId = UUID.randomUUID().toString();
+      WorkItem firstWorkItem =
+        new WorkItem(aWorkItemId, aWorkItemName, aWorkItemDescription);
 
-      //Move tree to the first position
-      WorkItem tree = board.getWorkItems()
-        .stream()
-        .filter(workItem -> "Tree".equals(workItem.getTitle()))
-        .findFirst()
-        .get();
+      board.addWorkItem(
+        firstWorkItem,
+        board.stageOfId(aStageIdentity).get()
+      );
 
-      board.putWorkItemAtPosition(tree, 0);
+      WorkItem secondWorkItem = new WorkItem(UUID.randomUUID().toString(), "a", "a");
+      board.addWorkItem(
+        secondWorkItem,
+        board.stageOfId(aStageIdentity).get()
+      );
 
-      //When unarchiving "One" it should be in second position
-      board.unarchive(one.getId());
+      WorkItem thirdWorkItem = new WorkItem(UUID.randomUUID().toString(), "a", "a");
+      board.addWorkItem(
+        thirdWorkItem,
+        board.stageOfId(aStageIdentity).get()
+      );
 
-      assertThat(tree.getOrder())
-        .isEqualTo(0);
+      board.archiveWorkItem(board.workItemOfId(aWorkItemId).get());
 
-      assertThat(one.getOrder())
-        .isEqualTo(1);
+      // When I put the work item at the first position
+      board.putWorkItemAtPosition(secondWorkItem, 0);
+      // And I send back to board the first work item
+      board.sendWorkItemBackToBoard(aWorkItemId);
 
-      WorkItem two = board.getWorkItems()
-        .stream()
-        .filter(workItem -> "Two".equals(workItem.getTitle()))
-        .findFirst()
-        .get();
-
-      assertThat(two.getOrder())
-        .isEqualTo(2);
+      // Then the the first work item has position 1
+      assertThat(firstWorkItem.getPosition()).isEqualTo(1);
+      // And the second work item has position 0
+      assertThat(secondWorkItem.getPosition()).isEqualTo(0);
+      // And the third work item has position 2
+      assertThat(thirdWorkItem.getPosition()).isEqualTo(2);
     }
 
   }
+
 
   public static class DefaultFeatures {
 
@@ -172,8 +159,10 @@ public class BoardUnitTest {
     public void testAddColumns() {
       Board board = new Board("todo");
 
-      Stage column = new Stage("work in progress");
-      board.addStage(column);
+      board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
       Assert.assertEquals(1, board.getStages().size());
     }
 
@@ -181,8 +170,10 @@ public class BoardUnitTest {
     public void testRemoveStage() throws StageNotInProcessException, StageNotEmptyException {
       Board board = new Board("todo");
 
-      Stage column = new Stage("work in progress");
-      board.addStage(column);
+      Stage column = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
       board.removeStage(column);
       Assert.assertTrue(board.getStages().isEmpty());
     }
@@ -192,7 +183,7 @@ public class BoardUnitTest {
       throws StageNotInProcessException, StageNotEmptyException {
       Board board = new Board("todo");
 
-      Stage column = new Stage("work in progress");
+      Stage column = new Stage(UUID.randomUUID().toString(), "work in progress");
       board.removeStage(column);
 
       Assert.assertTrue(board.getStages().isEmpty());
@@ -203,8 +194,10 @@ public class BoardUnitTest {
                                                                        StageNotEmptyException {
       Board board = new Board("todo");
 
-      Stage column = new Stage("work in progress");
-      board.addStage(column);
+      Stage column = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
       WorkItem workItem = new WorkItem("Make coffee");
       board.addWorkItem(workItem, column);
       board.removeStage(column);
@@ -216,8 +209,10 @@ public class BoardUnitTest {
       Board board = new Board("todo");
 
       WorkItem postIt = new WorkItem("My first task");
-      Stage column = new Stage("work in progress");
-      board.addStage(column);
+      Stage column = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
 
       Assert.assertTrue(board.getWorkItems().isEmpty());
       board.addWorkItem(postIt, column);
@@ -230,7 +225,8 @@ public class BoardUnitTest {
       Board board = new Board("todo");
 
       WorkItem postIt = new WorkItem("My first task");
-      Stage column = new Stage("work in progress");
+
+      Stage column = new Stage(UUID.randomUUID().toString(), "A column");
 
       board.addWorkItem(postIt, column);
     }
@@ -241,8 +237,10 @@ public class BoardUnitTest {
       Board board = new Board("todo");
 
       WorkItem postIt = new WorkItem("My first task");
-      Stage column = new Stage("work in progress");
-      board.addStage(column);
+      Stage column = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
 
       board.addWorkItem(postIt, column);
       board.removeWorkItem(postIt);
@@ -263,10 +261,14 @@ public class BoardUnitTest {
       Board board = new Board("todo");
 
       WorkItem postIt = new WorkItem("My first task");
-      Stage columnWIP = new Stage("work in progress");
-      board.addStage(columnWIP);
-      Stage columnDone = new Stage("done");
-      board.addStage(columnDone);
+      Stage columnWIP = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
+      Stage columnDone = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "done"
+      );
       board.addWorkItem(postIt, columnWIP);
       Assert.assertEquals(1, board.getWorkItems().size());
       Assert.assertEquals(columnWIP, postIt.getStage());
@@ -283,10 +285,14 @@ public class BoardUnitTest {
       Board board = new Board("todo");
 
       WorkItem postIt = new WorkItem("My first task");
-      Stage columnWIP = new Stage("work in progress");
-      board.addStage(columnWIP);
-      Stage columnDone = new Stage("done");
-      board.addStage(columnDone);
+      Stage columnWIP = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
+      Stage columnDone = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "done"
+      );
 
       Assert.assertTrue(board.getWorkItems().isEmpty());
       board.moveWorkItemToStage(postIt, columnDone);
@@ -301,10 +307,13 @@ public class BoardUnitTest {
       Board board = new Board("todo");
 
       WorkItem postIt = new WorkItem("My first task");
-      Stage columnWIP = new Stage("work in progress");
-      board.addStage(columnWIP);
+      Stage columnWIP = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
       board.addWorkItem(postIt, columnWIP);
-      Stage columnDone = new Stage("done");
+
+      Stage columnDone = new Stage(UUID.randomUUID().toString(), "done");
 
       board.moveWorkItemToStage(postIt, columnDone);
       Assert.assertEquals(1, board.getWorkItems());
@@ -314,16 +323,18 @@ public class BoardUnitTest {
     @Test
     public void addWorkItem_NewWorkItemIsTheLast() throws StageNotInProcessException {
       Board board = new Board("Project board");
-      Stage todoStage = new Stage("Todo");
-      board.addStage(todoStage);
+      Stage todoStage = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "To do"
+      );
 
       WorkItem workItemA = new WorkItem("Work item A");
       board.addWorkItem(workItemA, todoStage);
-      Assert.assertEquals(0, workItemA.getOrder());
+      Assert.assertEquals(0, workItemA.getPosition());
 
       WorkItem workItemB = new WorkItem("Work item B");
       board.addWorkItem(workItemB, todoStage);
-      Assert.assertEquals(1, workItemB.getOrder());
+      Assert.assertEquals(1, workItemB.getPosition());
     }
 
     @Test
@@ -331,8 +342,10 @@ public class BoardUnitTest {
                                                                WorkItemNotInProcessException,
                                                                WorkItemNotInStageException {
       Board board = new Board("Project board");
-      Stage todoStage = new Stage("Todo");
-      board.addStage(todoStage);
+      Stage todoStage = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "todo"
+      );
 
       WorkItem workItemA = new WorkItem("Work item A");
       board.addWorkItem(workItemA, todoStage);
@@ -347,28 +360,28 @@ public class BoardUnitTest {
       board.addWorkItem(workItemD, todoStage);
 
       board.putWorkItemAtPosition(workItemC, 0);
-      Assert.assertEquals(0, workItemC.getOrder());
-      Assert.assertEquals(1, workItemA.getOrder());
-      Assert.assertEquals(2, workItemB.getOrder());
-      Assert.assertEquals(3, workItemD.getOrder());
+      Assert.assertEquals(0, workItemC.getPosition());
+      Assert.assertEquals(1, workItemA.getPosition());
+      Assert.assertEquals(2, workItemB.getPosition());
+      Assert.assertEquals(3, workItemD.getPosition());
 
       board.putWorkItemAtPosition(workItemA, 3);
-      Assert.assertEquals(0, workItemC.getOrder());
-      Assert.assertEquals(3, workItemA.getOrder());
-      Assert.assertEquals(1, workItemB.getOrder());
-      Assert.assertEquals(2, workItemD.getOrder());
+      Assert.assertEquals(0, workItemC.getPosition());
+      Assert.assertEquals(3, workItemA.getPosition());
+      Assert.assertEquals(1, workItemB.getPosition());
+      Assert.assertEquals(2, workItemD.getPosition());
 
       board.putWorkItemAtPosition(workItemB, 2);
-      Assert.assertEquals(0, workItemC.getOrder());
-      Assert.assertEquals(3, workItemA.getOrder());
-      Assert.assertEquals(2, workItemB.getOrder());
-      Assert.assertEquals(1, workItemD.getOrder());
+      Assert.assertEquals(0, workItemC.getPosition());
+      Assert.assertEquals(3, workItemA.getPosition());
+      Assert.assertEquals(2, workItemB.getPosition());
+      Assert.assertEquals(1, workItemD.getPosition());
 
       board.putWorkItemAtPosition(workItemB, 2);
-      Assert.assertEquals(0, workItemC.getOrder());
-      Assert.assertEquals(3, workItemA.getOrder());
-      Assert.assertEquals(2, workItemB.getOrder());
-      Assert.assertEquals(1, workItemD.getOrder());
+      Assert.assertEquals(0, workItemC.getPosition());
+      Assert.assertEquals(3, workItemA.getPosition());
+      Assert.assertEquals(2, workItemB.getPosition());
+      Assert.assertEquals(1, workItemD.getPosition());
 
     }
 
@@ -377,8 +390,10 @@ public class BoardUnitTest {
       throws StageNotInProcessException,
              WorkItemNotInProcessException, WorkItemNotInStageException {
       Board board = new Board("Project board");
-      Stage todoStage = new Stage("Todo");
-      board.addStage(todoStage);
+      Stage todoStage = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "todo"
+      );
 
       WorkItem workItemA = new WorkItem("Work item A");
       board.addWorkItem(workItemA, todoStage);
@@ -394,8 +409,10 @@ public class BoardUnitTest {
       throws StageNotInProcessException,
              WorkItemNotInProcessException, WorkItemNotInStageException {
       Board board = new Board("Project board");
-      Stage todoStage = new Stage("Todo");
-      board.addStage(todoStage);
+      Stage todoStage = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "todo"
+      );
 
       WorkItem workItemA = new WorkItem("Work item A");
       board.addWorkItem(workItemA, todoStage);
@@ -404,80 +421,106 @@ public class BoardUnitTest {
       board.addWorkItem(workItemB, todoStage);
 
       board.putWorkItemAtPosition(workItemA, Integer.MAX_VALUE);
-      Assert.assertEquals(0, workItemB.getOrder());
-      Assert.assertEquals(1, workItemA.getOrder());
+      Assert.assertEquals(0, workItemB.getPosition());
+      Assert.assertEquals(1, workItemA.getPosition());
     }
 
     @Test
     public void shouldIncrementStageOrderByOne() {
       Board board = new Board("new board");
-      Stage todo = new Stage("todo");
-      board.addStage(todo);
+      Stage todo = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "todo"
+      );
 
-      Stage wip = new Stage("wip");
-      board.addStage(wip);
+      Stage wip = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
 
-      Stage done = new Stage("done");
-      board.addStage(done);
+      Stage done = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "done"
+      );
 
-      Assert.assertEquals(0, todo.getOrder());
-      Assert.assertEquals(1, wip.getOrder());
-      Assert.assertEquals(2, done.getOrder());
+      Assert.assertEquals(0, todo.getPosition());
+      Assert.assertEquals(1, wip.getPosition());
+      Assert.assertEquals(2, done.getPosition());
     }
 
     @Test
     public void shouldReorder_SwapBetweenFirstAndLast() throws StageNotInProcessException {
       Board board = new Board("new board");
-      Stage todo = new Stage("todo");
-      board.addStage(todo);
+      Stage todo = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "todo"
+      );
 
-      Stage wip = new Stage("wip");
-      board.addStage(wip);
+      Stage wip = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
 
-      Stage validation = new Stage("validation");
-      board.addStage(validation);
+      Stage validation = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "validation"
+      );
 
-      Stage done = new Stage("done");
-      board.addStage(done);
+      Stage done = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "done"
+      );
 
       board.reorderStage(todo, 4);
-      Assert.assertEquals(0, wip.getOrder());
-      Assert.assertEquals(1, validation.getOrder());
-      Assert.assertEquals(2, done.getOrder());
-      Assert.assertEquals(3, todo.getOrder());
+      Assert.assertEquals(0, wip.getPosition());
+      Assert.assertEquals(1, validation.getPosition());
+      Assert.assertEquals(2, done.getPosition());
+      Assert.assertEquals(3, todo.getPosition());
     }
 
     @Test
     public void shouldReorder_AllEmenetBetweenTwoElement() throws StageNotInProcessException {
       Board board = new Board("new board");
-      Stage todo = new Stage("todo");
-      board.addStage(todo);
+      Stage todo = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "todo"
+      );
 
-      Stage wip = new Stage("wip");
-      board.addStage(wip);
+      Stage wip = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "work in progress"
+      );
 
-      Stage validation = new Stage("validation");
-      board.addStage(validation);
+      Stage validation = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "validation"
+      );
 
-      Stage done = new Stage("done");
-      board.addStage(done);
+      Stage done = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "done"
+      );
 
       board.reorderStage(todo, 2);
-      Assert.assertEquals(0, wip.getOrder());
-      Assert.assertEquals(1, validation.getOrder());
-      Assert.assertEquals(2, todo.getOrder());
-      Assert.assertEquals(3, done.getOrder());
+      Assert.assertEquals(0, wip.getPosition());
+      Assert.assertEquals(1, validation.getPosition());
+      Assert.assertEquals(2, todo.getPosition());
+      Assert.assertEquals(3, done.getPosition());
     }
 
     @Test
     public void shouldReorderWorkItemsIfMoved()
       throws StageNotInProcessException, WorkItemNotInProcessException {
       Board board = new Board("new board");
-      Stage todo = new Stage("todo");
-      board.addStage(todo);
+      Stage todo = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "to do"
+      );
 
-      Stage wip = new Stage("wip");
-      board.addStage(wip);
+      Stage wip = board.addStageToBoard(
+        UUID.randomUUID().toString(),
+        "wip"
+      );
 
       WorkItem workItemA = new WorkItem("Work item A");
       board.addWorkItem(workItemA, todo);
@@ -486,28 +529,8 @@ public class BoardUnitTest {
       board.addWorkItem(workItemB, todo);
 
       board.moveWorkItemToStage(workItemA, wip);
-      Assert.assertEquals(0, workItemA.getOrder());
-      Assert.assertEquals(0, workItemB.getOrder());
-    }
-
-    @Test
-    public void itShouldAddStageWorkItemsIfStageContainsWorkItemWhenAddedToBoard() {
-      Board board = make(a(Board,
-        with(name, "Hello"),
-        with(stages, listOf(
-          a(Stage,
-            with(stageName, "TODO"),
-            with(workItems, listOf(
-              a(WorkItem, with(workItemName, "Un")),
-              a(WorkItem, with(workItemName, "Deux"))
-            ))),
-          a(Stage, with(stageName, "WIP")),
-          a(Stage, with(stageName, "DONE"))
-        ))
-      ));
-
-      assertThat(board.getWorkItems())
-        .hasSize(2);
+      Assert.assertEquals(0, workItemA.getPosition());
+      Assert.assertEquals(0, workItemB.getPosition());
     }
   }
 }

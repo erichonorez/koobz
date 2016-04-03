@@ -32,7 +32,7 @@ public class StageViewModel {
 
   @JsonProperty("order")
   public int getOrder() {
-    return this.stage.getOrder();
+    return this.stage.getPosition();
   }
 
   @JsonProperty("workItems")
