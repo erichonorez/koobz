@@ -87,7 +87,7 @@ public class WorkItemResource {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
 
-    this.boardApplicationService.deleteWorkItem(boardId, workItemId);
+    this.boardApplicationService.removeWorkItemFromBoard(boardId, workItemId);
   }
 
   @POST

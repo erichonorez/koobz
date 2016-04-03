@@ -247,10 +247,11 @@ public class BoardUnitTest {
         "work in progress"
       );
 
+      String aWorkItemId = UUID.randomUUID().toString();
       WorkItem postIt =
-        board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "My first task",
+        board.addWorkItemToStage(aStageIdentity, aWorkItemId, "My first task",
           "A description");
-      board.removeWorkItem(postIt);
+      board.removeWorkItemWithId(aWorkItemId);
       Assert.assertTrue(board.getWorkItems().isEmpty());
     }
 
@@ -259,8 +260,9 @@ public class BoardUnitTest {
       throws WorkItemNotInProcessException, StageNotInProcessException {
       Board board = new Board("todo");
 
-      WorkItem postIt = new WorkItem(UUID.randomUUID().toString(), "A work item", "A description");
-      board.removeWorkItem(postIt);
+      String aWorkItemId = UUID.randomUUID().toString();
+      WorkItem postIt = new WorkItem(aWorkItemId, "A work item", "A description");
+      board.removeWorkItemWithId(aWorkItemId);
     }
 
     @Test

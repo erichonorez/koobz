@@ -132,18 +132,13 @@ public class BoardApplicationService {
   }
 
   @Transactional
-  public void deleteWorkItem(final String boardId, final String workItemId)
+  public void removeWorkItemFromBoard(final String boardId, final String workItemId)
     throws BoardNotFoundException, WorkItemNotInProcessException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
 
     Board board = this.boardOfId(boardId);
-    Optional<WorkItem> optionalWorkItem = board.workItemOfId(workItemId);
-    if (!optionalWorkItem.isPresent()) {
-      throw new WorkItemNotInProcessException();
-    }
-
-    board.removeWorkItem(optionalWorkItem.get());
+    board.removeWorkItemWithId(workItemId);
   }
 
   @Transactional

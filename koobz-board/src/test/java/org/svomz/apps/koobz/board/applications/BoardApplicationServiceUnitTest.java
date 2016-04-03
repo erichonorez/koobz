@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
   BoardApplicationServiceUnitTest.ChangeStageName.class,
   BoardApplicationServiceUnitTest.DeleteStage.class,
   BoardApplicationServiceUnitTest.ChangeWorkItemInformation.class,
-  BoardApplicationServiceUnitTest.DeleteWorkItem.class
+  BoardApplicationServiceUnitTest.RemoveWorkItemFromBoard.class
 })
 public class BoardApplicationServiceUnitTest {
 
@@ -348,10 +348,10 @@ public class BoardApplicationServiceUnitTest {
 
   }
 
-  public static class DeleteWorkItem {
+  public static class RemoveWorkItemFromBoard {
 
     @Test
-    public void itShouldSuccessfullyDeleteWorkItem()
+    public void itShouldSuccessfullyRemoveWorkItemFromBoard()
       throws StageNotInProcessException, WorkItemNotInProcessException, BoardNotFoundException {
       // Given a board with a stage having a work item A
       String boardId = "35a45cd4-f81f-11e5-9ce9-5e5517507c66";
@@ -375,7 +375,7 @@ public class BoardApplicationServiceUnitTest {
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
         boardIdentityService);
 
-      boardApplicationService.deleteWorkItem(boardId, workItemId);
+      boardApplicationService.removeWorkItemFromBoard(boardId, workItemId);
 
       // Then the board does not contains the work item anymore.
       assertThat(board.getWorkItems()).doesNotContain(workItem);

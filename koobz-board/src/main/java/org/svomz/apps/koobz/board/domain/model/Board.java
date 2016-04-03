@@ -80,7 +80,7 @@ public class Board {
    * @return the list of work items on the board. This list does not contains archived items.
    *
    * This list is a unmodifiable Set to prevent direct manipulations (add / remove) of the set.
-   * If you want to add or remove work items you must use {@link #removeWorkItem(WorkItem)}
+   * If you want to add or remove work items you must use {@link #removeWorkItemWithId(String)}
    * and {@link #addWorkItemToStage(String, String, String, String)}.
    */
   public Set<WorkItem> getWorkItems() {
@@ -187,13 +187,15 @@ public class Board {
     return workItem;
   }
 
-  public Board removeWorkItem(final WorkItem workItem) throws WorkItemNotInProcessException {
-    Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
+  public Board removeWorkItemWithId(final String aWorkItemId) throws WorkItemNotInProcessException {
+    Preconditions.checkNotNull(aWorkItemId, "The given workItem must not be null.");
 
-    if (!this.workItems.contains(workItem)) {
+    Optional<WorkItem> optionalWorkItem = this.workItemOfId(aWorkItemId);
+    if (!optionalWorkItem.isPresent()) {
       throw new WorkItemNotInProcessException();
     }
 
+    WorkItem workItem = optionalWorkItem.get();
     workItem.getStage().removeWorkItem(workItem);
     this.workItems.remove(workItem);
     return this;
