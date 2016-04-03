@@ -169,11 +169,13 @@ public class BoardUnitTest {
     public void testRemoveStage() throws StageNotInProcessException, StageNotEmptyException {
       Board board = new Board("todo");
 
+      String aStageIdentity = UUID.randomUUID().toString();
       Stage column = board.addStageToBoard(
-        UUID.randomUUID().toString(),
+        aStageIdentity,
         "work in progress"
       );
-      board.removeStage(column);
+
+      board.removeStageWithId(aStageIdentity);
       Assert.assertTrue(board.getStages().isEmpty());
     }
 
@@ -182,8 +184,7 @@ public class BoardUnitTest {
       throws StageNotInProcessException, StageNotEmptyException {
       Board board = new Board("todo");
 
-      Stage column = new Stage(UUID.randomUUID().toString(), "work in progress");
-      board.removeStage(column);
+      board.removeStageWithId(UUID.randomUUID().toString());
 
       Assert.assertTrue(board.getStages().isEmpty());
     }
@@ -201,7 +202,7 @@ public class BoardUnitTest {
       WorkItem workItem = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item",
         "A description");
 
-      board.removeStage(column);
+      board.removeStageWithId(column.getId());
       Assert.assertTrue(board.getStages().isEmpty());
     }
 

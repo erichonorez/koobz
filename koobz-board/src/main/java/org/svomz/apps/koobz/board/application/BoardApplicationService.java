@@ -92,13 +92,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(aStageId);
 
     Board board = this.boardOfId(boardId);
-    Optional<Stage> optionalStage = board.stageOfId(aStageId);
-
-    if (!optionalStage.isPresent()) {
-      throw new StageNotInProcessException();
-    }
-
-    board.removeStage(optionalStage.get());
+    board.removeStageWithId(aStageId);
   }
 
   @Transactional

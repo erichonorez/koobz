@@ -95,7 +95,7 @@ public class Board {
   /**
    * @return the list of stages on the board. This list is a unmodifiable Set to prevent direct
    *         manipulations (add / remove) of the set. If you want to add or remove stages you must
-   *         use {@link #removeStage(Stage)} and {@link #addStageToBoard(String, String)}}.
+   *         use {@link #removeStageWithId(String)} and {@link #addStageToBoard(String, String)}}.
    */
   public Set<Stage> getStages() {
     return Collections.unmodifiableSet(this.stages);
@@ -113,14 +113,17 @@ public class Board {
     return stage;
   }
 
-  public Board removeStage(final Stage stage) throws StageNotInProcessException,
-      StageNotEmptyException {
-    Preconditions.checkNotNull(stage, "The given stage must not be null.");
+  public Board removeStageWithId(final String aStageId) throws StageNotInProcessException,
+                                                               StageNotEmptyException {
+    Preconditions.checkNotNull(aStageId, "The given stage must not be null.");
 
-    if (!this.stages.contains(stage)) {
+
+    Optional<Stage> optionalStage = this.stageOfId(aStageId);
+    if (!optionalStage.isPresent()) {
       throw new StageNotInProcessException();
     }
 
+    Stage stage = optionalStage.get();
     if (!stage.getWorkItems().isEmpty()) {
       throw new StageNotEmptyException();
     }
