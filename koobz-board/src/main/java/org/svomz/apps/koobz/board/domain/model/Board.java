@@ -227,15 +227,17 @@ public class Board {
     return this;
   }
   
-  public WorkItem putWorkItemAtPosition(final WorkItem workItem, int i)
+  public WorkItem moveWorkItemWithIdToPosition(final String aWorkItemId, int newPosition)
     throws WorkItemNotInProcessException, WorkItemNotInStageException {
-    Preconditions.checkNotNull(workItem);
-    
-    if (!this.getAllWorkItems().contains(workItem)) {
+    Preconditions.checkNotNull(aWorkItemId);
+
+    Optional<WorkItem> optionalWorkItem = this.workItemOfId(aWorkItemId);
+    if (!optionalWorkItem.isPresent()) {
       throw new WorkItemNotInProcessException();
     }
-    
-    workItem.getStage().putWorkItemAtPosition(workItem, i);
+
+    WorkItem workItem = optionalWorkItem.get();
+    workItem.getStage().moveWorkItemToPosition(workItem, newPosition);
     return workItem;
   }
 

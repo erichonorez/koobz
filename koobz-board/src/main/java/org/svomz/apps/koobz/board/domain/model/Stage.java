@@ -103,7 +103,7 @@ public class Stage {
     return this;
   }
   
-  Stage putWorkItemAtPosition(WorkItem workItem, int position) throws WorkItemNotInStageException {
+  Stage moveWorkItemToPosition(WorkItem workItem, int position) throws WorkItemNotInStageException {
     Preconditions.checkNotNull(workItem);
     Preconditions.checkArgument(position >= 0);
     

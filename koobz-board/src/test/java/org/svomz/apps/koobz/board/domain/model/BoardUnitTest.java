@@ -111,9 +111,10 @@ public class BoardUnitTest {
         aWorkItemDescription
       );
 
+      String aSecondWorkItemId = UUID.randomUUID().toString();
       WorkItem secondWorkItem = board.addWorkItemToStage(
         aStageIdentity,
-        UUID.randomUUID().toString(),
+        aSecondWorkItemId,
         "a",
         "a"
       );
@@ -128,7 +129,7 @@ public class BoardUnitTest {
       board.archiveWorkItemWithId(aWorkItemId);
 
       // When I put the work item at the first position
-      board.putWorkItemAtPosition(secondWorkItem, 0);
+      board.moveWorkItemWithIdToPosition(aSecondWorkItemId, 0);
       // And I send back to board the first work item
       board.sendBackToBoardWorkItemWithId(aWorkItemId);
 
@@ -360,37 +361,41 @@ public class BoardUnitTest {
         "todo"
       );
 
-      WorkItem workItemA = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item A",
+      String workItemAId = UUID.randomUUID().toString();
+      WorkItem workItemA = board.addWorkItemToStage(aStageIdentity, workItemAId, "Work item A",
         "A description");
 
-      WorkItem workItemB = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item B",
+      String workItemBId = UUID.randomUUID().toString();
+      WorkItem workItemB = board.addWorkItemToStage(aStageIdentity, workItemBId, "Work item B",
         "A description");
 
-      WorkItem workItemC = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item C",
+      String workItemCId = UUID.randomUUID().toString();
+      WorkItem workItemC = board.addWorkItemToStage(aStageIdentity, workItemCId, "Work item C",
         "A description");
 
-      WorkItem workItemD = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item D",
+      String workItemDId = UUID.randomUUID().toString();
+      WorkItem workItemD = board.addWorkItemToStage(aStageIdentity, workItemDId, "Work item D",
         "A description");
 
-      board.putWorkItemAtPosition(workItemC, 0);
+      board.moveWorkItemWithIdToPosition(workItemCId, 0);
       Assert.assertEquals(0, workItemC.getPosition());
       Assert.assertEquals(1, workItemA.getPosition());
       Assert.assertEquals(2, workItemB.getPosition());
       Assert.assertEquals(3, workItemD.getPosition());
 
-      board.putWorkItemAtPosition(workItemA, 3);
+      board.moveWorkItemWithIdToPosition(workItemAId, 3);
       Assert.assertEquals(0, workItemC.getPosition());
       Assert.assertEquals(3, workItemA.getPosition());
       Assert.assertEquals(1, workItemB.getPosition());
       Assert.assertEquals(2, workItemD.getPosition());
 
-      board.putWorkItemAtPosition(workItemB, 2);
+      board.moveWorkItemWithIdToPosition(workItemBId, 2);
       Assert.assertEquals(0, workItemC.getPosition());
       Assert.assertEquals(3, workItemA.getPosition());
       Assert.assertEquals(2, workItemB.getPosition());
       Assert.assertEquals(1, workItemD.getPosition());
 
-      board.putWorkItemAtPosition(workItemB, 2);
+      board.moveWorkItemWithIdToPosition(workItemBId, 2);
       Assert.assertEquals(0, workItemC.getPosition());
       Assert.assertEquals(3, workItemA.getPosition());
       Assert.assertEquals(2, workItemB.getPosition());
@@ -409,10 +414,11 @@ public class BoardUnitTest {
         "todo"
       );
 
-      WorkItem workItemA = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item A",
+      String aWorkItemId = UUID.randomUUID().toString();
+      WorkItem workItemA = board.addWorkItemToStage(aStageIdentity, aWorkItemId, "Work item A",
         "A description");
 
-      board.putWorkItemAtPosition(workItemA, -1);
+      board.moveWorkItemWithIdToPosition(aWorkItemId, -1);
     }
 
     @Test
@@ -426,13 +432,14 @@ public class BoardUnitTest {
         "todo"
       );
 
-      WorkItem workItemA = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item A",
+      String aWorkItemId = UUID.randomUUID().toString();
+      WorkItem workItemA = board.addWorkItemToStage(aStageIdentity, aWorkItemId, "Work item A",
         "A description");
 
       WorkItem workItemB = board.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item B",
         "A description");
 
-      board.putWorkItemAtPosition(workItemA, Integer.MAX_VALUE);
+      board.moveWorkItemWithIdToPosition(aWorkItemId, Integer.MAX_VALUE);
       Assert.assertEquals(0, workItemB.getPosition());
       Assert.assertEquals(1, workItemA.getPosition());
     }
