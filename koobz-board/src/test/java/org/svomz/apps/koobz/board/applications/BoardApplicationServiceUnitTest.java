@@ -294,6 +294,7 @@ public class BoardApplicationServiceUnitTest {
       String aWorkItemDescription = "At Starbuck";
 
       BoardIdentityService boardIdentityService = mock(BoardIdentityService.class);
+      when(boardIdentityService.nextWorkItemIdentity()).thenReturn(UUID.randomUUID().toString());
       BoardApplicationService boardApplicationService = new BoardApplicationService(boardRepository,
         boardIdentityService);
 

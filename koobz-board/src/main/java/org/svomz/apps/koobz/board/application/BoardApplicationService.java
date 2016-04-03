@@ -103,12 +103,6 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(aWorkItemDescription);
 
     Board board = this.boardOfId(boardId);
-
-    Optional<Stage> stage = board.stageOfId(stageId);
-    if (!stage.isPresent()) {
-      throw new StageNotInProcessException();
-    }
-
     return board.addWorkItemToStage(
       stageId,
       this.boardIdentityService().nextWorkItemIdentity(),
