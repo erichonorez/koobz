@@ -39,7 +39,7 @@ public class BoardViewModel {
   public List<StageViewModel> getStages() {
     ArrayList<StageViewModel> models = new ArrayList<>();
 
-    this.board.getStages().forEach(stage -> {
+    this.board.stages().forEach(stage -> {
       models.add(new StageViewModel(stage));
     });
 

@@ -1,7 +1,6 @@
 package org.svomz.apps.koobz.board.applications;
 
 import org.junit.Test;
-import org.svomz.apps.koobz.board.application.BoardApplicationService;
 import org.svomz.apps.koobz.board.application.BoardNotFoundException;
 import org.svomz.apps.koobz.board.application.BoardQueryService;
 import org.svomz.apps.koobz.board.domain.model.Board;
@@ -35,8 +34,8 @@ public class BoardQueryServiceUnitTest {
 
     Board board = optionalBoard.get();
     assertThat(board.getName()).isEqualTo(aBoardName);
-    assertThat(board.getWorkItems()).isEmpty();
-    assertThat(board.getStages()).isEmpty();
+    assertThat(board.workItems()).isEmpty();
+    assertThat(board.stages()).isEmpty();
     assertThat(board.getId()).isNotNull();
   }
 

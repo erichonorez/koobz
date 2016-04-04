@@ -1,11 +1,12 @@
 package org.svomz.apps.koobz.board.domain.model;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -17,13 +18,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.google.common.base.Preconditions;
-
 /**
  * Description: The board object is the aggregated root to manipulate the board itself and its
  * related objects : {@link WorkItem} and {@link Stage}.
- * 
- * @author Eric Honorez
  */
 @Entity
 @Table(name = "boards")
@@ -35,30 +32,24 @@ public class Board {
   @Column(name = "name")
   private String name;
 
-  @OneToMany(mappedBy="board", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch =
+    FetchType.EAGER)
   private Set<WorkItem> workItems;
 
-  @OneToMany(mappedBy="board", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch =
+    FetchType.EAGER)
   private Set<Stage> stages;
 
-  Board() {
-    this.id = UUID.randomUUID().toString();
-    this.workItems = new HashSet<WorkItem>();
-    this.stages = new HashSet<Stage>();
-  }
-
-  public Board(final String name) {
-    this();
-    BoardValidation.checkBoardName(name);
-
-    this.name = name;
+  /**
+   * Needed by JPA
+   */
+  private Board() {
   }
 
   public Board(final String boardId, final String aBoardName) {
-    Preconditions.checkNotNull(boardId);
-    this.id = boardId;
     this.workItems = new HashSet<WorkItem>();
     this.stages = new HashSet<Stage>();
+    this.setId(boardId);
     this.setName(aBoardName);
   }
 
@@ -77,28 +68,37 @@ public class Board {
   }
 
   /**
-   * @return the list of work items on the board. This list does not contains archived items.
+   * @return the list of visible work items on the board. This list does not contains archived items.
    *
-   * This list is a unmodifiable Set to prevent direct manipulations (add / remove) of the set.
-   * If you want to add or remove work items you must use {@link #removeWorkItemWithId(String)}
-   * and {@link #addWorkItemToStage(String, String, String, String)}.
+   * This list is a unmodifiable Set to prevent direct manipulations (add / remove) of the set. If
+   * you want to add or remove work items you must use {@link #removeWorkItemWithId(String)} and
+   * {@link #addWorkItemToStage(String, String, String, String)}.
    */
-  public Set<WorkItem> getWorkItems() {
+  public Set<WorkItem> workItems() {
     Set<WorkItem>
-      notArchivedWorkItems = this.getAllWorkItems().stream()
-        .filter(workItem -> !workItem.isArchived())
-        .collect(Collectors.toSet());
+      notArchivedWorkItems = this.allWorkItems().stream()
+      .filter(workItem -> !workItem.isArchived())
+      .collect(Collectors.toSet());
 
     return Collections.unmodifiableSet(notArchivedWorkItems);
   }
 
   /**
    * @return the list of stages on the board. This list is a unmodifiable Set to prevent direct
-   *         manipulations (add / remove) of the set. If you want to add or remove stages you must
-   *         use {@link #removeStageWithId(String)} and {@link #addStageToBoard(String, String)}}.
+   * manipulations (add / remove) of the set. If you want to add or remove stages you must use
+   * {@link #removeStageWithId(String)} and {@link #addStageToBoard(String, String)}}.
    */
-  public Set<Stage> getStages() {
+  public Set<Stage> stages() {
     return Collections.unmodifiableSet(this.stages);
+  }
+
+  public Optional<Stage> stageOfId(String stageId) {
+    Preconditions.checkNotNull(stageId);
+
+    return this.stages().stream()
+      .filter(stage -> {
+        return stageId.equals(stage.getId());
+      }).findFirst();
   }
 
   public Stage addStageToBoard(final String aStageIdentity, final String aStageTitle) {
@@ -114,9 +114,8 @@ public class Board {
   }
 
   public Board removeStageWithId(final String aStageId) throws StageNotInProcessException,
-                                                               StageNotEmptyException {
+    StageNotEmptyException {
     Preconditions.checkNotNull(aStageId, "The given stage must not be null.");
-
 
     Optional<Stage> optionalStage = this.stageOfId(aStageId);
     if (!optionalStage.isPresent()) {
@@ -132,45 +131,48 @@ public class Board {
     return this;
   }
 
-  public Board reorderStage(final Stage stage,final int position)
+  public Board moveStageWithIdToPosition(final String aStageId, final int newPosition)
     throws StageNotInProcessException {
-    Preconditions.checkNotNull(stage, "The given stage must not be null");
+    Preconditions.checkNotNull(aStageId, "The given stage must not be null");
 
-    if (!this.stages.contains(stage)) {
+    Optional<Stage> optionalStage = this.stageOfId(aStageId);
+    if (!optionalStage.isPresent()) {
       throw new StageNotInProcessException();
     }
 
-    if (position == stage.getPosition()) {
+    Stage stage = optionalStage.get();
+
+    if (newPosition == stage.getPosition()) {
       return this;
     }
 
-    int order = position;
-    if (order >= this.stages.size()) {
-      order = this.stages.size() - 1;
+    int position = newPosition;
+    if (position >= this.stages.size()) {
+      position = this.stages.size() - 1;
     }
 
-    if (order > stage.getPosition()) {
+    if (position > stage.getPosition()) {
       for (Stage item : this.stages) {
-        if (item.getPosition() > stage.getPosition() && item.getPosition() <= order) {
+        if (item.getPosition() > stage.getPosition() && item.getPosition() <= position) {
           item.setPosition(item.getPosition() - 1);
         }
       }
     } else {
       for (Stage item : this.stages) {
-        if (item.getPosition() >= position && item.getPosition() < stage.getPosition()) {
+        if (item.getPosition() >= newPosition && item.getPosition() < stage.getPosition()) {
           item.setPosition(item.getPosition() + 1);
         }
       }
     }
 
-    stage.setPosition(order);
+    stage.setPosition(position);
 
     return this;
   }
 
   public WorkItem addWorkItemToStage(final String aStageId, final String aWorkItemId,
     String aWorkItemTitle, String aWorkItemDescription)
-      throws StageNotInProcessException {
+    throws StageNotInProcessException {
     Preconditions.checkNotNull(aWorkItemId, "The given workItem must not be null.");
     Preconditions.checkNotNull(aStageId, "The given stage must not be null");
 
@@ -206,11 +208,8 @@ public class Board {
    * Move a work item to a stage. The work item is added as the last element in the stage.
    *
    * @param aWorkItemId the work item to move
-   * @param aStageId the destination stage
+   * @param aStageId    the destination stage
    * @return the board to which belong the work item and the stage
-   *
-   * @throws WorkItemNotInProcessException
-   * @throws StageNotInProcessException
    */
   public Board moveWorkItemWithIdToStageWithId(final String aWorkItemId, final String aStageId)
     throws WorkItemNotInProcessException, StageNotInProcessException {
@@ -234,7 +233,7 @@ public class Board {
     stage.addWorkItem(workItem);
     return this;
   }
-  
+
   public WorkItem moveWorkItemWithIdToPosition(final String aWorkItemId, int newPosition)
     throws WorkItemNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(aWorkItemId);
@@ -249,7 +248,8 @@ public class Board {
     return workItem;
   }
 
-  public Board archiveWorkItemWithId(final String aWorkItemId) throws WorkItemNotInProcessException {
+  public Board archiveWorkItemWithId(final String aWorkItemId)
+    throws WorkItemNotInProcessException {
     Preconditions.checkNotNull(aWorkItemId);
 
     Optional<WorkItem> optionalWorkItem = this.workItemOfId(aWorkItemId);
@@ -262,7 +262,8 @@ public class Board {
     return this;
   }
 
-  public Board sendBackToBoardWorkItemWithId(final String workItemId) throws WorkItemNotArchivedException {
+  public Board sendBackToBoardWorkItemWithId(final String workItemId)
+    throws WorkItemNotArchivedException {
     Preconditions.checkNotNull(workItemId);
 
     Optional<WorkItem> optionalWorkItem = this.archivedWorkItemOfId(workItemId);
@@ -272,22 +273,6 @@ public class Board {
 
     optionalWorkItem.get().setArchived(false);
     return this;
-  }
-
-  /**
-   * @return the list of work items event the archived ones.
-   */
-  private Set<WorkItem> getAllWorkItems() {
-    return this.workItems;
-  }
-
-  public Optional<Stage> stageOfId(String stageId) {
-    Preconditions.checkNotNull(stageId);
-
-    return this.getStages().stream()
-      .filter(stage -> {
-        return stageId.equals(stage.getId());
-      }).findFirst();
   }
 
   /**
@@ -315,25 +300,33 @@ public class Board {
 
   /**
    * Get the non archived work item by its id
-   *
-   * @param aWorkItemId
-   * @return
-   * @throws WorkItemNotInProcessException
    */
   public Optional<WorkItem> workItemOfId(final String aWorkItemId) {
     Preconditions.checkNotNull(aWorkItemId);
 
-    return this.getWorkItems()
+    return this.workItems()
       .stream()
       .filter(workItem -> aWorkItemId.equals(workItem.getId()))
       .findFirst();
   }
 
+  private void setId(String boardId) {
+    Preconditions.checkNotNull(boardId);
+    this.id = boardId;
+  }
+
   private Optional<WorkItem> archivedWorkItemOfId(final String workItemId) {
-    return this.getAllWorkItems()
+    return this.allWorkItems()
       .stream()
       .filter(workItem -> workItem.isArchived() && workItem.getId().equals(workItemId))
       .findFirst();
+  }
+
+  /**
+   * @return the list of work items even the archived ones.
+   */
+  private Set<WorkItem> allWorkItems() {
+    return this.workItems;
   }
 
   private static class BoardValidation {
@@ -348,7 +341,7 @@ public class Board {
 
       int nameLength = name.length();
       Preconditions.checkArgument(nameLength >= 1 && nameLength <= 255,
-          String.format(NAME_SIZE_ERR_MSG, NAME_MIN_SIZE, NAME_MAX_SIZE));
+        String.format(NAME_SIZE_ERR_MSG, NAME_MIN_SIZE, NAME_MAX_SIZE));
     }
 
   }

@@ -54,8 +54,8 @@ public class BoardApplicationServiceUnitTest {
 
       assertThat(board).isNotNull();
       assertThat(board.getName()).isEqualTo(aBoardName);
-      assertThat(board.getWorkItems()).isEmpty();
-      assertThat(board.getStages()).isEmpty();
+      assertThat(board.workItems()).isEmpty();
+      assertThat(board.stages()).isEmpty();
       assertThat(board.getId()).isNotNull();
     }
 
@@ -113,7 +113,7 @@ public class BoardApplicationServiceUnitTest {
 
       // Then the board has a new stage
 
-      assertThat(board.getStages()).contains(stage);
+      assertThat(board.stages()).contains(stage);
     }
 
     @Test(expected = BoardNotFoundException.class)
@@ -201,7 +201,7 @@ public class BoardApplicationServiceUnitTest {
       boardApplicationService.removeStageFromBoard(boardId, aStageId);
 
       // Then board does not contains the stage any more
-      assertThat(board.getStages()).doesNotContain(stage);
+      assertThat(board.stages()).doesNotContain(stage);
     }
 
   }
@@ -242,7 +242,7 @@ public class BoardApplicationServiceUnitTest {
       );
 
       // Then the board contains the work item
-      assertThat(board.getWorkItems()).contains(workItem);
+      assertThat(board.workItems()).contains(workItem);
       assertThat(workItem.getTitle()).isEqualTo(aWorkItemTitle);
       assertThat(workItem.getDescription()).isEqualTo(aWorkItemDescription);
     }
@@ -343,7 +343,7 @@ public class BoardApplicationServiceUnitTest {
       boardApplicationService.changeWorkItemInformation(boardId, workItemId, newWorkItemName, newWorkItemDescription);
 
       // Then work item name is "Ticket 42" and its description is "Bla bla bla".
-      assertThat(board.getWorkItems()).contains(workItem);
+      assertThat(board.workItems()).contains(workItem);
     }
 
   }
@@ -378,7 +378,7 @@ public class BoardApplicationServiceUnitTest {
       boardApplicationService.removeWorkItemFromBoard(boardId, workItemId);
 
       // Then the board does not contains the work item anymore.
-      assertThat(board.getWorkItems()).doesNotContain(workItem);
+      assertThat(board.workItems()).doesNotContain(workItem);
     }
 
   }
@@ -607,7 +607,7 @@ public class BoardApplicationServiceUnitTest {
       boardApplicationService.archiveWorkItem(boardId, workItemAId);
 
       // Then work item A should not be in the list of work items any more
-      assertThat(board.getWorkItems()).doesNotContain(workItemA);
+      assertThat(board.workItems()).doesNotContain(workItemA);
     }
 
   }
@@ -643,7 +643,7 @@ public class BoardApplicationServiceUnitTest {
       boardApplicationService.sendWorkItemBackToBoard(boardId, workItemAId);
 
       // Then work item A should not be in the list of work items any more
-      assertThat(board.getWorkItems()).contains(workItemA);
+      assertThat(board.workItems()).contains(workItemA);
     }
 
   }

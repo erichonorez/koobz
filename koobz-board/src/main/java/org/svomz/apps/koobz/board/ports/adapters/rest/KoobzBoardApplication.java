@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.svomz.apps.koobz.board.application.BoardApplicationService;
 import org.svomz.apps.koobz.board.infrastructure.domain.KanbanRepositoryFactoryBean;
 
 /**
