@@ -50,7 +50,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(newBoardName);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     board.setName(newBoardName);
   }
 
@@ -59,7 +59,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(aBoardId);
     Preconditions.checkNotNull(aStageTitle);
 
-    Board board = this.boardOfId(aBoardId);
+    Board board = this.existingBoardOfId(aBoardId);
     Stage stage = board.addStageToBoard(
       this.boardIdentityService.nextStageIdentity(),
       aStageTitle
@@ -75,7 +75,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(aStageId);
     Preconditions.checkNotNull(newStageName);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     Optional<Stage> optionalStage = board.stageOfId(aStageId);
     if (!optionalStage.isPresent()) {
       throw new StageNotInProcessException();
@@ -91,7 +91,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(aStageId);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     board.removeStageWithId(aStageId);
   }
 
@@ -102,7 +102,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(stageId);
     Preconditions.checkNotNull(aWorkItemDescription);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     return board.addWorkItemToStage(
       stageId,
       this.boardIdentityService().nextWorkItemIdentity(),
@@ -120,7 +120,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(newWorkItemTitle);
     Preconditions.checkNotNull(newWorkItemDescription);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     Optional<WorkItem> optionalWorkItem = board.workItemOfId(workItemId);
     if (!optionalWorkItem.isPresent()) {
       throw new WorkItemNotInProcessException();
@@ -137,7 +137,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     board.removeWorkItemWithId(workItemId);
   }
 
@@ -147,7 +147,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(aWorkItemId);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     board.moveWorkItemWithIdToStageWithId(aWorkItemId, aStageId);
   }
 
@@ -157,7 +157,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     board.moveWorkItemWithIdToPosition(workItemId, newPosition);
   }
 
@@ -167,7 +167,7 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     board.archiveWorkItemWithId(workItemId);
   }
 
@@ -177,11 +177,11 @@ public class BoardApplicationService {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
 
-    Board board = this.boardOfId(boardId);
+    Board board = this.existingBoardOfId(boardId);
     board.sendBackToBoardWorkItemWithId(workItemId);
   }
 
-  private Board boardOfId(String boardId) throws BoardNotFoundException {
+  private Board existingBoardOfId(String boardId) throws BoardNotFoundException {
     Board board = this.boardRepository().findOne(boardId);
     if (board == null) {
       throw new BoardNotFoundException(boardId);
