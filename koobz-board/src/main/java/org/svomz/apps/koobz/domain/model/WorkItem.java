@@ -25,7 +25,7 @@ public class WorkItem {
   private String description;
   
   @Column(name = "position")
-  private int order;
+  private int priority;
 
   @ManyToOne
   @JoinColumn(name = "stage_id")
@@ -86,14 +86,14 @@ public class WorkItem {
     return this;
   }
 
-  WorkItem setPosition(final int order) {
-    this.order = order;
+  WorkItem setPriority(final int priority) {
+    this.priority = priority;
     return this;
   }
 
   @Nullable
-  public int getPosition() {
-    return this.order;
+  public int getPriority() {
+    return this.priority;
   }
 
   WorkItem setWorkflow(final Workflow workflow) {

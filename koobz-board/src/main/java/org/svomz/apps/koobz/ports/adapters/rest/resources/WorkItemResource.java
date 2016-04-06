@@ -111,7 +111,7 @@ public class WorkItemResource {
     @NotNull @Valid final WorkItemPositionInputModel input)
     throws WorkItemNotInStageException, WorkflowNotFoundException, WorkItemNotInProcessException {
 
-    this.workflowApplicationService.moveWorkItemToPosition(workflowId, workItemId, input.getNewPosition());
+    this.workflowApplicationService.changeWorkItemPriority(workflowId, workItemId, input.getNewPosition());
 
     return Response.status(Status.OK)
       .build();

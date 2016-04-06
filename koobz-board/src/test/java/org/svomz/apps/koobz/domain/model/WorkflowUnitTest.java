@@ -128,17 +128,17 @@ public class WorkflowUnitTest {
 
       workflow.archiveWorkItemWithId(aWorkItemId);
 
-      // When I put the work item at the first position
-      workflow.moveWorkItemWithIdToPosition(aSecondWorkItemId, 0);
+      // When I put the work item at the first priority
+      workflow.changePriorityOfWorkItemWithId(aSecondWorkItemId, 0);
       // And I send back to board the first work item
       workflow.sendBackToWorkflowWorkItemWithId(aWorkItemId);
 
-      // Then the the first work item has position 1
-      assertThat(firstWorkItem.getPosition()).isEqualTo(1);
-      // And the second work item has position 0
-      assertThat(secondWorkItem.getPosition()).isEqualTo(0);
-      // And the third work item has position 2
-      assertThat(thirdWorkItem.getPosition()).isEqualTo(2);
+      // Then the the first work item has priority 1
+      assertThat(firstWorkItem.getPriority()).isEqualTo(1);
+      // And the second work item has priority 0
+      assertThat(secondWorkItem.getPriority()).isEqualTo(0);
+      // And the third work item has priority 2
+      assertThat(thirdWorkItem.getPriority()).isEqualTo(2);
     }
 
   }
@@ -351,13 +351,13 @@ public class WorkflowUnitTest {
       WorkItem workItemA =
         workflow.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item A",
           "A description");
-      Assert.assertEquals(0, workItemA.getPosition());
+      Assert.assertEquals(0, workItemA.getPriority());
 
       WorkItem workItemB =
         workflow.addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item B",
           "A description");
 
-      Assert.assertEquals(1, workItemB.getPosition());
+      Assert.assertEquals(1, workItemB.getPriority());
     }
 
     @Test
@@ -387,29 +387,29 @@ public class WorkflowUnitTest {
       WorkItem workItemD = workflow.addWorkItemToStage(aStageIdentity, workItemDId, "Work item D",
         "A description");
 
-      workflow.moveWorkItemWithIdToPosition(workItemCId, 0);
-      Assert.assertEquals(0, workItemC.getPosition());
-      Assert.assertEquals(1, workItemA.getPosition());
-      Assert.assertEquals(2, workItemB.getPosition());
-      Assert.assertEquals(3, workItemD.getPosition());
+      workflow.changePriorityOfWorkItemWithId(workItemCId, 0);
+      Assert.assertEquals(0, workItemC.getPriority());
+      Assert.assertEquals(1, workItemA.getPriority());
+      Assert.assertEquals(2, workItemB.getPriority());
+      Assert.assertEquals(3, workItemD.getPriority());
 
-      workflow.moveWorkItemWithIdToPosition(workItemAId, 3);
-      Assert.assertEquals(0, workItemC.getPosition());
-      Assert.assertEquals(3, workItemA.getPosition());
-      Assert.assertEquals(1, workItemB.getPosition());
-      Assert.assertEquals(2, workItemD.getPosition());
+      workflow.changePriorityOfWorkItemWithId(workItemAId, 3);
+      Assert.assertEquals(0, workItemC.getPriority());
+      Assert.assertEquals(3, workItemA.getPriority());
+      Assert.assertEquals(1, workItemB.getPriority());
+      Assert.assertEquals(2, workItemD.getPriority());
 
-      workflow.moveWorkItemWithIdToPosition(workItemBId, 2);
-      Assert.assertEquals(0, workItemC.getPosition());
-      Assert.assertEquals(3, workItemA.getPosition());
-      Assert.assertEquals(2, workItemB.getPosition());
-      Assert.assertEquals(1, workItemD.getPosition());
+      workflow.changePriorityOfWorkItemWithId(workItemBId, 2);
+      Assert.assertEquals(0, workItemC.getPriority());
+      Assert.assertEquals(3, workItemA.getPriority());
+      Assert.assertEquals(2, workItemB.getPriority());
+      Assert.assertEquals(1, workItemD.getPriority());
 
-      workflow.moveWorkItemWithIdToPosition(workItemBId, 2);
-      Assert.assertEquals(0, workItemC.getPosition());
-      Assert.assertEquals(3, workItemA.getPosition());
-      Assert.assertEquals(2, workItemB.getPosition());
-      Assert.assertEquals(1, workItemD.getPosition());
+      workflow.changePriorityOfWorkItemWithId(workItemBId, 2);
+      Assert.assertEquals(0, workItemC.getPriority());
+      Assert.assertEquals(3, workItemA.getPriority());
+      Assert.assertEquals(2, workItemB.getPriority());
+      Assert.assertEquals(1, workItemD.getPriority());
 
     }
 
@@ -428,7 +428,7 @@ public class WorkflowUnitTest {
       WorkItem workItemA = workflow.addWorkItemToStage(aStageIdentity, aWorkItemId, "Work item A",
         "A description");
 
-      workflow.moveWorkItemWithIdToPosition(aWorkItemId, -1);
+      workflow.changePriorityOfWorkItemWithId(aWorkItemId, -1);
     }
 
     @Test
@@ -450,9 +450,9 @@ public class WorkflowUnitTest {
         .addWorkItemToStage(aStageIdentity, UUID.randomUUID().toString(), "Work item B",
         "A description");
 
-      workflow.moveWorkItemWithIdToPosition(aWorkItemId, Integer.MAX_VALUE);
-      Assert.assertEquals(0, workItemB.getPosition());
-      Assert.assertEquals(1, workItemA.getPosition());
+      workflow.changePriorityOfWorkItemWithId(aWorkItemId, Integer.MAX_VALUE);
+      Assert.assertEquals(0, workItemB.getPriority());
+      Assert.assertEquals(1, workItemA.getPriority());
     }
 
     @Test
@@ -565,8 +565,8 @@ public class WorkflowUnitTest {
         "A description");
 
       workflow.moveWorkItemWithIdToStageWithId(workItemAId, wipStageId);
-      Assert.assertEquals(0, workItemA.getPosition());
-      Assert.assertEquals(0, workItemB.getPosition());
+      Assert.assertEquals(0, workItemA.getPriority());
+      Assert.assertEquals(0, workItemB.getPriority());
     }
   }
 }

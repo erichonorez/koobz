@@ -550,7 +550,7 @@ public class WorkflowApplicationServiceUnitTest {
         workflowRepository,
         workflowIdentityService);
 
-      workflowApplicationService.moveWorkItemToPosition(workflow.getId(), workItemA.getId(), 2);
+      workflowApplicationService.changeWorkItemPriority(workflow.getId(), workItemA.getId(), 2);
 
       // Then B is the first one and A is the last one
       assertThat(workflow.workItemsInStage(aStageId)).containsExactly(workItemB, workItemA);
@@ -592,7 +592,7 @@ public class WorkflowApplicationServiceUnitTest {
         workflowRepository,
         workflowIdentityService);
 
-      workflowApplicationService.moveWorkItemToPosition(workflow.getId(), unknownWorkItemId, 2);
+      workflowApplicationService.changeWorkItemPriority(workflow.getId(), unknownWorkItemId, 2);
 
       // Then I got an exception
     }

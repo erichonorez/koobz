@@ -74,7 +74,7 @@ public class Stage {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     workItem.setStage(this);
-    workItem.setPosition(this.workItems.size());
+    workItem.setPriority(this.workItems.size());
     this.workItems.add(workItem);
     return this;
   }
@@ -83,13 +83,13 @@ public class Stage {
     Preconditions.checkNotNull(workItem, "The given workItem must not be null.");
 
     this.workItems.remove(workItem);
-    int workItemOrder = workItem.getPosition();
+    int workItemOrder = workItem.getPriority();
 
     //reoder all items after the removed one
     this.workItems.forEach(item -> {
-      if (item.getPosition() > workItemOrder) {
-        int currentOrder = item.getPosition();
-        item.setPosition(currentOrder - 1);
+      if (item.getPriority() > workItemOrder) {
+        int currentOrder = item.getPriority();
+        item.setPriority(currentOrder - 1);
       }
     });
 
@@ -111,7 +111,7 @@ public class Stage {
       throw new WorkItemNotInStageException();
     }
     
-    if (position == workItem.getPosition()) {
+    if (position == workItem.getPriority()) {
       return this;
     }
     
@@ -119,21 +119,21 @@ public class Stage {
       position = this.workItems.size() - 1;
     }
     
-    if (position > workItem.getPosition()) {
+    if (position > workItem.getPriority()) {
       for (WorkItem item : this.workItems) {
-        if (item.getPosition() > workItem.getPosition() && item.getPosition() <= position) {
-          item.setPosition(item.getPosition() - 1);
+        if (item.getPriority() > workItem.getPriority() && item.getPriority() <= position) {
+          item.setPriority(item.getPriority() - 1);
         }
       }
     } else {
       for (WorkItem item : this.workItems) {
-        if (item.getPosition() >= position && item.getPosition() < workItem.getPosition()) {
-          item.setPosition(item.getPosition() + 1);
+        if (item.getPriority() >= position && item.getPriority() < workItem.getPriority()) {
+          item.setPriority(item.getPriority() + 1);
         }
       }
     }
     
-    workItem.setPosition(position);
+    workItem.setPriority(position);
     return this;
   }
 

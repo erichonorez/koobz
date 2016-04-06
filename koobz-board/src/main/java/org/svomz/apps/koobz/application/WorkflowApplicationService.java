@@ -153,13 +153,13 @@ public class WorkflowApplicationService {
   }
 
   @Transactional
-  public void moveWorkItemToPosition(final String boardId, final String workItemId, int newPosition)
+  public void changeWorkItemPriority(final String boardId, final String workItemId, int newPriority)
     throws WorkflowNotFoundException, WorkItemNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(boardId);
     Preconditions.checkNotNull(workItemId);
 
     Workflow workflow = this.existingWorkflowOfId(boardId);
-    workflow.moveWorkItemWithIdToPosition(workItemId, newPosition);
+    workflow.changePriorityOfWorkItemWithId(workItemId, newPriority);
   }
 
   @Transactional

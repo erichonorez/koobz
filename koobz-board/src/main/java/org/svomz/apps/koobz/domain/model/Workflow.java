@@ -234,7 +234,7 @@ public class Workflow {
     return this;
   }
 
-  public WorkItem moveWorkItemWithIdToPosition(final String aWorkItemId, int newPosition)
+  public WorkItem changePriorityOfWorkItemWithId(final String aWorkItemId, int newPriority)
     throws WorkItemNotInProcessException, WorkItemNotInStageException {
     Preconditions.checkNotNull(aWorkItemId);
 
@@ -244,7 +244,7 @@ public class Workflow {
     }
 
     WorkItem workItem = optionalWorkItem.get();
-    workItem.getStage().moveWorkItemToPosition(workItem, newPosition);
+    workItem.getStage().moveWorkItemToPosition(workItem, newPriority);
     return workItem;
   }
 
@@ -294,7 +294,7 @@ public class Workflow {
     return stage.getWorkItems()
       .stream()
       .sorted((workItem1, workItem2) -> {
-        return workItem1.getPosition() - workItem2.getPosition();
+        return workItem1.getPriority() - workItem2.getPriority();
       }).collect(Collectors.toList());
   }
 
