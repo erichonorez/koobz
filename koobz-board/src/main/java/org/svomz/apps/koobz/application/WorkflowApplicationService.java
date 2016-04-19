@@ -83,7 +83,7 @@ public class WorkflowApplicationService {
     }
 
     Stage stage = optionalStage.get();
-    stage.setName((String) newStageName);
+    stage.setName(newStageName);
   }
 
   @Transactional
